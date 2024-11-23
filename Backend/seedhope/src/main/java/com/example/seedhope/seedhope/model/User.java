@@ -12,6 +12,7 @@ public class User {
     private String email;
     private String username;
     private String password;
+    private String contactno;
 
     // Private constructor to enforce the use of the builder
     private User(UserBuilder builder) {
@@ -20,6 +21,7 @@ public class User {
         this.email = builder.email;
         this.username = builder.username;
         this.password = builder.password;
+        this.contactno = builder.contactno;
     }
 
     // Getters
@@ -43,6 +45,8 @@ public class User {
         return password;
     }
 
+    public String getContactno() { return  contactno;}
+
     @Override
     public String toString() {
         return "User{" +
@@ -50,6 +54,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
+                ", contactno='" + contactno + '\'' +
                 '}';
     }
 
@@ -60,6 +65,7 @@ public class User {
         private String email;
         private String username;
         private String password;
+        private String contactno;
 
         public UserBuilder setId(Long id) {
             this.id = id;
@@ -83,6 +89,11 @@ public class User {
 
         public UserBuilder setPassword(String password) {
             this.password = password;
+            return this;
+        }
+
+        public UserBuilder setContactno(String contactno){
+            this.contactno = contactno;
             return this;
         }
 
