@@ -1,6 +1,5 @@
 package com.example.seedhope.seedhope.model;
 
-
 import jakarta.persistence.*;
 
 @Entity
@@ -11,40 +10,37 @@ public class User {
     private Long id;
     private String name;
     private String email;
-
     private String username;
     private String password;
 
-    // getters and setters
+    // Private constructor to enforce the use of the builder
+    private User(UserBuilder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.email = builder.email;
+        this.username = builder.username;
+        this.password = builder.password;
+    }
+
+    // Getters
     public Long getId() {
         return id;
     }
-    public void setId(Long id) {
-        this.id = id;
-    }
+
     public String getName() {
         return name;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
+
     public String getEmail() {
         return email;
     }
-    public void setEmail(String email) {
-        this.email = email;
-    }
+
     public String getUsername() {
         return username;
     }
-    public void setUsername(String username) {
-        this.username = username;
-    }
+
     public String getPassword() {
         return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     @Override
@@ -55,5 +51,43 @@ public class User {
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
                 '}';
+    }
+
+    // Static inner Builder class
+    public static class UserBuilder {
+        private Long id;
+        private String name;
+        private String email;
+        private String username;
+        private String password;
+
+        public UserBuilder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public UserBuilder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public UserBuilder setUsername(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public UserBuilder setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
     }
 }
