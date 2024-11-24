@@ -13,7 +13,11 @@ public class User {
     private String username;
     private String password;
     private String contactno;
+    private String picture;
+    private String provider;
 
+    protected User() {
+    }
     // Private constructor to enforce the use of the builder
     private User(UserBuilder builder) {
         this.id = builder.id;
@@ -22,6 +26,8 @@ public class User {
         this.username = builder.username;
         this.password = builder.password;
         this.contactno = builder.contactno;
+        this.picture = builder.picture;
+        this.provider = builder.provider;
     }
 
     // Getters
@@ -47,6 +53,16 @@ public class User {
 
     public String getContactno() { return  contactno;}
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+
+
     @Override
     public String toString() {
         return "User{" +
@@ -66,6 +82,8 @@ public class User {
         private String username;
         private String password;
         private String contactno;
+        private String picture;
+        private String provider;
 
         public UserBuilder setId(Long id) {
             this.id = id;
@@ -94,6 +112,16 @@ public class User {
 
         public UserBuilder setContactno(String contactno){
             this.contactno = contactno;
+            return this;
+        }
+
+        public UserBuilder setPicture(String picture) {
+            this.picture = picture;
+            return this;
+        }
+
+        public UserBuilder setProvider(String provider) {
+            this.provider = provider;
             return this;
         }
 

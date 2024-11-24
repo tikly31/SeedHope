@@ -28,6 +28,8 @@ public class Userservice {
     AuthenticationManager authManager;
 
     public List<User> getAllUsers() {
+
+
         List<User> users = userRepository.findAll();
         if(users.isEmpty()) {
             return null;
