@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import HomeScreen from "./src/screen/HomeScreen";
 import LoginScreen from "./src/screen/LogInScreen";
 import SignupScreen from "./src/screen/SignUpScreen";
+import MainScreen from "./src/screen/MainScreen";
 const Stack = createNativeStackNavigator();
 
 const _layout = () => {
@@ -17,6 +18,7 @@ const _layout = () => {
             headerShown: false,
           }}
         >
+          <Stack.Screen name={"MAINSCREEN"} component={MainScreen} />
           <Stack.Screen name={"HOME"} component={HomeScreen} />
           <Stack.Screen name={"LOGIN"} component={LoginScreen} />
           <Stack.Screen name={"SIGNUP"} component={SignupScreen} />

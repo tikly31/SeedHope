@@ -12,6 +12,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../utils/colors";
+import MainScreen from "./MainScreen";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -44,9 +45,7 @@ const LoginScreen = () => {
     );
 
     if (user) {
-      Alert.alert("Success", "Login successful!");
-      // Navigate to the next screen, e.g., a dashboard
-      // navigation.navigate("DASHBOARD");
+      navigation.navigate("MAINSCREEN");
     } else {
       Alert.alert("Error", "Invalid email or password. Please try again.");
     }
