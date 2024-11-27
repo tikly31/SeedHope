@@ -132,6 +132,12 @@ public class Userservice {
         return userRepository.save(user);
     }
 
+    // return user by id
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
 
 
 }

@@ -62,6 +62,44 @@ public class User {
     }
 
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setContactno(String contactno) {
+        this.contactno = contactno;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    // toString() method to print the User object
+
+
+
+
+
 
     @Override
     public String toString() {
@@ -70,7 +108,10 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
                 ", contactno='" + contactno + '\'' +
+                ", picture='" + picture + '\'' +
+                ", provider='" + provider + '\'' +
                 '}';
     }
 
