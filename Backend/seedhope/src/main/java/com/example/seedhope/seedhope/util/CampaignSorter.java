@@ -2,9 +2,12 @@ package com.example.seedhope.seedhope.util;
 
 import com.example.seedhope.seedhope.model.Campaign;
 import com.example.seedhope.seedhope.service.strategy.sorting.CampaignSortStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class CampaignSorter {
     private CampaignSortStrategy sortStrategy;
 
