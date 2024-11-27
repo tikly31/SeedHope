@@ -13,6 +13,7 @@ import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { colors } from "../utils/colors";
+import MainScreen from "./MainScreen";
 
 import * as Google from 'expo-auth-session/providers/google'
 import * as AuthSession from 'expo-auth-session';
@@ -126,9 +127,7 @@ const LoginScreen = () => {
     );
 
     if (user) {
-      Alert.alert("Success", "Login successful!");
-      // Navigate to the next screen, e.g., a dashboard
-      // navigation.navigate("DASHBOARD");
+      navigation.navigate("MAINSCREEN");
     } else {
       Alert.alert("Error", "Invalid email or password. Please try again.");
     }
