@@ -9,19 +9,28 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.SeedHope"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.SeedHope"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+
+    "google": {
+      "androidClientId": "853660126141-jtnrl3712kumek7ounntjjdlj8l3lkcd.apps.googleusercontent.com",
+      "iosClientId": "853660126141-12nj0532b9anqrsr5nbn1h3ntak0ijud.apps.googleusercontent.com",
+      "webClientId": "853660126141-kn2kjcl3vq3t6c962u711p53p62qimlk.apps.googleusercontent.com"
+    },
+
     "plugins": [
       "expo-router",
       [
@@ -36,6 +45,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "14ce6a64-daff-4e7b-95e2-54eae2aa0565"
+      }
     }
   }
 }

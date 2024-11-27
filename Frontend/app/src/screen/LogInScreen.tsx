@@ -11,7 +11,27 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import { colors } from "../utils/colors";
+
+import * as Google from 'expo-auth-session/providers/google'
+import * as AuthSession from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
+import jwtDecode from "jwt-decode";
+
+
+
+
+// web client id 853660126141-kn2kjcl3vq3t6c962u711p53p62qimlk.apps.googleusercontent.com
+// ios client id 853660126141-12nj0532b9anqrsr5nbn1h3ntak0ijud.apps.googleusercontent.com
+// android client id 853660126141-jtnrl3712kumek7ounntjjdlj8l3lkcd.apps.googleusercontent.com
+const GOOGLE_ANDROID_CLIENT_ID = "853660126141-jtnrl3712kumek7ounntjjdlj8l3lkcd.apps.googleusercontent.com"
+const GOOGLE_iOS_CLIENT_ID = "853660126141-12nj0532b9anqrsr5nbn1h3ntak0ijud.apps.googleusercontent.com"
+const GOOGLE_WEB_CLIENT_ID = "853660126141-kn2kjcl3vq3t6c962u711p53p62qimlk.apps.googleusercontent.com"
+WebBrowser.maybeCompleteAuthSession();
+
+
+
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -27,6 +47,68 @@ const LoginScreen = () => {
     { email: "admin@example.com", password: "adminAccess!" },
   ];
 
+
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    webClientId: GOOGLE_WEB_CLIENT_ID,
+    androidClientId: GOOGLE_ANDROID_CLIENT_ID,
+    iosClientId: GOOGLE_iOS_CLIENT_ID,
+  });
+
+  React.useEffect(() => {
+    if (response?.type === 'success') {
+      console.log("Google login success");
+      const { id_token } = response.params;
+      // console.log(id_token);
+
+       // Decode the JWT to extract user data from the id_token
+        const decoded = decodeJwtToken(id_token);
+        console.log("decoded  : token");
+        console.log(decoded);
+
+        const user = {
+          email: decoded.email,
+          name: decoded.name,
+          picture: decoded.picture
+        };
+        console.log("user");
+        
+        
+
+    }
+  }, [response]);
+
+
+  const decodeJwtToken = (token) => {
+    // Split the token into its three parts
+    const parts = token.split('.');
+  
+    if (parts.length !== 3) {
+      throw new Error("Invalid token");
+    }
+  
+    // The payload is the second part (index 1)
+    const payload = parts[1];
+  
+    // Base64 decode the payload
+    const decodedPayload = atob(payload);
+  
+    // Parse the decoded string into a JSON object
+    return JSON.parse(decodedPayload);
+  };
+
+     
+  
+  const handleSingInWithGoogle = async () => {
+    console.log("Google login initiated");
+    promptAsync();
+  }
+
+
+  
+  
+
+
+ 
   const handleLogin = () => {
     if (!email || !password) {
       Alert.alert("Error", "Please enter both email and password.");
@@ -108,7 +190,7 @@ const LoginScreen = () => {
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
         <Text style={styles.continueText}>or continue with</Text>
-        <TouchableOpacity style={styles.googleButtonContainer}>
+        <TouchableOpacity style={styles.googleButtonContainer}  onPress={handleSingInWithGoogle}>
           <Image
             source={require("../assets/google.png")}
             style={styles.googleImage}
