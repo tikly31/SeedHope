@@ -46,6 +46,7 @@ const LoginScreen = () => {
     { email: "test3@example.com", password: "mySecret789" },
     { email: "user@example.com", password: "password123" },
     { email: "admin@example.com", password: "adminAccess!" },
+    { email: "i@gmail.com", password: "1" },
   ];
 
 

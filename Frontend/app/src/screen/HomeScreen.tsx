@@ -85,92 +85,82 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 22,
   },
-  buttonContainer: {
-    width: '80%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  buttonWrapper: {
-    width: '48%',
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loginButton: {
-    backgroundColor: colors.primary || '#007AFF',
-  },
-  signupButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.primary || '#007AFF',
-  },
-  loginButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  signupButtonText: {
-    color: colors.primary || '#007AFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+
+buttonContainer: {
+              marginTop: 20,
+              flexDirection: "column",
+              alignItems: "center",
+              width: "80%",
+              height: 60,
+            },
+            loginButtonWrapper: {            
+                width: "80%",
+                borderRadius: 100,
+              }, 
+              loginButtonText: {
+                  color: colors.primary || '#007AFF',
+                  fontSize: 18,
+                },
+                signupButtonText: {
+                    fontSize: 18,
+              }
+
 });
 
-export default HomeScreen;
 
 
 
 // const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: colors.white,
-//     alignItems: "center",
+//     container: {
+//         flex: 1,
+//         backgroundColor: colors.white,
+//         alignItems: "center",
 //   }, 
 //   logo: {
-//     height: 40,
-//     width: 140,
-//     marginVertical: 30,
-//   },
-//   bannerImage: { 
-//     marginVertical: 20,
-//     height: 250,
-//     width: 231,
-//   }, 
-//   title:{
-//     fontSize: 40,
-//     // fontFamily: fonts.SemiBold,
-//     paddingHorizontal: 20,
-//     textAlign: "center",
-//     color: colors.primary,
-//     marginTop: 40,
-//   },
-//   subTitle:{
-//     fontSize: 18,
-//     paddingHorizontal: 20,
-//     textAlign: "center",
-//     color: colors.secondary,
-//     // fontFamily: fonts.Medium,
-//     marginVertical: 20,
-//   }, 
-//   buttonContainer: {
-//     marginTop: 20,
-//     flexDirection: "column",
-//     alignItems: "center",
-//     width: "80%",
-//     height: 60,
-//   },
-//   loginButtonWrapper: {
-//     width: "80%",
-//     borderRadius: 100,
-//   }, 
-//   loginButtonText: {
-//     color: colors.white,
-//     fontSize: 18,
-//     // fontFamily: fonts.SemiBold,
-//   },
-//   signupButtonText: {
-//     fontSize: 18,
-//     // fontFamily: fonts.SemiBold,
+//       height: 40,
+//       width: 140,
+//       marginVertical: 30,
+//     },
+    // bannerImage: { 
+    //     marginVertical: 20,
+    //     height: 250,
+    //     width: 231,
+    //   }, 
+    //   title:{
+    //       fontSize: 40,
+    //       // fontFamily: fonts.SemiBold,
+    //       paddingHorizontal: 20,
+    //       textAlign: "center",
+    //       color: colors.primary,
+        //   marginTop: 40,
+        // },
+        // subTitle:{
+        //     fontSize: 18,
+        //     paddingHorizontal: 20,
+        //     textAlign: "center",
+        //     color: colors.secondary,
+        //     // fontFamily: fonts.Medium,
+        //     marginVertical: 20,
+        //   }, 
+          // buttonContainer: {
+          //     marginTop: 20,
+          //     flexDirection: "column",
+          //     alignItems: "center",
+          //     width: "80%",
+          //     height: 60,
+          //   },
+          //   loginButtonWrapper: {
+          //       width: "80%",
+          //       borderRadius: 100,
+              // }, 
+//               loginButtonText: {
+//                   color: colors.white,
+//                   fontSize: 18,
+//                   // fontFamily: fonts.SemiBold,
+//                 },
+//                 signupButtonText: {
+//                     fontSize: 18,
+//                     // fontFamily: fonts.SemiBold,
 //   }
 // })
+export default HomeScreen;
