@@ -1,10 +1,11 @@
 package com.example.seedhope.seedhope.model;
 
+import com.example.seedhope.seedhope.observer.PaymentObserver;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Campaign {
+public class Campaign implements PaymentObserver{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -112,5 +113,10 @@ public class Campaign {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    // Observer method to update the raised amount
+    public void update(Payment payment) {
+        this.raisedAmount += payment.getAmount();
     }
 }
