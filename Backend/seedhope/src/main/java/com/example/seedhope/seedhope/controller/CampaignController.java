@@ -2,10 +2,7 @@ package com.example.seedhope.seedhope.controller;
 
 import com.example.seedhope.seedhope.model.Campaign;
 import com.example.seedhope.seedhope.service.CampaignService;
-import com.example.seedhope.seedhope.service.strategy.sorting.CampaignSortStrategy;
-import com.example.seedhope.seedhope.service.strategy.sorting.SortByDateStrategy;
-import com.example.seedhope.seedhope.service.strategy.sorting.SortByGoalAmountStrategy;
-import com.example.seedhope.seedhope.service.strategy.sorting.SortByStatusStrategy;
+import com.example.seedhope.seedhope.service.strategy.sorting.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/campaigns")
+@RequestMapping("/campaigns")
 public class CampaignController {
 
     @Autowired
@@ -70,6 +67,11 @@ public class CampaignController {
             case "status":
                 strategy = new SortByStatusStrategy();
                 break;
+            case "Emergency" :
+                strategy = new SortByDueDateAsc();
+            case "Recent" :
+                strategy = new SortByCreationDateDesc();
+
             default:
                 return ResponseEntity.badRequest().build();
         }

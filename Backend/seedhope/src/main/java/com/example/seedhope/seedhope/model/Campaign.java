@@ -2,9 +2,12 @@ package com.example.seedhope.seedhope.model;
 
 import com.example.seedhope.seedhope.observer.PaymentObserver;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table
 public class Campaign implements PaymentObserver{
 
     @Id
@@ -30,24 +33,28 @@ public class Campaign implements PaymentObserver{
 
     private LocalDateTime createdAt;
 
+    private LocalDate due_date;
+
     // Enum for campaign status
     public enum Status {
         PENDING,
         APPROVED,
-        REJECTED
+        REJECTED,
+        DONE
     }
 
     // Default Constructor
     public Campaign() {}
 
     // Parameterized Constructor
-    public Campaign(String title, String description, String category, Double goalAmount, Status status, LocalDateTime createdAt) {
+    public Campaign(String title, String description, String category, Double goalAmount, Status status, LocalDateTime createdAt, LocalDate due_date) {
         this.title = title;
         this.description = description;
         this.category = category;
         this.goalAmount = goalAmount;
         this.status = status;
         this.createdAt = createdAt;
+        this.due_date = due_date;
     }
 
     // Getters and Setters
@@ -113,6 +120,10 @@ public class Campaign implements PaymentObserver{
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDate getDue_date(){
+        return due_date;
     }
 
     // Observer method to update the raised amount
