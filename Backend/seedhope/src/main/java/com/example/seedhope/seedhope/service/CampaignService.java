@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +59,8 @@ public class CampaignService {
         this.campaignRepository = campaignRepository;
     }
 
-    public Campaign createCampaign(String title, String description, String category, Double goalAmount) {
-        Campaign campaign = CampaignFactory.createDefaultCampaign(title, description, category, goalAmount);
+    public Campaign createCampaign(String title, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
+        Campaign campaign = CampaignFactory.createDefaultCampaign(title, description, category, goalAmount, DueDate, photourl);
         return campaignRepository.save(campaign);
     }
 
@@ -68,7 +69,9 @@ public class CampaignService {
                 campaignRequestDTO.getTitle(),
                 campaignRequestDTO.getDescription(),
                 campaignRequestDTO.getCategory(),
-                campaignRequestDTO.getGoalAmount()
+                campaignRequestDTO.getGoalAmount(),
+                campaignRequestDTO.getDueDate(),
+                campaignRequestDTO.getPhotourl()
         );
         campaign.setId(userId);
         return campaignRepository.save(campaign);

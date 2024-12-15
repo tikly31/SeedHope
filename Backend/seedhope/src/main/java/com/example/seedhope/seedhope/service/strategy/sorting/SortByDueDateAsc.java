@@ -11,7 +11,7 @@ public class SortByDueDateAsc implements CampaignSortStrategy {
 
     @Override
     public List<Campaign> sort(List<Campaign> campaigns) {
-        campaigns.sort(Comparator.comparing(Campaign::getDue_date));
+        campaigns.sort(Comparator.comparing(Campaign::getDueDate));
         return campaigns;
     }
 }

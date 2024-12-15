@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/campaigns")
 public class CampaignController {
 
     @Autowired
@@ -20,39 +21,42 @@ public class CampaignController {
         this.campaignService = campaignService;
     }
 
-    @PostMapping
+    @PostMapping("/campaign")
     public ResponseEntity<Campaign> createCampaign(
             @RequestParam String title,
             @RequestParam String description,
             @RequestParam String category,
-            @RequestParam Double goalAmount) {
-        Campaign campaign = campaignService.createCampaign(title, description, category, goalAmount);
+            @RequestParam Double goalAmount,
+            @RequestParam LocalDate due_date,
+            @RequestParam String photourl)
+            {
+        Campaign campaign = campaignService.createCampaign(title, description, category, goalAmount, due_date, photourl);
         return ResponseEntity.ok(campaign);
     }
 
-    @GetMapping
+    @GetMapping("/campaign")
     public ResponseEntity<List<Campaign>> getAllApprovedCampaigns() {
         return ResponseEntity.ok(campaignService.getAllApprovedCampaigns());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/campaign/{id}")
     public ResponseEntity<Campaign> getCampaignById(@PathVariable Long id) {
         return campaignService.getCampaignById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PatchMapping("/{id}/status")
+    @PatchMapping("/campaign/{id}/status")
     public ResponseEntity<Campaign> updateCampaignStatus(@PathVariable Long id, @RequestParam Campaign.Status status) {
         return ResponseEntity.ok(campaignService.updateCampaignStatus(id, status));
     }
 
-    @GetMapping("/category")
+    @GetMapping("/campaign/category")
     public ResponseEntity<List<Campaign>> getCampaignsByCategory(@RequestParam String category) {
         return ResponseEntity.ok(campaignService.getCampaignsByCategory(category));
     }
 
-    @GetMapping("/sorted")
+    @GetMapping("/campaign/sorted")
     public ResponseEntity<List<Campaign>> getSortedCampaigns(@RequestParam String sortBy) {
         CampaignSortStrategy strategy;
 

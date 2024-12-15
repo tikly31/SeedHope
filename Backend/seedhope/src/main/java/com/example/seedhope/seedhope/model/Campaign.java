@@ -7,8 +7,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
-public class Campaign implements PaymentObserver{
+@Table(name = "campaign")
+public class Campaign implements PaymentObserver {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +26,21 @@ public class Campaign implements PaymentObserver{
     @Column(nullable = false)
     private Double goalAmount;
 
+    @Column
     private Double raisedAmount = 0.0;
 
+    @Column
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 
-    private LocalDateTime createdAt;
+    @Column
+    private LocalDateTime creationDate = LocalDateTime.now();
 
-    private LocalDate due_date;
+    @Column
+    private LocalDate dueDate;
+
+    @Column
+    private String photoUrl; // New field to store the URL or path of the photo
 
     // Enum for campaign status
     public enum Status {
@@ -47,14 +54,14 @@ public class Campaign implements PaymentObserver{
     public Campaign() {}
 
     // Parameterized Constructor
-    public Campaign(String title, String description, String category, Double goalAmount, Status status, LocalDateTime createdAt, LocalDate due_date) {
+    public Campaign(String title, String description, String category, Double goalAmount, Status status, LocalDate dueDate, String photoUrl) {
         this.title = title;
         this.description = description;
         this.category = category;
         this.goalAmount = goalAmount;
         this.status = status;
-        this.createdAt = createdAt;
-        this.due_date = due_date;
+        this.dueDate = dueDate;
+        this.photoUrl = photoUrl;
     }
 
     // Getters and Setters
@@ -114,19 +121,32 @@ public class Campaign implements PaymentObserver{
         this.status = status;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
-    public LocalDate getDue_date(){
-        return due_date;
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     // Observer method to update the raised amount
+    @Override
     public void update(Payment payment) {
         this.raisedAmount += payment.getAmount();
     }
