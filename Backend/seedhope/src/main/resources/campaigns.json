@@ -44,7 +44,186 @@
     "status": "APPROVED",
     "dueDate": "2025-02-15",
     "photoUrl": "camp4.jpg"
+  },
+  {
+    "organizerId": 3,
+    "title": "Support San Miguel Students' Bright Future",
+    "description": "Our Story: San Miguel School is an all-boys Lasallian middle school which consists of 64 kids (16 per grade). At San Miguel, they take students from troubled backgrounds in the Providence area and provide them with a safe and caring environment. At the end of their time at San Miguel, students are provided counseling through the process of getting into high school and then college, a service they normally would not have. San Miguel is run totally off of donations. These donations go towards breakfast and lunch for the students, classes, after-school programs, uniforms, and financial literacy courses. After visiting the school and getting to talk with some of the faculty and students, we all knew that San Miguel was the organization that we wanted to work with. Out of all the people we met when we visited, there wasn’t a single person who met us with anything but kindness and respect. Looking around, you could really see that the students enjoyed going to school there and that the faculty really enjoy working there. After observing all of these things, it has motivated us to raise as much money as possible so that these kids and the future San Miguel students can continue to enjoy learning and making friends in such a great environment. With your money, we will be able to sponsor a San Miguel student and provide him with the support he needs to get a great education in a safe and caring environment.",
+    "category": "education",
+    "goalAmount": 100000.00,
+    "raisedAmount": 50000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-06-15",
+    "photoUrl": "camp5.jpg"
+  },
+  {
+    "organizerId": 2,
+    "title": "Help Ahmed Restore His Dreams and Family",
+    "description": "Ahmed's story as passed through and translated through Seigen Mizu Dojo:\n\n Hello, I am Ahmed, 20 years old, studying computer engineering. I had big dreams and ambitions, but because of the war, I lost everything I was exposed to many dangers\n\n Last January, the occupation ordered us to evacuate our house, and I am the sole breadwinner for my family. We were displaced on foot for a long distance under the showers of bullets and rain. From that day until today, I have been homeless, without shelter, and without work. Our house was demolished, I lost my car, and my university was bombed by the occupation, so I want to complete my studies and education and build my dreams again",
+    "category": "education",
+    "goalAmount": 60000.00,
+    "raisedAmount": 5000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-06-15",
+    "photoUrl": "camp6.jpg"
+  },
+  {
+    "organizerId": 2,
+    "title": "Brighten the Holidays for SF Youth",
+    "description": "Support Independence High School youth this holiday season! Consider donating here to purchase gift cards for our homeless/unhoused and foster youth families this holiday season.\n\n Donations of $25 or more are eligible to receive a limited edition SF BIRDS 2025 calendar and accompanying Owls of San Francisco mini-calendar featuring photographs of San Francisco's most photogenic birds by IHS principal Anna Klafter. Reach out to the IHS office to redeem your calendar. Only 100 copies available!\n\nThank you for your generosity!",
+    "category": "education",
+    "goalAmount": 20000.00,
+    "raisedAmount": 2000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-03-15",
+    "photoUrl": "camp7.jpg"
+  },
+
+  {
+    "organizerId": 3,
+    "title": "Help C.S. Porter Middle School get a new kiln.",
+    "description": "You know me as Candice. My students know me as Ms. H, Ms. Haster, or Ms. Candice. I'm a ceramic artist and I teach art in Missoula, Montana - currently at C.S. Porter Middle School. Our kiln is in dire need of replacement, and I'm here to ask for your help. As you know, district budget cuts have impacted the arts in heartbreaking ways. Our kiln is the oldest in the district, and deemed the most in-need of replacement. It is inefficient (heating consumes an estimated 5x the energy of a new kiln) and it misfires consistently, resulting in damage to student artwork, funky glazes, lots of wasted time and energy, and broken hearts. You all remember how heartache felt in middle school, right? I'd like to prevent that, where I can, and give these kids a chance to feel proud, accomplished and to celebrate their creativity and creative risk-taking.\n\n C.S. Porter is the only Title 1 Middle School in Missoula. That means that the youth we serve are largely low income. This also means that your donation will be 100% tax deductible.",
+    "category": "education",
+    "goalAmount": 25000.00,
+    "raisedAmount": 3000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-03-15",
+    "photoUrl": "camp8.jpg"
+  },
+  {
+    "organizerId": 4,
+    "title": "Help Mindy and Andrew Rebuild Their Bridge",
+    "description": "As many of you know, on September 28th tropical storm Helene changed our beloved home of Western North Carolina forever. Mindy and Andrew’s home was no exception. While their house was left undamaged, the bridge to their house was washed away by Reems Creek. What was once a 25 foot span bridge will need to be replaced by a 65 foot span bridge due to widening of the river bed. FEMA has given them some funds toward rebuilding their bridge, but far short of the cost of building. Please consider supporting my dear friends and neighbors in their recovery effort",
+    "category": "environment",
+    "goalAmount": 50000.00,
+    "raisedAmount": 8000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-02-15",
+    "photoUrl": "camp9.jpg"
+  },
+  {
+    "organizerId": 4,
+    "title": "Help us buy trees!",
+    "description": "Greenwich Eco Alliance is an upcoming non-profit founded by Greenwich High School students looking to make Greenwich a greener, healthier, and more beautiful place to live.\n\nYour donations will go to purchasing trees and plants and planting them throughout our community.\n\nHelp us by donating to enhance the environment YOU live in and providing numerous benefits for the generations to come!",
+    "category": "environment",
+    "goalAmount": 10000.00,
+    "raisedAmount": 2000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-01-25",
+    "photoUrl": "camp10.jpg"
+  },
+  {
+    "organizerId": 4,
+    "title": "Help White Marsh Families Fight Pollution",
+    "description": "The White Marsh Cowenton Improvement Association is advocating on behalf of our residents who are passionately opposed to construction of a crematory which will operate daily within their neighborhood. White Marsh is a community of growing families, retired households, elderly and disabled who have joined together in opposition to a proposed crematory as close as 250 ft from someone's residence. The crematory operator has deep pockets and we need your help to protect our community from additional pollution in White Marsh.",
+    "category": "environment",
+    "goalAmount": 15000.00,
+    "raisedAmount": 2000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-03-25",
+    "photoUrl": "camp11.jpg"
+  },
+
+  {
+    "organizerId": 4,
+    "title": "Join Us Give Relief Efforts After the Hurricane",
+    "description": "Help people affected by Hurricane. Your donation enables the Red cross to prepare for, respond to and help people recover from this disaster.\n\n Hurricane made landfall in some parts of the country and continues to devastate the Southeast, claiming lives of numbers of people and destroying homes and businesses of countless families.\n\nLet's come together to help the hurricane victims.\n\nThank you for your generosity.",
+    "category": "environment",
+    "goalAmount": 35000.00,
+    "raisedAmount": 5000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-02-25",
+    "photoUrl": "camp12.jpg"
+  },
+  {
+    "organizerId": 5,
+    "title": "Help Elias's Family During This Crisis",
+    "description": "On December 4, 2024, our five-year-old grandson, Elias, was shot in a school shooting at Feather River Adventist School, the small Christian school he attends in Northern California. The bullet went through his chest and abdomen, piercing and nicking multiple organs before exiting. He was airlifted to the hospital, where he underwent emergency surgery to stop the bleeding. He is currently sedated and on a ventilator in PICU, awaiting additional surgery. Though in critical condition, he is stable at the moment.\n\nWe are overwhelmed by the great outpouring of love, concern and especially prayers. You cannot know how much it means that there are hundreds, if not thousands, lifting Elias up before our Heavenly Father. Thank you.\n\n We have also had people reaching out asking how they can help. In answer to these requests, we have set up this fund to help the family through this difficult time. Your support means so much.",
+    "category": "emergency",
+    "goalAmount": 100000.00,
+    "raisedAmount": 25000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-02-25",
+    "photoUrl": "camp13.jpg"
+  },
+  {
+    "organizerId": 5,
+    "title": "Bohm Family: Rebuilding After Tragic Fire",
+    "description": "We are raising funds for the Bohm family who lost everything today on 12/12 due to a house fire. The family lost all belongings, vehicle, and everything they owned. They have NOTHING and need everything! All donations will be 100% donated for the family to buy necessities. They have 3 amazing boys and a beautiful baby girl that is on the way. Please share this with everyone you can and let’s come together for the Bohm family!",
+    "category": "emergency",
+    "goalAmount": 50000.00,
+    "raisedAmount": 2500.00,
+    "status": "APPROVED",
+    "dueDate": "2025-03-18",
+    "photoUrl": "camp14.jpg"
+  },
+  {
+    "organizerId": 5,
+    "title": "Help Rohan Recover From His Brain Injury",
+    "description": "This go fund me is for Rohan Shukla and his family so we can help them in any way possible as he recovers from his injury. He sustained a brain injury during our Thanksgiving football game and is currently in the hospital after having brain surgery.",
+    "category": "emergency",
+    "goalAmount": 100000.00,
+    "raisedAmount": 5000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-02-18",
+    "photoUrl": "camp15.jpg"
+  },
+  {
+    "organizerId": 5,
+    "title": "From Hospital to Homeless: Christina's Story",
+    "description": "My name is Christina Sivilay. I recently had a stroke and I was in a coma for a while, but I don't remember how long. When I woke up, I saw my family and friends. I was unable to speak, and I couldn't remember their names. I wanted to say words to them, but due to the rupture and swelling in my brain, I couldn’t process the words to say. I was in the hospital for 2 months recovering. I was doing PT OT and speech therapy to get better. When I came home, my entire life had changed. My mom, my aunt and everyone that was close to me try to help me to get better and supported me however they could. I am not fully recovered and my whole right side I can barely move it. I wish I was back to how I was before, but I can't. I struggle doing the smallest tasks, and feel stuck - unable to freely do the things I use to. Everyday I want to cry because of how this stroke has paralyzed my right side preventing me to do things with my kids. It's hard for me to sleep and eat.\n\nSoon after, I found out that I'm getting evicted from my own home with my two kids. Unable to work or receive financial help. I now have 2 months to find a place to stay with my two kids. I have nowhere to go except for the shelter or the streets. It would mean so much to me if any of you can help.\n\nAny donation will help; it doesn't have to be much. I just want a warm safe place for me and my kids this Holiday and Winte",
+    "category": "emergency",
+    "goalAmount": 20000.00,
+    "raisedAmount": 3000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-04-18",
+    "photoUrl": "camp16.jpg"
+  },
+  {
+    "organizerId": 2,
+    "title": "Support Western NC Families Impacted by Hurricane Helene",
+    "description": "My name is Bill St. Pierre, owner of St. Pierre Woodworking (Floyd, VA). I am raising money for families in Western NC who were impacted by Hurricane Helene.\n\nI am looking to help support multiple families that I connected with over social media (and through prior relief efforts since the storm) and then met in person to see their needs. Excess funds may be used to support additional families or organizations that are identified that need help or are supporting disaster relief efforts.\n\nFunds may be used as follows (to include but may not be limited to): disaster cleanup (debris removal, site cleanup), home rebuilding (materials, labor costs), shelter (hotel expenses, temporary shelter purchases/campers), heat (heat pumps, furnaces, small heaters), or food/water. As I travel to the impacted area to support, I may also use a small amount of the funds for fuel/transportation costs, equipment service/maintenance, meals, or lodging.",
+    "category": "disaster",
+    "goalAmount": 40000.00,
+    "raisedAmount": 3000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-01-18",
+    "photoUrl": "camp17.jpg"
+  },
+  {
+    "organizerId": 3,
+    "title": "Support the Santoro Family After Fire Tragedy",
+    "description": "Help the Santoro’s Rebuild After Devastating Fire\n\nDear Friends, Family, and Community,\n\nWe are reaching out with heavy hearts to share the news of a devastating fire that struck the home of Tallman Fire District Commissioner John Santoro, his wife Christine, Chief James Santoro, and Lieutenant Charles Schmidt of the Tallman Fire Department on December 14th. This unexpected tragedy has left the families not only without a home for the holidays but also without many of their personal belongings.\n\nAs dedicated members of the Tallman Fire District and Department, John, James, and Charles have spent countless years serving and protecting our community. They have been there for us during our times of need, and now it's our turn to support them during theirs. Their commitment to public service and safety has been unwavering, and we are determined to help them rebuild their lives after this unfortunate event.",
+    "category": "disaster",
+    "goalAmount": 60000.00,
+    "raisedAmount": 8000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-02-19",
+    "photoUrl": "camp18.jpg"
+  },
+  {
+    "organizerId": 3,
+    "title": "Please help our family after a devastating house fire.",
+    "description": "My sister and my two nieces lost everything today 12/13/24 due to an electrical fire in their home. They were not home at the time but did lose their cats and dog in the fire. The house is a total loss along with everything in it. Barbie, Mia and Layla will need to start over. Please help in any way you can. Donations of furniture, toiletries, clothing etc are needed as well. Please pray for them as they go through this devastating loss right before the Holiday's.\n\nThe family is in need of women's adult clothes size small or medium. Womens shoes size 6 and 8. Girls clothing size 7/8-9/10 and shoe size kids 1. Toys, household items, toiletries etc are all needed. You can drop off donations to 4537 N Green Bay Rd in Racine Wisconsin anytime after this Sunday 12/15/24. We will appreciate anything and everything! Thank you so much everyone. We truly appreciate all of the help!",
+    "category": "disaster",
+    "goalAmount": 50000.00,
+    "raisedAmount": 8000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-01-25",
+    "photoUrl": "camp19.jpg"
+  },
+  {
+    "organizerId": 3,
+    "title": "Urgent Relief for our Family in Gaza",
+    "description": "On October 7, 2023, our lives were shattered by the conflict that struck Gaza. Our home—once filled with laughter, love, and memories—was reduced to rubble. In an instant, everything we had worked so hard for was gone. We lost not only our home but also our source of livelihood and any sense of stability. Now, we are left with nothing but the clothes on our backs and a deep longing for peace and safety.",
+    "category": "disaster",
+    "goalAmount": 40000.00,
+    "raisedAmount": 1000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-02-14",
+    "photoUrl": "camp20.jpg"
   }
+
 
 
 ]
