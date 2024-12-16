@@ -5,10 +5,11 @@ import com.example.seedhope.seedhope.model.Campaign;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 public class CampaignFactory {
-    public static Campaign createDefaultCampaign(String title, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
+    public static Campaign createDefaultCampaign(String title, Long organizerId, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
         Campaign campaign = new Campaign();
         campaign.setTitle(title);
         campaign.setDescription(description);
+        campaign.setOrganizerId(organizerId);
         campaign.setCategory(category);
         campaign.setGoalAmount(goalAmount);
         campaign.setStatus(Campaign.Status.PENDING); // Default status
@@ -18,14 +19,14 @@ public class CampaignFactory {
         return campaign;
     }
 
-    public static Campaign createApprovedCampaign(String title, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
-        Campaign campaign = createDefaultCampaign(title, description, category, goalAmount, DueDate, photourl);
+    public static Campaign createApprovedCampaign(String title, Long organizerId, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
+        Campaign campaign = createDefaultCampaign(title, organizerId, description, category, goalAmount, DueDate, photourl);
         campaign.setStatus(Campaign.Status.APPROVED); // Set status to approved
         return campaign;
     }
 
-    public static Campaign createRejectedCampaign(String title, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
-        Campaign campaign = createDefaultCampaign(title, description, category, goalAmount, DueDate, photourl);
+    public static Campaign createRejectedCampaign(String title, Long organizerId, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
+        Campaign campaign = createDefaultCampaign(title, organizerId, description, category, goalAmount, DueDate, photourl);
         campaign.setStatus(Campaign.Status.REJECTED); // Set status to rejected
         return campaign;
     }

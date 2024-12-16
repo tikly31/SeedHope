@@ -15,6 +15,9 @@ public class Campaign implements PaymentObserver {
     private Long id;
 
     @Column(nullable = false)
+    private Long organizer_id;
+
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false, length = 1000)
@@ -68,6 +71,15 @@ public class Campaign implements PaymentObserver {
     public Long getId() {
         return id;
     }
+
+    public Long getOrganizerId(){
+        return this.organizer_id;
+    }
+
+    public void setOrganizerId(Long id){
+        this.organizer_id = id;
+    }
+
 
     public void setId(Long id) {
         this.id = id;

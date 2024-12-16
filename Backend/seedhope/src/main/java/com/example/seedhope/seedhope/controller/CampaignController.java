@@ -22,16 +22,8 @@ public class CampaignController {
     }
 
     @PostMapping("/campaign")
-    public ResponseEntity<Campaign> createCampaign(
-            @RequestParam String title,
-            @RequestParam String description,
-            @RequestParam String category,
-            @RequestParam Double goalAmount,
-            @RequestParam LocalDate due_date,
-            @RequestParam String photourl)
-            {
-        Campaign campaign = campaignService.createCampaign(title, description, category, goalAmount, due_date, photourl);
-        return ResponseEntity.ok(campaign);
+    public Campaign addCampaign(@RequestBody Campaign campaign){
+        return campaignService.addCampaign(campaign);
     }
 
     @GetMapping("/campaign")

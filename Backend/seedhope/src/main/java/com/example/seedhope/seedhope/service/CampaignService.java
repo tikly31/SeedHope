@@ -11,6 +11,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -59,14 +60,20 @@ public class CampaignService {
         this.campaignRepository = campaignRepository;
     }
 
-    public Campaign createCampaign(String title, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
-        Campaign campaign = CampaignFactory.createDefaultCampaign(title, description, category, goalAmount, DueDate, photourl);
+    public Campaign createCampaign(String title, Long organizerId, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
+        Campaign campaign = CampaignFactory.createDefaultCampaign(title, organizerId, description, category, goalAmount, DueDate, photourl);
         return campaignRepository.save(campaign);
     }
+
+    public Campaign addCampaign(@RequestBody Campaign campaign){
+        return campaignRepository.save(campaign);
+    }
+
 
     public Campaign requestFundraising(CampaignRequestDTO campaignRequestDTO, Long userId) {
         Campaign campaign = CampaignFactory.createDefaultCampaign(
                 campaignRequestDTO.getTitle(),
+                userId,
                 campaignRequestDTO.getDescription(),
                 campaignRequestDTO.getCategory(),
                 campaignRequestDTO.getGoalAmount(),
@@ -78,7 +85,7 @@ public class CampaignService {
     }
 
     public List<Campaign> getAllApprovedCampaigns() {
-        return campaignRepository.findByStatus(Campaign.Status.APPROVED);
+        return campaignRepository.findByStatus(Campaign.Status.PENDING);
     }
 
     public Optional<Campaign> getCampaignById(Long id) {
