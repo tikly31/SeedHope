@@ -1,0 +1,50 @@
+[
+  {
+    "organizerId": 2,
+    "title": "Donate to Support the Gaudio Family",
+    "description": "Dear Friends,\n\nOur names are Amy Colcher and Booda Sanchez. Bernadette Gaudio is our best friend. Her children, Robert and Andrew, are like our children. The Gaudio family has been the victim of an unfathomable and heinous crime. On Sunday, December 8, 2024 - during a home invasion Bernadette was shot multiple times and paralyzed, and Andrew was murdered. A young man of 25 whose life was just beginning - gone. A mother, who lost her husband 15 years ago is now facing the loss of her youngest son and a life of possible paralysis. Robert, a young man who lost his father as a child is now faced with the loss of his little brother and the medical care of his mother.This family has faced too many tragedies.\n \n Robert, is standing strong - but he needs our help. This is a call to the community - PLEASE GIVE WHAT YOU CAN! No amount is too small. Funeral costs, medical costs, and costs of life long care for Bernadette are daunting.",
+    "category": "medical",
+    "goalAmount": 50000.00,
+    "raisedAmount": 2500.00,
+    "status": "APPROVED",
+    "dueDate": "2025-02-21",
+    "photoUrl": "camp1.jpg"
+  },
+
+  {
+    "organizerId": 2,
+    "title": "Support Johnny's Fight Against Brain Cancer",
+    "description": "Over the next two months – and possibly longer – Johnny will be receiving daily radiation and an aggressive round of chemotherapy. At this point surgery to remove the tumor is not an option as it is too close to his cerebellum. Both Molly and Johnny will need to be at the Mayo Clinic throughout this treatment. His parents, brother, and other family members will be helping as well, as they have been through this whole ordeal. On top of what will surely be a grueling treatment, both Molly and Johnny’s lives will need to conform to living in Rochester. This financial goal aligns with the immediate expenses Johnny and Molly will face in coming months, including increased COBRA insurance payments, living expenses in Rochester, and lost wages. Our goal is to lighten at least the financial burden this crisis presents. As anyone who knows them well understands, asking for this kind of help is uncomfortable for them, which is why we're doing so on their behalf. They are so grateful for your support. We will keep this community updated on their needs as we learn more. For now, please donate what you can and encourage others to do the same.\n\nTo know Johnny is to love him. Everyone who crosses paths with him knows him to be one of the kindest and sweetest guys around. His gentle nature and beautiful spirit radiate from within. He is now battling the scariest battle of his life, and it is time for those who love him to try to support him and his wife, Molly, as best we can.",
+    "category": "medical",
+    "goalAmount": 100000.00,
+    "raisedAmount": 5000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-05-11",
+    "photoUrl": "camp2.jpg"
+  },
+  {
+    "organizerId": 3,
+    "title": "Support Karissa's Battle Against Terminal Stage 4 Cancer",
+    "description": "Dear Friends, Family, and Supporters,\n\nIt has taken me a long time to find the courage to write this letter. Sharing something so deeply personal is not easy, but today, I am opening my heart to you because I believe in the power of faith, community, and love. I also believe that sharing my story will bring more people into our circle of prayer, support, and hope during this challenging time.\n\n In January 2022, after 17 years of remission, I received devastating news: my breast cancer had returned. This time, however, it came with the diagnosis of stage 4, terminal cancer. The shock was overwhelming—after so many years, I never imagined I would be here again. Even now, writing this brings a flood of emotions. But my love for my family—my incredible husband, my amazing children, and my supportive friends—gives me strength every single day. They are my world, and I want to be here for them as long as possible.\n\n For nearly three years, I have been undergoing treatments at some of the best medical facilities in the U.S., including MD Anderson, Dana-Farber, and City of Hope. While these treatments have helped, my options are becoming limited. Some promising procedures and medications that could extend my life have yet to be FDA-approved in the United States but are available overseas. After extensive research, my family and I have identified a highly reputable facility abroad offering treatments that give us hope for more time together.\n\n Unfortunately, these treatments are not covered by insurance. Every test, every hospital stay, every procedure—right down to the blood work and anesthesia—comes with significant out-of-pocket costs. These expenses are beyond what my family can manage alone, which is why I am humbly asking for your help.",
+    "category": "medical",
+    "goalAmount": 400000.00,
+    "raisedAmount": 50000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-06-21",
+    "photoUrl": "camp3.jpg"
+  },
+
+  {
+    "organizerId": 3,
+    "title": "Tokens for Tinley",
+    "description": "On November 19th, Tinley developed a respiratory illness and later came down with an ear infection and was given antibiotics. During the next two weeks, Tinley fought hard to fight it off, but on Friday, November 29th, Tinley became unresponsive. She was taken to Children's Mercy that evening and was unresponsive for the next 29 hours. They diagnosed Tinley with meningitis and encephalitis from Mycoplasma pneumoniae (community spread pneumonia). Tinley is making a great comeback and is currently in rehab at Childrens Mercy in Kansas City.\n\n Tinley is an 8th grader at Holton Middle School in Holton, Kansas.",
+    "category": "medical",
+    "goalAmount": 100000.00,
+    "raisedAmount": 50000.00,
+    "status": "APPROVED",
+    "dueDate": "2025-02-15",
+    "photoUrl": "camp4.jpg"
+  }
+
+
+]

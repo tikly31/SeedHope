@@ -1,6 +1,7 @@
 package com.example.seedhope.seedhope.model;
 
 import com.example.seedhope.seedhope.observer.PaymentObserver;
+import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -13,36 +14,35 @@ public class Campaign implements PaymentObserver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+//    @Column(nullable = false)
+    private Long organizerId;
 
-    @Column(nullable = false)
-    private Long organizer_id;
-
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String category;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Double goalAmount;
 
-    @Column
+//    @Column
     private Double raisedAmount = 0.0;
 
-    @Column
+//    @Column
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 
-    @Column
+//    @Column
     private LocalDateTime creationDate = LocalDateTime.now();
 
-    @Column
+//    @Column
     private LocalDate dueDate;
 
-    @Column
+//    @Column
     private String photoUrl; // New field to store the URL or path of the photo
 
     // Enum for campaign status
@@ -57,7 +57,7 @@ public class Campaign implements PaymentObserver {
     public Campaign() {}
 
     // Parameterized Constructor
-    public Campaign(String title, String description, String category, Double goalAmount, Status status, LocalDate dueDate, String photoUrl) {
+    public Campaign(String title, String description, String category, Double goalAmount, Status status, LocalDate dueDate, String photoUrl, Long organizer_id) {
         this.title = title;
         this.description = description;
         this.category = category;
@@ -65,7 +65,24 @@ public class Campaign implements PaymentObserver {
         this.status = status;
         this.dueDate = dueDate;
         this.photoUrl = photoUrl;
+        this.organizerId = organizer_id;
+        this.creationDate = LocalDateTime.now();
+        this.raisedAmount = 0.0;
     }
+
+    public Campaign(String title, String description, String category, Double goalAmount, Double raisedAmount, Status status, LocalDate dueDate, String photoUrl, Long organizer_id) {
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.goalAmount = goalAmount;
+        this.status = status;
+        this.dueDate = dueDate;
+        this.photoUrl = photoUrl;
+        this.organizerId = organizer_id;
+        this.creationDate = LocalDateTime.now();
+        this.raisedAmount = raisedAmount;
+    }
+
 
     // Getters and Setters
     public Long getId() {
@@ -73,11 +90,11 @@ public class Campaign implements PaymentObserver {
     }
 
     public Long getOrganizerId(){
-        return this.organizer_id;
+        return this.organizerId;
     }
 
     public void setOrganizerId(Long id){
-        this.organizer_id = id;
+        this.organizerId = id;
     }
 
 

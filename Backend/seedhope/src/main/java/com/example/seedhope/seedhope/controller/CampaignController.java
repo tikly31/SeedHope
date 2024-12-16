@@ -23,6 +23,7 @@ public class CampaignController {
 
     @PostMapping("/campaign")
     public Campaign addCampaign(@RequestBody Campaign campaign){
+        System.out.println(campaign);
         return campaignService.addCampaign(campaign);
     }
 

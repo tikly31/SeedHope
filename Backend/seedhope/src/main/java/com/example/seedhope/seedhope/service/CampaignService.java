@@ -66,6 +66,7 @@ public class CampaignService {
     }
 
     public Campaign addCampaign(@RequestBody Campaign campaign){
+        System.out.println(campaign);
         return campaignRepository.save(campaign);
     }
 
