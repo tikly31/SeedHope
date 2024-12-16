@@ -64,10 +64,12 @@ public class CampaignController {
             case "status":
                 strategy = new SortByStatusStrategy();
                 break;
-            case "Emergency" :
+            case "emergency" :
                 strategy = new SortByDueDateAsc();
-            case "Recent" :
+                break;
+            case "recent" :
                 strategy = new SortByCreationDateDesc();
+                break;
 
             default:
                 return ResponseEntity.badRequest().build();
@@ -76,5 +78,15 @@ public class CampaignController {
         // Fetch and return sorted campaigns
         List<Campaign> sortedCampaigns = campaignService.getSortedCampaigns(strategy);
         return ResponseEntity.ok(sortedCampaigns);
+    }
+
+    @GetMapping("/campaign/successful")
+    public ResponseEntity<List<Campaign>> getSuccessfulCampaigns(){
+        return ResponseEntity.ok(campaignService.getSuccessfulCampaigns());
+    }
+
+    @PatchMapping("/campaign/{id}/updateAmount")
+    public ResponseEntity<Campaign> updateRaisedAmount(@PathVariable Long id, @RequestParam Double Amount){
+        return ResponseEntity.ok(campaignService.updateRaisedAmount(id,Amount));
     }
 }

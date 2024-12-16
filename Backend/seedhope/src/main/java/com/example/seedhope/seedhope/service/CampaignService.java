@@ -31,31 +31,6 @@ public class CampaignService {
     @OneToMany(mappedBy = "campaign", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
-//    // Add method to update the raisedAmount
-//    public void addPayment(Double amount, String paymentMethod, LocalDateTime paymentDate) {
-//        // Create Payment using builder pattern
-//        Payment payment = new Payment.Builder()
-//                .setAmount(amount)
-//                .setPaymentMethod(paymentMethod)
-//                .setPaymentDate(paymentDate)
-//                .setCampaign(this) // Associate with the current campaign
-//                .build();
-//
-//        // Add the payment to the campaign's list
-//        this.payments.add(payment);
-//
-//        // Update the raised amount
-//        this.raisedAmount += payment.getAmount();
-//    }
-//
-//    public void removePayment(Payment payment) {
-//        this.payments.remove(payment);
-//        payment.setCampaign(null);  // Disassociate the payment from the campaign
-//        this.raisedAmount -= payment.getAmount(); // Adjust the raised amount
-//    }
-
-
-
     public CampaignService(CampaignRepository campaignRepository) {
         this.campaignRepository = campaignRepository;
     }
@@ -65,11 +40,10 @@ public class CampaignService {
         return campaignRepository.save(campaign);
     }
 
-    public Campaign addCampaign(@RequestBody Campaign campaign){
+    public Campaign addCampaign(@RequestBody Campaign campaign) {
         System.out.println(campaign);
         return campaignRepository.save(campaign);
     }
-
 
     public Campaign requestFundraising(CampaignRequestDTO campaignRequestDTO, Long userId) {
         Campaign campaign = CampaignFactory.createDefaultCampaign(
@@ -112,5 +86,29 @@ public class CampaignService {
 
         // Return the sorted campaigns
         return campaignSorter.sortCampaigns(campaigns);
+    }
+
+    public List<Campaign> getSuccessfulCampaigns() {
+        return campaignRepository.findByStatus(Campaign.Status.DONE);
+    }
+
+    // Update campaign
+    public Campaign updateRaisedAmount(Long campaignId, Double amount) {
+        Campaign campaign = campaignRepository.findById(campaignId)
+                .orElseThrow(() -> new IllegalArgumentException("Campaign not found"));
+
+        if (campaign.getRaisedAmount() + amount > campaign.getGoalAmount()) {
+            throw new IllegalArgumentException("Raised amount cannot exceed goal amount");
+        }
+
+        // Update the raised amount
+        campaign.setRaisedAmount(campaign.getRaisedAmount() + amount);
+
+        // Check if the goal amount is reached and update status to DONE
+        if (campaign.getRaisedAmount() >= campaign.getGoalAmount()) {
+            campaign.setStatus(Campaign.Status.DONE);
+        }
+
+        return campaignRepository.save(campaign);
     }
 }
