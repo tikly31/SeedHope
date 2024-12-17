@@ -111,4 +111,8 @@ public class CampaignService {
 
         return campaignRepository.save(campaign);
     }
+
+    public List<Campaign> searchCampaigns(String category, String searchTerm) {
+        return campaignRepository.searchCampaignsByCategoryAndKeyword(category, searchTerm);
+    }
 }

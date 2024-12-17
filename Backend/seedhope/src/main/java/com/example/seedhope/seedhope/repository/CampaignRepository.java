@@ -27,4 +27,10 @@ public interface CampaignRepository extends JpaRepository<Campaign, Long> {
     // Custom Query: Find campaigns by category and status, sorted by due date
     @Query("SELECT c FROM Campaign c WHERE c.category = :category AND c.status = :status ORDER BY c.dueDate ASC")
     List<Campaign> findByCategoryAndStatusOrderByDueDate(@Param("category") String category, @Param("status") Campaign.Status status);
+
+    @Query("SELECT c FROM Campaign c WHERE c.category = :category AND " +
+            "(LOWER(c.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(c.description) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+    List<Campaign> searchCampaignsByCategoryAndKeyword(@Param("category") String category,
+                                                       @Param("searchTerm") String searchTerm);
 }

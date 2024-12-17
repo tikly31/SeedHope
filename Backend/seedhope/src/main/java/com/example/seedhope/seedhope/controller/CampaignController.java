@@ -89,4 +89,12 @@ public class CampaignController {
     public ResponseEntity<Campaign> updateRaisedAmount(@PathVariable Long id, @RequestParam Double Amount){
         return ResponseEntity.ok(campaignService.updateRaisedAmount(id,Amount));
     }
+
+    @GetMapping("/campaign/{category}/search")
+    public ResponseEntity<List<Campaign>> searchCampaigns(
+            @PathVariable String category,
+            @RequestParam String searchTerm) {
+        List<Campaign> campaigns = campaignService.searchCampaigns(category, searchTerm);
+        return ResponseEntity.ok(campaigns);
+    }
 }
