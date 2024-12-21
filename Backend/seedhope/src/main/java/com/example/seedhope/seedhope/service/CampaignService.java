@@ -4,6 +4,7 @@ import com.example.seedhope.seedhope.Factory.CampaignFactory;
 import com.example.seedhope.seedhope.dto.CampaignRequestDTO;
 import com.example.seedhope.seedhope.model.Campaign;
 import com.example.seedhope.seedhope.model.Payment;
+import com.example.seedhope.seedhope.observer.PaymentObserver;
 import com.example.seedhope.seedhope.repository.CampaignRepository;
 import com.example.seedhope.seedhope.service.strategy.sorting.CampaignSortStrategy;
 import com.example.seedhope.seedhope.util.CampaignSorter;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CampaignService {
+public class CampaignService implements PaymentObserver {
 
     @Autowired
     private final CampaignRepository campaignRepository;
@@ -110,6 +111,14 @@ public class CampaignService {
         }
 
         return campaignRepository.save(campaign);
+    }
+
+    // Observer method to update the raised amount
+    @Override
+    public void update(Payment payment) {
+        Long campaign_id = payment.getCampaign().getId();
+        Double amount = payment.getAmount();
+        updateRaisedAmount(campaign_id, amount);
     }
 
     public List<Campaign> searchCampaigns(String category, String searchTerm) {

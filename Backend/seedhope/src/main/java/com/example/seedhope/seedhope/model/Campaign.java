@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "campaign")
-public class Campaign implements PaymentObserver {
+public class Campaign{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -174,9 +174,5 @@ public class Campaign implements PaymentObserver {
         this.photoUrl = photoUrl;
     }
 
-    // Observer method to update the raised amount
-    @Override
-    public void update(Payment payment) {
-        this.raisedAmount += payment.getAmount();
-    }
+
 }
