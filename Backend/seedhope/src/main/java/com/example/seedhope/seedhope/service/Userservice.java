@@ -1,6 +1,8 @@
 package com.example.seedhope.seedhope.service;
 
+import com.example.seedhope.seedhope.model.Payment;
 import com.example.seedhope.seedhope.model.User;
+import com.example.seedhope.seedhope.observer.PaymentObserver;
 import com.example.seedhope.seedhope.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class Userservice {
+public class Userservice implements PaymentObserver {
 
     @Autowired
     private UserRepository userRepository;
@@ -138,6 +140,18 @@ public class Userservice {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
+    public void UpdateDonatedAmount(User user, Double amount){
+        Double val = user.getDonatedAmount();
+        val += amount;
+        user.setDonatedAmount(val);
+        userRepository.save(user);
+    }
 
+    @Override
+    public void update(Payment payment) {
+        User user = payment.getUser() ;
+        Double amount = payment.getAmount();// Logic to fetch the user from context or a pre-set field
+        UpdateDonatedAmount(user, amount);
+    }
 
 }

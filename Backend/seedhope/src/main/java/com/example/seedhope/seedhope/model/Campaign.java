@@ -1,59 +1,102 @@
 package com.example.seedhope.seedhope.model;
 
 import com.example.seedhope.seedhope.observer.PaymentObserver;
+import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-public class Campaign implements PaymentObserver{
+@Table(name = "campaign")
+public class Campaign{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+//    @Column(nullable = false)
+    private Long organizerId;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String category;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Double goalAmount;
 
+//    @Column
     private Double raisedAmount = 0.0;
 
+//    @Column
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 
-    private LocalDateTime createdAt;
+//    @Column
+    private LocalDateTime creationDate = LocalDateTime.now();
+
+//    @Column
+    private LocalDate dueDate;
+
+//    @Column
+    private String photoUrl; // New field to store the URL or path of the photo
 
     // Enum for campaign status
     public enum Status {
         PENDING,
         APPROVED,
-        REJECTED
+        REJECTED,
+        DONE
     }
 
     // Default Constructor
     public Campaign() {}
 
     // Parameterized Constructor
-    public Campaign(String title, String description, String category, Double goalAmount, Status status, LocalDateTime createdAt) {
+    public Campaign(String title, String description, String category, Double goalAmount, Status status, LocalDate dueDate, String photoUrl, Long organizer_id) {
         this.title = title;
         this.description = description;
         this.category = category;
         this.goalAmount = goalAmount;
         this.status = status;
-        this.createdAt = createdAt;
+        this.dueDate = dueDate;
+        this.photoUrl = photoUrl;
+        this.organizerId = organizer_id;
+        this.creationDate = LocalDateTime.now();
+        this.raisedAmount = 0.0;
     }
+
+    public Campaign(String title, String description, String category, Double goalAmount, Double raisedAmount, Status status, LocalDate dueDate, String photoUrl, Long organizer_id) {
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.goalAmount = goalAmount;
+        this.status = status;
+        this.dueDate = dueDate;
+        this.photoUrl = photoUrl;
+        this.organizerId = organizer_id;
+        this.creationDate = LocalDateTime.now();
+        this.raisedAmount = raisedAmount;
+    }
+
 
     // Getters and Setters
     public Long getId() {
         return id;
     }
+
+    public Long getOrganizerId(){
+        return this.organizerId;
+    }
+
+    public void setOrganizerId(Long id){
+        this.organizerId = id;
+    }
+
 
     public void setId(Long id) {
         this.id = id;
@@ -107,16 +150,29 @@ public class Campaign implements PaymentObserver{
         this.status = status;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
-    // Observer method to update the raised amount
-    public void update(Payment payment) {
-        this.raisedAmount += payment.getAmount();
+    public LocalDate getDueDate() {
+        return dueDate;
     }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+
 }

@@ -4,6 +4,7 @@ import com.example.seedhope.seedhope.Factory.CampaignFactory;
 import com.example.seedhope.seedhope.dto.CampaignRequestDTO;
 import com.example.seedhope.seedhope.model.Campaign;
 import com.example.seedhope.seedhope.model.Payment;
+import com.example.seedhope.seedhope.observer.PaymentObserver;
 import com.example.seedhope.seedhope.repository.CampaignRepository;
 import com.example.seedhope.seedhope.service.strategy.sorting.CampaignSortStrategy;
 import com.example.seedhope.seedhope.util.CampaignSorter;
@@ -11,14 +12,16 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CampaignService {
+public class CampaignService implements PaymentObserver {
 
     @Autowired
     private final CampaignRepository campaignRepository;
@@ -29,46 +32,29 @@ public class CampaignService {
     @OneToMany(mappedBy = "campaign", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
-//    // Add method to update the raisedAmount
-//    public void addPayment(Double amount, String paymentMethod, LocalDateTime paymentDate) {
-//        // Create Payment using builder pattern
-//        Payment payment = new Payment.Builder()
-//                .setAmount(amount)
-//                .setPaymentMethod(paymentMethod)
-//                .setPaymentDate(paymentDate)
-//                .setCampaign(this) // Associate with the current campaign
-//                .build();
-//
-//        // Add the payment to the campaign's list
-//        this.payments.add(payment);
-//
-//        // Update the raised amount
-//        this.raisedAmount += payment.getAmount();
-//    }
-//
-//    public void removePayment(Payment payment) {
-//        this.payments.remove(payment);
-//        payment.setCampaign(null);  // Disassociate the payment from the campaign
-//        this.raisedAmount -= payment.getAmount(); // Adjust the raised amount
-//    }
-
-
-
     public CampaignService(CampaignRepository campaignRepository) {
         this.campaignRepository = campaignRepository;
     }
 
-    public Campaign createCampaign(String title, String description, String category, Double goalAmount) {
-        Campaign campaign = CampaignFactory.createDefaultCampaign(title, description, category, goalAmount);
+    public Campaign createCampaign(String title, Long organizerId, String description, String category, Double goalAmount, LocalDate DueDate, String photourl) {
+        Campaign campaign = CampaignFactory.createDefaultCampaign(title, organizerId, description, category, goalAmount, DueDate, photourl);
+        return campaignRepository.save(campaign);
+    }
+
+    public Campaign addCampaign(@RequestBody Campaign campaign) {
+        System.out.println(campaign);
         return campaignRepository.save(campaign);
     }
 
     public Campaign requestFundraising(CampaignRequestDTO campaignRequestDTO, Long userId) {
         Campaign campaign = CampaignFactory.createDefaultCampaign(
                 campaignRequestDTO.getTitle(),
+                userId,
                 campaignRequestDTO.getDescription(),
                 campaignRequestDTO.getCategory(),
-                campaignRequestDTO.getGoalAmount()
+                campaignRequestDTO.getGoalAmount(),
+                campaignRequestDTO.getDueDate(),
+                campaignRequestDTO.getPhotourl()
         );
         campaign.setId(userId);
         return campaignRepository.save(campaign);
@@ -101,5 +87,41 @@ public class CampaignService {
 
         // Return the sorted campaigns
         return campaignSorter.sortCampaigns(campaigns);
+    }
+
+    public List<Campaign> getSuccessfulCampaigns() {
+        return campaignRepository.findByStatus(Campaign.Status.DONE);
+    }
+
+    // Update campaign
+    public Campaign updateRaisedAmount(Long campaignId, Double amount) {
+        Campaign campaign = campaignRepository.findById(campaignId)
+                .orElseThrow(() -> new IllegalArgumentException("Campaign not found"));
+
+        if (campaign.getRaisedAmount() + amount > campaign.getGoalAmount()) {
+            throw new IllegalArgumentException("Raised amount cannot exceed goal amount");
+        }
+
+        // Update the raised amount
+        campaign.setRaisedAmount(campaign.getRaisedAmount() + amount);
+
+        // Check if the goal amount is reached and update status to DONE
+        if (campaign.getRaisedAmount() >= campaign.getGoalAmount()) {
+            campaign.setStatus(Campaign.Status.DONE);
+        }
+
+        return campaignRepository.save(campaign);
+    }
+
+    // Observer method to update the raised amount
+    @Override
+    public void update(Payment payment) {
+        Long campaign_id = payment.getCampaign().getId();
+        Double amount = payment.getAmount();
+        updateRaisedAmount(campaign_id, amount);
+    }
+
+    public List<Campaign> searchCampaigns(String category, String searchTerm) {
+        return campaignRepository.searchCampaignsByCategoryAndKeyword(category, searchTerm);
     }
 }

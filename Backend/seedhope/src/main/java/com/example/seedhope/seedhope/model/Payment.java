@@ -29,6 +29,7 @@ public class Payment {
 
     // Private constructor to prevent direct instantiation
     private Payment(Builder builder) {
+        this.user = builder.user;
         this.amount = builder.amount;
         this.paymentMethod = builder.paymentMethod;
         this.paymentDate = builder.paymentDate;
@@ -38,6 +39,10 @@ public class Payment {
     // Getters and Setters (optional if using Builder pattern)
     public Long getId() {
         return id;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public Double getAmount() {
@@ -70,12 +75,18 @@ public class Payment {
     // Static Builder class
     public static class Builder {
 
+        private User user;
         private Double amount;
         private String paymentMethod;
         private LocalDateTime paymentDate;
         private Campaign campaign;
 
         // Setters for Builder pattern (return the builder instance)
+        public Builder setUser(User user){
+            this.user = user;
+            return this;
+        }
+
         public Builder setAmount(Double amount) {
             this.amount = amount;
             return this;

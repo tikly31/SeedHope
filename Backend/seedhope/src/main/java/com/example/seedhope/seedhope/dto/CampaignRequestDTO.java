@@ -3,6 +3,9 @@ package com.example.seedhope.seedhope.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDate;
 
 public class CampaignRequestDTO {
 
@@ -19,7 +22,23 @@ public class CampaignRequestDTO {
     @Positive(message = "Goal amount must be positive")
     private Double goalAmount;
 
+    @NotNull(message = "Due Date is required")
+    private LocalDate due_date;
+
+    @NotNull(message = "Please insert a photo")
+    private String photourl;
+
     // Getters and Setters
+
+
+    public String getPhotourl() {
+        return photourl;
+    }
+
+    public void setPhotourl(String photourl){
+        this.photourl = photourl;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -50,5 +69,13 @@ public class CampaignRequestDTO {
 
     public void setGoalAmount(Double goalAmount) {
         this.goalAmount = goalAmount;
+    }
+
+    public LocalDate getDueDate(){
+        return this.due_date;
+    }
+
+    public void setDueDate(LocalDate due_date){
+        this.due_date = due_date;
     }
 }

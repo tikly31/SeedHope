@@ -15,6 +15,7 @@ public class User {
     private String contactno;
     private String picture;
     private String provider;
+    private Double donatedAmount = 0.0;
 
     protected User() {
     }
@@ -61,6 +62,9 @@ public class User {
         return provider;
     }
 
+    public Double getDonatedAmount() {
+        return donatedAmount;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -94,6 +98,8 @@ public class User {
         this.provider = provider;
     }
 
+    public void  setDonatedAmount(Double amount){ this.donatedAmount = amount;}
+
     // toString() method to print the User object
 
 
@@ -112,6 +118,7 @@ public class User {
                 ", contactno='" + contactno + '\'' +
                 ", picture='" + picture + '\'' +
                 ", provider='" + provider + '\'' +
+                ",donatedAmount='" + donatedAmount + '\'' +
                 '}';
     }
 
@@ -125,6 +132,7 @@ public class User {
         private String contactno;
         private String picture;
         private String provider;
+        private Double donatedAmount;
 
         public UserBuilder setId(Long id) {
             this.id = id;
@@ -163,6 +171,11 @@ public class User {
 
         public UserBuilder setProvider(String provider) {
             this.provider = provider;
+            return this;
+        }
+
+        public UserBuilder setDonatedAmount(Double amount){
+            this.donatedAmount = amount;
             return this;
         }
 
