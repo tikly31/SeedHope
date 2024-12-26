@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Home, Compass, PlusCircle, User } from 'lucide-react';
 
 interface BottomNavBarProps {
@@ -28,7 +23,15 @@ export default function BottomNavBar({ navigation, activeScreen }: BottomNavBarP
           <TouchableOpacity
             key={item.name}
             style={styles.navItem}
-            onPress={() => navigation.navigate(item.name)}
+            onPress={() => {
+              if (item.name === 'Create') {
+                // Navigate to CreateFundraiser for the "Create" button
+                navigation.navigate('CreateFundraiser');
+              } else {
+                // Navigate to other screens
+                navigation.navigate(item.name);
+              }
+            }}
           >
             <Icon
               size={24}
@@ -70,4 +73,3 @@ const styles = StyleSheet.create({
     color: '#2196F3',
   },
 });
-

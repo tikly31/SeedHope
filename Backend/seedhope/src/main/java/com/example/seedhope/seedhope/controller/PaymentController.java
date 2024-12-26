@@ -17,14 +17,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 @RestController
 public class PaymentController {
-
     @Autowired
     private PaymentService paymentService;
     @Autowired
     private Userservice userservice;
-
-
-
     @PostMapping("/payment/{id}")
     public ResponseEntity<PaymentResponse> createPaymentLink(@PathVariable Long id) throws StripeException {
 
@@ -32,7 +28,6 @@ public class PaymentController {
         PaymentResponse paymentResponse = paymentService.createPaymentLink(currentUser);
         return ResponseEntity.ok(paymentResponse);
     }
-
 
 
 }
