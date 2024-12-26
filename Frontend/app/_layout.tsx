@@ -18,10 +18,10 @@ const _layout = () => {
             headerShown: false,
           }}
         >
+          <Stack.Screen name={"MAINSCREEN"} component={MainScreen} />
           <Stack.Screen name={"HOME"} component={HomeScreen} />
           <Stack.Screen name={"LOGIN"} component={LoginScreen} />
           <Stack.Screen name={"SIGNUP"} component={SignupScreen} />
-          <Stack.Screen name={"MAINSCREEN"} component={MainScreen} />
         </Stack.Navigator>
       // </NavigationContainer>
     // </GestureHandlerRootView>
