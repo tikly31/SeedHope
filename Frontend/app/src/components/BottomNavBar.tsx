@@ -1,53 +1,49 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Home, Compass, PlusCircle, User } from 'lucide-react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+
 
 interface BottomNavBarProps {
   navigation: any;
-  activeScreen: 'Home' | 'Explore' | 'Create' | 'Profile';
+  activeScreen: 'MainScreen1' | 'ExploreScreen' | 'Create' | 'Profile';
 }
 
 export default function BottomNavBar({ navigation, activeScreen }: BottomNavBarProps) {
   const navItems = [
-    { name: 'Home', icon: Home },
-    { name: 'Explore', icon: Compass },
-    { name: 'Create', icon: PlusCircle },
-    { name: 'Profile', icon: User },
+    { name: 'MainScreen', label: 'Home', icon: 'home-outline' },
+    { name: 'ExploreScreen', label: 'Explore', icon: 'compass-outline' },
+    { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
+    { name: 'Profile', label: 'Profile', icon: 'person-outline' },
   ];
 
   return (
     <View style={styles.bottomNav}>
-      {navItems.map((item) => {
-        const Icon = item.icon;
-        return (
-          <TouchableOpacity
-            key={item.name}
-            style={styles.navItem}
-            onPress={() => {
-              if (item.name === 'Create') {
-                // Navigate to CreateFundraiser for the "Create" button
-                navigation.navigate('CreateFundraiser');
-              } else {
-                // Navigate to other screens
-                navigation.navigate(item.name);
-              }
-            }}
+      {navItems.map((item) => (
+        <TouchableOpacity
+          key={item.name}
+          style={styles.navItem}
+          onPress={() => navigation.navigate(item.name)}
+        >
+          <Ionicons
+            name={item.icon}
+            size={24}
+            color={activeScreen === item.name ? '#2196F3' : '#666'}
+          />
+          <Text
+            style={[
+              styles.navText,
+              activeScreen === item.name && styles.navTextActive,
+            ]}
           >
-            <Icon
-              size={24}
-              color={activeScreen === item.name ? '#2196F3' : '#666'}
-            />
-            <Text
-              style={[
-                styles.navText,
-                activeScreen === item.name && styles.navTextActive,
-              ]}
-            >
-              {item.name}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
+            {item.label}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 }

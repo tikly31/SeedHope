@@ -96,7 +96,7 @@ export default function FundraiserSuccess({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.8}
-          onPress={() => navigation.navigate('MAINSCREEN')}
+          onPress={() => navigation.navigate('MainScreen')}
         >
           <LinearGradient
             colors={['#007AFF', '#0055FF']}
