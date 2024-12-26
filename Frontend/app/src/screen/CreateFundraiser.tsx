@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 
+import { Picker } from '@react-native-picker/picker';
+import BottomNavBar from '../components/BottomNavBar';
 
 
 
@@ -36,6 +38,7 @@ export default function CreateFundraiser({navigation}) {
   ];
 
   return (
+     <SafeAreaView style={styles.containers}>
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Let's begin fundraising!</Text>
       
@@ -94,10 +97,18 @@ export default function CreateFundraiser({navigation}) {
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </ScrollView>
+    <View style={styles.bottomnavbar}>
+      <BottomNavBar  navigation={navigation} activeScreen="Create" />
+    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  containers: {
+    flex: 1,
+    backgroundColor: '#F7FAFC',
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -172,5 +183,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  bottomnavbar: {
+    // Add bottomnavbar styles here fixed bottom of the screen
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
 });

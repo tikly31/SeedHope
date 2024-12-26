@@ -8,8 +8,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import BottomNavBar from '../components/BottomNavBar';
 
 export default function FundraiserDetails({navigation}) {
   const [title, setTitle] = useState('');
@@ -19,6 +21,7 @@ export default function FundraiserDetails({navigation}) {
   const isValidForm = title.trim().length > 0 && details.trim().length > 0;
 
   return (
+    <SafeAreaView style={styles.containers}>
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
@@ -77,10 +80,18 @@ export default function FundraiserDetails({navigation}) {
         </TouchableOpacity>
       </LinearGradient>
     </KeyboardAvoidingView>
+    <View style={styles.bottomNav}>
+      <BottomNavBar navigation={navigation} activeScreen="Create" />
+    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  containers: {
+    flex: 1,
+    backgroundColor: '#F7FAFC',
+  },
   container: {
     flex: 1,
   },
@@ -120,6 +131,7 @@ const styles = StyleSheet.create({
   button: {
     margin: 20,
     borderRadius: 10,
+    padding: 60,
     overflow: 'hidden',
   },
   buttonDisabled: {
@@ -133,5 +145,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  bottomNav: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
 });
