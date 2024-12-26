@@ -1,241 +1,261 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Dimensions, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import FeaturedProject from '../components/FeaturedProject';
+import React from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  FlatList,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import BottomNavBar from '../components/BottomNavBar';
+// Mock data for fundraisers
+const mockFundraisers = [
+  { id: '1', title: 'Save the Forest', amount: '$5,000' },
+  { id: '2', title: 'Clean Water Project', amount: '$3,000' },
+  { id: '3', title: 'Education Fund', amount: '$8,000' },
+  { id: '4', title: 'Medical Aid', amount: '$12,000' },
+];
 
-const { width } = Dimensions.get('window');
+const mockContributors = [
+  { id: '1', name: 'John D.', image: 'https://placeholder.com/50' },
+  { id: '2', name: 'Sarah M.', image: 'https://placeholder.com/50' },
+  { id: '3', name: 'Mike R.', image: 'https://placeholder.com/50' },
+  { id: '4', name: 'Lisa K.', image: 'https://placeholder.com/50' },
+];
 
-const ProjectCard = ({ title, description, progress }) => (
-  <View style={styles.projectCard}>
-    <Image
-      source={{ uri: 'https://picsum.photos/200/100' }}
-      style={styles.projectImage}
-    />
-    <View style={styles.projectContent}>
-      <Text style={styles.projectTitle}>{title}</Text>
-      <Text style={styles.projectDescription}>{description}</Text>
-      <View style={styles.progressBar}>
-        <View style={[styles.progress, { width: `${progress}%` }]} />
-      </View>
-      <Text style={styles.progressText}>{progress}% funded</Text>
+const FundraiserCard = ({ title, amount }) => (
+  <TouchableOpacity style={styles.card}>
+    <View style={styles.cardImageContainer}>
+      <Image
+        source={{ uri: 'https://placeholder.com/100' }}
+        style={styles.cardImage}
+      />
     </View>
+    <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
+    <Text style={styles.cardAmount}>{amount}</Text>
+  </TouchableOpacity>
+);
+
+const ContributorCircle = ({ image, name }) => (
+  <TouchableOpacity style={styles.contributorContainer}>
+    <Image source={{ uri: image }} style={styles.contributorImage} />
+    <Text style={styles.contributorName} numberOfLines={1}>{name}</Text>
+  </TouchableOpacity>
+);
+
+const FundraiserSection = ({ title, data }) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>{title}</Text>
+    <FlatList
+      data={data}
+      renderItem={({ item }) => (
+        <FundraiserCard title={item.title} amount={item.amount} />
+      )}
+      keyExtractor={item => item.id}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.fundraiserList}
+    />
   </View>
 );
 
-const MainScreen = () => {
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const featuredProjects = [
-    {
-      id: '1',
-      title: 'Save the Rainforest',
-      description: 'Help us protect 1000 acres of rainforest',
-      progress: 70,
-      imageUrl: 'https://picsum.photos/400/200',
-    },
-    {
-      id: '2',
-      title: 'Clean Energy Initiative',
-      description: 'Fund solar panels for 100 homes',
-      progress: 55,
-      imageUrl: 'https://picsum.photos/400/201',
-    },
-    {
-      id: '3',
-      title: 'Ocean Cleanup',
-      description: 'Remove 1000 tons of plastic from the ocean',
-      progress: 40,
-      imageUrl: 'https://picsum.photos/400/202',
-    },
-  ];
-
-  const ongoingProjects = [
-    { id: '4', title: "Clean Ocean Initiative", description: "Remove plastic from our oceans", progress: 45 },
-    { id: '5', title: "Urban Garden Project", description: "Create green spaces in the city", progress: 60 },
-    { id: '6', title: "Renewable Energy Fund", description: "Invest in solar and wind power", progress: 30 },
-  ];
-
-  const allProjects = [...featuredProjects, ...ongoingProjects];
-
-  const filteredProjects = useCallback(() => {
-    if (!searchQuery) return allProjects;
-    return allProjects.filter(project => 
-      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery]);
-
-  const toggleSearch = () => {
-    setIsSearchVisible(!isSearchVisible);
-    if (isSearchVisible) {
-      setSearchQuery('');
-    }
-  };
-
+export default function MainScreen1() {
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        {isSearchVisible ? (
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search projects..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            autoFocus
+        <Image
+          source={{ uri: 'https://placeholder.com/logo.png' }}
+          style={styles.logo}
+        />
+        <TouchableOpacity>
+          <Image
+            source={{ uri: 'https://placeholder.com/profile.png' }}
+            style={styles.profilePhoto}
           />
-        ) : (
-          <Text style={styles.headerTitle}>CrowdFund</Text>
-        )}
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconButton} onPress={toggleSearch}>
-            <MaterialCommunityIcons name={isSearchVisible ? "close" : "magnify"} size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <MaterialCommunityIcons name="bell-outline" size={24} color="black" />
-          </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
+
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <Ionicons name="search" size={20} color="#666" />
+        <Text style={styles.searchPlaceholder}>Search fundraisers...</Text>
+      </View>
+
+      {/* Main Content */}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <FundraiserSection title="Trending Fundraisers" data={mockFundraisers} />
+        <FundraiserSection title="Emergency Fundraisers" data={mockFundraisers} />
+        <FundraiserSection title="Recent Fundraisers" data={mockFundraisers} />
+        <FundraiserSection title="Successful Fundraisers" data={mockFundraisers} />
+
+        {/* Top Contributors */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Top Contributors</Text>
+          <FlatList
+            data={mockContributors}
+            renderItem={({ item }) => (
+              <ContributorCircle image={item.image} name={item.name} />
+            )}
+            keyExtractor={item => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.contributorList}
+          />
         </View>
-      </View>
-      
-      <ScrollView style={styles.content}>
-        {!searchQuery && (
-          <>
-            <Text style={styles.sectionTitle}>Featured Projects</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.featuredProjectsContainer}>
-              {featuredProjects.map((project) => (
-                <FeaturedProject key={project.id} {...project} />
-              ))}
-            </ScrollView>
-          </>
-        )}
-        
-        <Text style={styles.sectionTitle}>{searchQuery ? 'Search Results' : 'Ongoing Projects'}</Text>
-        {filteredProjects().map((project) => (
-          <ProjectCard key={project.id} title={project.title} description={project.description} progress={project.progress} />
-        ))}
+
+        {/* Top Fundraisers */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Top Fundraisers</Text>
+          <FlatList
+            data={mockContributors}
+            renderItem={({ item }) => (
+              <ContributorCircle image={item.image} name={item.name} />
+            )}
+            keyExtractor={item => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.contributorList}
+          />
+        </View>
       </ScrollView>
-      
-      <View style={styles.bottomNav}>
+
+      {/* Bottom Navigation */}
+      {/* <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem}>
-          <MaterialCommunityIcons name="home" size={24} color="black" />
-          <Text>Home</Text>
+          <Ionicons name="home" size={24} color="#333" />
+          <Text style={styles.navText}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <MaterialCommunityIcons name="compass" size={24} color="black" />
-          <Text>Explore</Text>
+          <Ionicons name="compass" size={24} color="#666" />
+          <Text style={styles.navText}>Explore</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <MaterialCommunityIcons name="plus-circle" size={24} color="black" />
-          <Text>Create</Text>
+          <Ionicons name="add-circle" size={24} color="#666" />
+          <Text style={styles.navText}>Create</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <MaterialCommunityIcons name="account" size={24} color="black" />
-          <Text>Profile</Text>
+          <Ionicons name="person" size={24} color="#666" />
+          <Text style={styles.navText}>Profile</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
+      {/* <BottomNavBar navigation={navigation} activeScreen="MainScreen" /> */}
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  logo: {
+    width: 32,
+    height: 32,
   },
-  headerIcons: {
+  profilePhoto: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
+  searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    margin: 16,
+    padding: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
   },
-  iconButton: {
-    marginLeft: 16,
+  searchPlaceholder: {
+    marginLeft: 8,
+    color: '#666',
   },
-  searchInput: {
-    flex: 1,
-    height: 40,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    marginRight: 16,
-  },
-  content: {
-    flex: 1,
+  section: {
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    margin: 16,
+    marginLeft: 16,
+    marginBottom: 12,
   },
-  featuredProjectsContainer: {
-    paddingLeft: 16,
+  fundraiserList: {
+    paddingHorizontal: 12,
   },
-  projectCard: {
-    flexDirection: 'row',
+  card: {
+    width: 160,
+    marginHorizontal: 4,
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginHorizontal: 16,
-    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardImageContainer: {
+    width: '100%',
+    height: 120,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
     overflow: 'hidden',
   },
-  projectImage: {
-    width: 100,
-    height: 100,
-  },
-  projectContent: {
-    flex: 1,
-    padding: 12,
-  },
-  projectTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  projectDescription: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 8,
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 4,
-    marginVertical: 8,
-  },
-  progress: {
+  cardImage: {
+    width: '100%',
     height: '100%',
-    backgroundColor: '#4caf50',
-    borderRadius: 4,
   },
-  progressText: {
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    padding: 8,
+  },
+  cardAmount: {
+    fontSize: 14,
+    color: '#2196F3',
+    paddingHorizontal: 8,
+    paddingBottom: 8,
+  },
+  contributorList: {
+    paddingHorizontal: 12,
+  },
+  contributorContainer: {
+    alignItems: 'center',
+    marginHorizontal: 8,
+  },
+  contributorImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  contributorName: {
     fontSize: 12,
-    color: '#666',
+    marginTop: 4,
+    maxWidth: 60,
+    textAlign: 'center',
   },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingVertical: 8,
+    padding: 8,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: '#eee',
+    backgroundColor: '#fff',
   },
   navItem: {
     alignItems: 'center',
   },
+  navText: {
+    fontSize: 12,
+    marginTop: 4,
+    color: '#666',
+  },
 });
-
-export default MainScreen;
-

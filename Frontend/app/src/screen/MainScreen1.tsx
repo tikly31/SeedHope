@@ -9,7 +9,7 @@ import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
-import { Search, Home, Compass, PlusCircle, User } from 'lucide-react';
+import { Ionicons } from '@expo/vector-icons';
 import BottomNavBar from '../components/BottomNavBar';
 
 // Mock data for fundraisers
@@ -21,11 +21,20 @@ const mockFundraisers = [
 ];
 
 const mockContributors = [
-  { id: '1', name: 'John D.', image: 'https://placeholder.com/50' },
-  { id: '2', name: 'Sarah M.', image: 'https://placeholder.com/50' },
-  { id: '3', name: 'Mike R.', image: 'https://placeholder.com/50' },
-  { id: '4', name: 'Lisa K.', image: 'https://placeholder.com/50' },
+  { id: '1', name: 'John D.', image: 'https://placeholder.com/50' , contribution: '$100'},
+  { id: '2', name: 'Sarah M.', image: 'https://placeholder.com/50', contribution: '$50' },
+  { id: '3', name: 'Mike R.', image: 'https://placeholder.com/50' , contribution: '$25'},
+  { id: '4', name: 'Lisa K.', image: 'https://placeholder.com/50' , contribution: '$10'},
+  { id: '5', name: 'David S.', image: 'https://placeholder.com/50' , contribution: '$5'},
+  { id: '6', name: 'Jane D.', image: 'https://placeholder.com/50' , contribution: '$1'},
+  { id: '7', name: 'Alex P.', image: 'https://placeholder.com/50' , contribution: '$1'},
+  { id: '8', name: 'Emily W.', image: 'https://placeholder.com/50' , contribution: '$1'},
 ];
+
+// Sort contributors by contribution amount and get the top 5
+const sortedContributors = mockContributors
+  .sort((a, b) => b.contribution - a.contribution)
+  .slice(0, 5);
 
 const FundraiserCard = ({ title, amount }) => (
   <TouchableOpacity style={styles.card}>
@@ -82,7 +91,7 @@ export default function MainScreen1({ navigation }) {
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <Search size={20} color="#666" />
+        <Ionicons name="search" size={20} color="#666" />
         <Text style={styles.searchPlaceholder}>Search fundraisers...</Text>
       </View>
 
@@ -97,7 +106,7 @@ export default function MainScreen1({ navigation }) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Contributors</Text>
           <FlatList
-            data={mockContributors}
+            data={sortedContributors}
             renderItem={({ item }) => (
               <ContributorCircle image={item.image} name={item.name} />
             )}
@@ -107,12 +116,13 @@ export default function MainScreen1({ navigation }) {
             contentContainerStyle={styles.contributorList}
           />
         </View>
+        
 
         {/* Top Fundraisers */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Fundraisers</Text>
           <FlatList
-            data={mockContributors}
+            data={sortedContributors}
             renderItem={({ item }) => (
               <ContributorCircle image={item.image} name={item.name} />
             )}
@@ -226,4 +236,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
