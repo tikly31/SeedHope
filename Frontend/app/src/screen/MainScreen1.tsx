@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import BottomNavBar from '../components/BottomNavBar';
+import { useNavigation } from '@react-navigation/native';
 
 // Mock data for fundraisers
 const mockFundraisers = [
@@ -36,8 +37,15 @@ const sortedContributors = mockContributors
   .sort((a, b) => b.contribution - a.contribution)
   .slice(0, 5);
 
-const FundraiserCard = ({ title, amount }) => (
-  <TouchableOpacity style={styles.card}>
+interface FundraiserCardProps {
+  id: string;
+  title: string;
+  amount: string;
+  onPress: (id: string) => void;
+}
+
+const FundraiserCard = ({ id, title, amount, onPress }: FundraiserCardProps) => (
+  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
     <View style={styles.cardImageContainer}>
       <Image
         source={{ uri: 'https://placeholder.com/100' }}
@@ -56,13 +64,19 @@ const ContributorCircle = ({ image, name }) => (
   </TouchableOpacity>
 );
 
-const FundraiserSection = ({ title, data }) => (
+const FundraiserSection = ({ title, data, onPressFundraiser }) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>{title}</Text>
     <FlatList
       data={data}
       renderItem={({ item }) => (
-        <FundraiserCard title={item.title} amount={item.amount} />
+        <FundraiserCard
+          key={item.id}
+          id={item.id}
+          title={item.title}
+          amount={item.amount}
+          onPress={onPressFundraiser}
+        />
       )}
       keyExtractor={item => item.id}
       horizontal
@@ -72,7 +86,15 @@ const FundraiserSection = ({ title, data }) => (
   </View>
 );
 
-export default function MainScreen1({ navigation }) {
+export default function MainScreen1() {
+  const navigation = useNavigation();
+
+  const handlePressFundraiser = (fundId: string) => {
+    navigation.navigate('FundraiserDetailsScreen', {
+      fundId,
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -97,10 +119,26 @@ export default function MainScreen1({ navigation }) {
 
       {/* Main Content */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        <FundraiserSection title="Trending Fundraisers" data={mockFundraisers} />
-        <FundraiserSection title="Emergency Fundraisers" data={mockFundraisers} />
-        <FundraiserSection title="Recent Fundraisers" data={mockFundraisers} />
-        <FundraiserSection title="Successful Fundraisers" data={mockFundraisers} />
+        <FundraiserSection
+          title="Trending Fundraisers"
+          data={mockFundraisers}
+          onPressFundraiser={handlePressFundraiser}
+        />
+        <FundraiserSection
+          title="Emergency Fundraisers"
+          data={mockFundraisers}
+          onPressFundraiser={handlePressFundraiser}
+        />
+        <FundraiserSection
+          title="Recent Fundraisers"
+          data={mockFundraisers}
+          onPressFundraiser={handlePressFundraiser}
+        />
+        <FundraiserSection
+          title="Successful Fundraisers"
+          data={mockFundraisers}
+          onPressFundraiser={handlePressFundraiser}
+        />
 
         {/* Top Contributors */}
         <View style={styles.section}>
@@ -236,3 +274,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
