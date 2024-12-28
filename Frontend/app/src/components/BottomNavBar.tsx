@@ -18,7 +18,7 @@ export default function BottomNavBar({ navigation, activeScreen }: BottomNavBarP
     { name: 'MainScreen', label: 'Home', icon: 'home-outline' },
     { name: 'ExploreScreen', label: 'Explore', icon: 'compass-outline' },
     { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
-    { name: 'Profile', label: 'Profile', icon: 'person-outline' },
+    { name: 'ProfileScreen', label: 'Profile', icon: 'person-outline' },
   ];
 
   return (

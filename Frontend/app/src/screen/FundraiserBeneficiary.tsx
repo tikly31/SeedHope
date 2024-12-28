@@ -5,8 +5,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import BottomNavBar from '../components/BottomNavBar';
 
 type BeneficiaryOption = 'yourself' | 'someone' | 'charity' | null;
 
@@ -35,6 +37,7 @@ export default function FundraiserBeneficiary({ navigation }) {
   ];
 
   return (
+    <SafeAreaView style={styles.containers}>
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Tell us who you're raising funds for...</Text>
 
@@ -78,10 +81,18 @@ export default function FundraiserBeneficiary({ navigation }) {
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </ScrollView>
+    <View style={styles.bottomnavbar}>
+      <BottomNavBar navigation={navigation} activeScreen="Create" />
+    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  containers: {
+    flex: 1,
+    backgroundColor: '#F7FAFC',
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -149,5 +160,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  bottomnavbar: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
 });

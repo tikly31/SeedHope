@@ -11,6 +11,7 @@ import {
 import * as DocumentPicker from 'expo-document-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import BottomNavBar from '../components/BottomNavBar';
 
 interface DocumentFile {
   name: string;
@@ -155,6 +156,9 @@ export default function DocumentUpload({ navigation }) {
           </LinearGradient>
         </TouchableOpacity>
       </View>
+      <View style={styles.ButtonNavBar}>
+        <BottomNavBar navigation={navigation} activeScreen="Create" />
+      </View>
     </View>
   );
 }
@@ -253,6 +257,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#e1e1e1',
     flexDirection: 'row',
     gap: 12,
+    paddingBottom: 80,
   },
   skipButton: {
     flex: 1,
@@ -280,5 +285,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
+  },
+  ButtonNavBar: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
 });

@@ -6,9 +6,11 @@ import {
   StyleSheet,
   Animated,
   Easing,
+  SafeAreaView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import BottomNavBar from '../components/BottomNavBar';
 
 export default function FundraiserSuccess({ navigation }) {
   const scaleAnim = new Animated.Value(0);
@@ -54,6 +56,7 @@ export default function FundraiserSuccess({ navigation }) {
   });
 
   return (
+    <SafeAreaView style={{ flex: 1 }}>
     <LinearGradient
       colors={['#ffffff', '#f0f8ff']}
       style={styles.container}
@@ -110,6 +113,10 @@ export default function FundraiserSuccess({ navigation }) {
         </TouchableOpacity>
       </View>
     </LinearGradient>
+    <View style={styles.bottomNav}>
+      <BottomNavBar navigation={navigation} activeScreen="Create" />
+    </View>
+    </SafeAreaView>
   );
 }
 
@@ -193,5 +200,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
+  },
+  bottomNav: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
 });
