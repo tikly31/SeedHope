@@ -12,5 +12,4 @@ public class SeedhopeApplication {
 		SpringApplication.run(SeedhopeApplication.class, args);
 	}
 
-
 }

@@ -45,7 +45,7 @@ public class SecurityConfig {
         return http.csrf(customizer -> customizer.disable()).
                 authorizeHttpRequests(request -> request
                         .requestMatchers("login","users", "register", "campaign", "campaign/category", "campaign/sorted", "campaign/successful", "campaign/{id}","campaign/{id}/status", "campaign/{id}/updateAmount"
-                                ,"campaign/{category}/search").permitAll()
+                                ,"campaign/{category}/search", "/contributors").permitAll()
                         .anyRequest().authenticated()).
                 httpBasic(Customizer.withDefaults()).
                 sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

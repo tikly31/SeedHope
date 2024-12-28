@@ -154,4 +154,8 @@ public class Userservice implements PaymentObserver {
         UpdateDonatedAmount(user, amount);
     }
 
+    public List<User> getTopContributors() {
+        return userRepository.findAllByOrderByDonatedAmountDesc();
+    }
+
 }
