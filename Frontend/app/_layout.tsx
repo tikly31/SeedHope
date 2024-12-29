@@ -14,6 +14,8 @@ import FundraiserSuccess from "./src/screen/FundraiserSuccess";
 import ExploreScreen from './src/screen/ExploreScreen';
 import ProfileScreen from "./src/screen/ProfileScreen";
 import EditProfileScreen from "./src/screen/EditProfileScreen";
+import CategoryScreen from "./src/screen/CategoryScreen";
+import FundraiserDetailsScreen from "./src/screen/FundraiserDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +30,7 @@ const AppNavigator = () => {
         >
           
           <Stack.Screen name={"MainScreen"} component={MainScreen} />
+          <Stack.Screen name={"FundraiserDetailsScreen"} component={FundraiserDetailsScreen} />
           <Stack.Screen name={"ExploreScreen"} component={ExploreScreen} />
           <Stack.Screen name={"HomeScreen"} component={HomeScreen} />
           <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
@@ -40,6 +43,7 @@ const AppNavigator = () => {
           <Stack.Screen name={"FundraiserSuccess"} component={FundraiserSuccess} />
           <Stack.Screen name={"ProfileScreen"} component={ProfileScreen} />
           <Stack.Screen name={"EditProfileScreen"} component={EditProfileScreen} />
+          <Stack.Screen name={"CategoryScreen"} component={CategoryScreen} />
         </Stack.Navigator>
       // </NavigationContainer>
     // </GestureHandlerRootView>

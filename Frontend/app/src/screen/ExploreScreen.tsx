@@ -39,7 +39,7 @@ export default function ExploreScreen({ navigation }) {
               key={index}
               icon={category.icon}
               label={category.label}
-              onPress={() => console.log(`Selected ${category.label}`)}
+              onPress={() => navigation.navigate('CategoryScreen', { category: category.label })}
             />
           ))}
         </View>
