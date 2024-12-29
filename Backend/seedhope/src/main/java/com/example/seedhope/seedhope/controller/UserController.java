@@ -13,8 +13,13 @@ public class UserController {
 
     @Autowired
     private Userservice userservice;
-    @RequestMapping("/users")
+    @RequestMapping("api/v1/users")
     public List<User> getAllUsers() {
+        return userservice.getAllUsers();
+    }
+
+    @GetMapping("/users")
+    public List<User> getAllUser() {
         return userservice.getAllUsers();
     }
     @GetMapping("/users/{id}")
@@ -33,10 +38,18 @@ public class UserController {
 
     }
 
-    @PostMapping("/login")
+    @PostMapping("api/v1/login")
     public String login(@RequestBody User user) {
         return userservice.verify(user);
     }
+
+
+    // current logged in user details endpoint
+    @GetMapping("/currentuser")
+    public User getCurrentUser() {
+        return userservice.getCurrentUser();
+    }
+
 
 
 
