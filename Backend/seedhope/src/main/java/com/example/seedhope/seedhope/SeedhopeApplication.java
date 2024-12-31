@@ -11,5 +11,4 @@ public class SeedhopeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SeedhopeApplication.class, args);
 	}
-
 }

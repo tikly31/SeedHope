@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -154,8 +155,10 @@ public class Userservice implements PaymentObserver {
         UpdateDonatedAmount(user, amount);
     }
 
-    public List<User> getTopContributors() {
-        return userRepository.findAllByOrderByDonatedAmountDesc();
+    public User getCurrentUser() {
+        // Get the current authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return userRepository.findByUsername(username);
     }
-
 }
