@@ -161,4 +161,8 @@ public class Userservice implements PaymentObserver {
         String username = authentication.getName();
         return userRepository.findByUsername(username);
     }
+
+    public List<User> getTopContributors() {
+        return userRepository.findAllByOrderByDonatedAmountDesc();
+    }
 }
