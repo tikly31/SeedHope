@@ -1,12 +1,26 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
+
+const API_BASE_URL = 'http://192.168.0.105:8080';
 
 interface FundraiserDetailsProps {
   route: {
     params: {
-      fundId: string;
+      fundId: number;
     };
   };
 }
@@ -15,56 +29,101 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
   const { fundId } = route.params;
   const navigation = useNavigation();
 
-  // Mock data - replace with actual API call using fundId
-  const fundraiser = {
-    id: fundId,
-    title: "Emergency Medical Equipment",
-    dueDate: "2024-01-31",
-    raisedAmount: 15000,
-    requiredAmount: 50000,
-    description: "Urgent funding needed for essential medical equipment in rural areas. This initiative aims to provide basic healthcare facilities to underserved communities.",
-    imageUrl: "https://placeholder.com/medical-equipment",
-    isUrgent: true,
-  };
+  console.log('Here with fundId:', fundId);
 
-  const progress = (fundraiser.raisedAmount / fundraiser.requiredAmount) * 100;
+  const [fundraiser, setFundraiser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+      if (!fundId) {
+        console.log('Invalid fundId:', fundId);
+        return; // Exit early if fundId is not valid
+      }
+
+      const fetchFundraiserDetails = async () => {
+        try {
+          console.log('Making API call with fundId:', fundId);
+          const response = await axios.get(`${API_BASE_URL}/campaign/${fundId}`);
+          console.log('API Response:', response.data);
+          setFundraiser(response.data);
+        } catch (err) {
+          console.error('Error fetching fundraiser details:', err);
+          setError('Failed to load fundraiser details.');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchFundraiserDetails();
+    }, [fundId]);
+
+     // Handle loading state and error
+      if (loading) {
+        return (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#2196F3" />
+            <Text>Loading fundraiser details...</Text>
+          </View>
+        );
+      }
+
+      if (error) {
+        return (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        );
+      }
+
+      if (!fundraiser) {
+        return (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Fundraiser not found.</Text>
+          </View>
+        );
+      }
+
+
+
+  const progress = (fundraiser.raisedAmount / fundraiser.goalAmount) * 100;
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color="#000" /> {/* Updated Icon */}
+        {/* Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
 
-        <Image 
-          source={{ uri: fundraiser.imageUrl }} 
-          style={styles.image}
-        />
+        {/* Fundraiser Image */}
+        <Image source={{ uri: fundraiser.imageUrl }} style={styles.image} />
 
         <View style={styles.content}>
+          {/* Fundraiser Title and Due Date */}
           <View style={styles.header}>
             <Text style={styles.title}>{fundraiser.title}</Text>
             <Text style={styles.dueDate}>Due: {fundraiser.dueDate}</Text>
           </View>
 
+          {/* Raised Amount and Required Amount */}
           <View style={styles.amountsContainer}>
             <View style={styles.amountBox}>
               <Text style={styles.amountLabel}>Raised Amount</Text>
               <Text style={styles.amount}>${fundraiser.raisedAmount.toLocaleString()}</Text>
             </View>
             <View style={styles.amountBox}>
-              <Text style={styles.amountLabel}>Required Amount</Text>
-              <Text style={styles.amount}>${fundraiser.requiredAmount.toLocaleString()}</Text>
+              <Text style={styles.amountLabel}>Goal Amount</Text>
+              <Text style={styles.amount}>${fundraiser.goalAmount.toLocaleString()}</Text>
             </View>
           </View>
 
+          {/* Progress Bar */}
           <View style={styles.progressContainer}>
             <View style={[styles.progressBar, { width: `${progress}%` }]} />
           </View>
 
+          {/* Description and Urgent Tag */}
           <View style={styles.descriptionContainer}>
             {fundraiser.isUrgent && (
               <View style={styles.urgentTag}>
@@ -74,6 +133,7 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
             <Text style={styles.description}>{fundraiser.description}</Text>
           </View>
 
+          {/* Donate Button */}
           <TouchableOpacity style={styles.donateButton}>
             <Text style={styles.donateButtonText}>Donate</Text>
           </TouchableOpacity>
@@ -86,108 +146,108 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 20,
     left: 20,
     zIndex: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 20,
     padding: 8,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 250,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
   content: {
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     flex: 1,
     marginRight: 10,
   },
   dueDate: {
     fontSize: 14,
-    color: '#666',
-    backgroundColor: '#f5f5f5',
+    color: "#666",
+    backgroundColor: "#f5f5f5",
     padding: 8,
     borderRadius: 6,
   },
   amountsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   amountBox: {
     flex: 1,
     marginRight: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     padding: 12,
     borderRadius: 8,
   },
   amountLabel: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginBottom: 4,
   },
   amount: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2196F3',
+    fontWeight: "bold",
+    color: "#2196F3",
   },
   progressContainer: {
     height: 8,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: "#e0e0e0",
     borderRadius: 4,
     marginBottom: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressBar: {
-    height: '100%',
-    backgroundColor: '#4CAF50',
+    height: "100%",
+    backgroundColor: "#4CAF50",
     borderRadius: 4,
   },
   descriptionContainer: {
     marginBottom: 20,
   },
   urgentTag: {
-    backgroundColor: '#FF5252',
-    alignSelf: 'flex-start',
+    backgroundColor: "#FF5252",
+    alignSelf: "flex-start",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 4,
     marginBottom: 10,
   },
   urgentText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#444',
+    color: "#444",
   },
   donateButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: "#2196F3",
     padding: 16,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   donateButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

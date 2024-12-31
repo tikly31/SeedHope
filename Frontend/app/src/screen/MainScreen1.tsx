@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,47 +8,20 @@ import {
   TouchableOpacity,
   SafeAreaView,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
 
-// Mock data for fundraisers
-const mockFundraisers = [
-  { id: '1', title: 'Save the Forest', amount: '$5,000' },
-  { id: '2', title: 'Clean Water Project', amount: '$3,000' },
-  { id: '3', title: 'Education Fund', amount: '$8,000' },
-  { id: '4', title: 'Medical Aid', amount: '$12,000' },
-];
+const API_BASE_URL = 'http://192.168.0.105:8080'; // Replace with your actual backend URL
 
-const mockContributors = [
-  { id: '1', name: 'John D.', image: 'https://placeholder.com/50' , contribution: '$100'},
-  { id: '2', name: 'Sarah M.', image: 'https://placeholder.com/50', contribution: '$50' },
-  { id: '3', name: 'Mike R.', image: 'https://placeholder.com/50' , contribution: '$25'},
-  { id: '4', name: 'Lisa K.', image: 'https://placeholder.com/50' , contribution: '$10'},
-  { id: '5', name: 'David S.', image: 'https://placeholder.com/50' , contribution: '$5'},
-  { id: '6', name: 'Jane D.', image: 'https://placeholder.com/50' , contribution: '$1'},
-  { id: '7', name: 'Alex P.', image: 'https://placeholder.com/50' , contribution: '$1'},
-  { id: '8', name: 'Emily W.', image: 'https://placeholder.com/50' , contribution: '$1'},
-];
-
-// Sort contributors by contribution amount and get the top 5
-const sortedContributors = mockContributors
-  .sort((a, b) => b.contribution - a.contribution)
-  .slice(0, 5);
-
-interface FundraiserCardProps {
-  id: string;
-  title: string;
-  amount: string;
-  onPress: (id: string) => void;
-}
-
-const FundraiserCard = ({ id, title, amount, onPress }: FundraiserCardProps) => (
-  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
+const FundraiserCard = ({ id, title, amount, onPress }) => (
+    <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
     <View style={styles.cardImageContainer}>
       <Image
-        source={{ uri: 'https://placeholder.com/100' }}
+        source={{ uri: 'https://placeholder.com/100' }} // Replace with actual image if available
         style={styles.cardImage}
       />
     </View>
@@ -58,42 +31,88 @@ const FundraiserCard = ({ id, title, amount, onPress }: FundraiserCardProps) => 
 );
 
 const ContributorCircle = ({ image, name }) => (
-  <TouchableOpacity style={styles.contributorContainer}>
+  <View style={styles.contributorContainer}>
     <Image source={{ uri: image }} style={styles.contributorImage} />
     <Text style={styles.contributorName} numberOfLines={1}>{name}</Text>
-  </TouchableOpacity>
+  </View>
 );
 
 const FundraiserSection = ({ title, data, onPressFundraiser }) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>{title}</Text>
-    <FlatList
-      data={data}
-      renderItem={({ item }) => (
-        <FundraiserCard
-          key={item.id}
-          id={item.id}
-          title={item.title}
-          amount={item.amount}
-          onPress={onPressFundraiser}
-        />
-      )}
-      keyExtractor={item => item.id}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.fundraiserList}
-    />
+    {data.length === 0 ? (
+      <Text style={styles.noDataText}>No fundraisers available.</Text>
+    ) : (
+      <FlatList
+        data={data}
+        renderItem={({ item }) => (
+          <FundraiserCard
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            amount={item.goalAmount-item.raisedAmount}
+            onPress={onPressFundraiser}
+          />
+        )}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.fundraiserList}
+      />
+    )}
   </View>
 );
 
 export default function MainScreen1() {
   const navigation = useNavigation();
 
-  const handlePressFundraiser = (fundId: string) => {
-    navigation.navigate('FundraiserDetailsScreen', {
-      fundId,
-    });
+  const [emergencyFundraisers, setEmergencyFundraisers] = useState([]);
+  const [recentFundraisers, setRecentFundraisers] = useState([]);
+  const [successfulFundraisers, setSuccessfulFundraisers] = useState([]);
+  const [topContributors, setTopContributors] = useState([]);
+  const [loading, setLoading] = useState(true);
+   const staticTrendingFundraisers = [
+      { id: '1', title: 'Save the Forest', amount: '$5,000' },
+      { id: '2', title: 'Clean Water Project', amount: '$3,000' },
+      { id: '3', title: 'Education Fund', amount: '$8,000' },
+      { id: '4', title: 'Medical Aid', amount: '$12,000' },
+    ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [emergencyRes, recentRes, successfulRes, contributorsRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/campaign/sorted?sortBy=emergency`),
+          axios.get(`${API_BASE_URL}/campaign/sorted?sortBy=recent`),
+          axios.get(`${API_BASE_URL}/campaign/successful`),
+          axios.get(`${API_BASE_URL}/contributors`),
+        ]);
+        setEmergencyFundraisers(emergencyRes.data);
+        setRecentFundraisers(recentRes.data);
+        setSuccessfulFundraisers(successfulRes.data);
+        setTopContributors(contributorsRes.data);
+      } catch (error) {
+        console.error('Error fetching data:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handlePressFundraiser = (fundId) => {
+    console.log('Navigating with fundId:', fundId);
+    navigation.navigate('FundraiserDetailsScreen', { fundId });
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#2196F3" />
+        <Text>Loading fundraisers...</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -121,22 +140,22 @@ export default function MainScreen1() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <FundraiserSection
           title="Trending Fundraisers"
-          data={mockFundraisers}
+          data={staticTrendingFundraisers}
           onPressFundraiser={handlePressFundraiser}
         />
         <FundraiserSection
           title="Emergency Fundraisers"
-          data={mockFundraisers}
+          data={emergencyFundraisers}
           onPressFundraiser={handlePressFundraiser}
         />
         <FundraiserSection
           title="Recent Fundraisers"
-          data={mockFundraisers}
+          data={recentFundraisers}
           onPressFundraiser={handlePressFundraiser}
         />
         <FundraiserSection
           title="Successful Fundraisers"
-          data={mockFundraisers}
+          data={successfulFundraisers}
           onPressFundraiser={handlePressFundraiser}
         />
 
@@ -144,27 +163,11 @@ export default function MainScreen1() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Contributors</Text>
           <FlatList
-            data={sortedContributors}
+            data={topContributors}
             renderItem={({ item }) => (
-              <ContributorCircle image={item.image} name={item.name} />
+              <ContributorCircle image={item.profileImage || 'https://placeholder.com/50'} name={item.name} />
             )}
-            keyExtractor={item => item.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.contributorList}
-          />
-        </View>
-        
-
-        {/* Top Fundraisers */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Top Fundraisers</Text>
-          <FlatList
-            data={sortedContributors}
-            renderItem={({ item }) => (
-              <ContributorCircle image={item.image} name={item.name} />
-            )}
-            keyExtractor={item => item.id}
+            keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.contributorList}
@@ -222,6 +225,29 @@ const styles = StyleSheet.create({
   fundraiserList: {
     paddingHorizontal: 12,
   },
+  contributorList: {
+    paddingHorizontal: 12,
+  },
+  contributorContainer: {
+    alignItems: 'center',
+    marginHorizontal: 8,
+  },
+  contributorImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  contributorName: {
+    fontSize: 12,
+    marginTop: 4,
+    maxWidth: 60,
+    textAlign: 'center',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   card: {
     width: 160,
     marginHorizontal: 4,
@@ -255,23 +281,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingBottom: 8,
   },
-  contributorList: {
-    paddingHorizontal: 12,
-  },
-  contributorContainer: {
-    alignItems: 'center',
-    marginHorizontal: 8,
-  },
-  contributorImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-  contributorName: {
-    fontSize: 12,
-    marginTop: 4,
-    maxWidth: 60,
-    textAlign: 'center',
+  noDataText: {
+    marginLeft: 16,
+    fontSize: 14,
+    color: '#999',
   },
 });
-

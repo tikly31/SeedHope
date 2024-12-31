@@ -1,6 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-// import { Heart } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 interface DonationCardProps {
   title: string;
@@ -20,25 +19,51 @@ const DonationCard = ({ title, onPress }: DonationCardProps) => (
 
 export default function CategoryScreen({ route }) {
   const { category } = route.params;
-  console.log(`Selected category: ${category}`);
-  
-  // Mock data - replace with your actual data
-  const donations = [
-    { id: 1, title: "Support Local Hospital" },
-    { id: 2, title: "Medical Equipment Fund" },
-    { id: 3, title: "Healthcare for Children" },
-    { id: 4, title: "Emergency Medical Aid" },
-    { id: 5, title: "Medical Research Support" },
-    { id: 6, title: "Community Health Project" },
-    { id: 7, title: "Rural Healthcare Initiative" },
-    { id: 8, title: "Medical Training Program" },
-    { id: 9, title: "Healthcare Access Fund" },
-  ];
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const response = await fetch(`http://192.168.0.105:8080/campaign/category?category=${encodeURIComponent(category)}`);
+        if (!response.ok) {
+
+          throw new Error('Failed to fetch campaigns');
+        }
+        const data = await response.json();
+        setDonations(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCampaigns();
+  }, [category]);
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#4299E1" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
+      <Text style={styles.header}>Campaigns in {category}</Text>
       <View style={styles.grid}>
-        {donations.map((donation) => (
+        {donations.map((donation: { id: number; title: string }) => (
           <DonationCard
             key={donation.id}
             title={donation.title}
@@ -54,6 +79,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7FAFC',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#2D3748',
+    padding: 16,
   },
   grid: {
     padding: 16,
@@ -96,5 +127,21 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontWeight: '600',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  errorText: {
+    color: '#E53E3E',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
