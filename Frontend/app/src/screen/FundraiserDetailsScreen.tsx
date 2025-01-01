@@ -15,7 +15,7 @@ import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
 
-const API_BASE_URL = 'http://192.168.0.105:8080';
+const API_BASE_URL = 'http://192.168.0.106:8080';
 
 interface FundraiserDetailsProps {
   route: {

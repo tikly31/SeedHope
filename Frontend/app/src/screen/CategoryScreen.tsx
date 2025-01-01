@@ -1,19 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from 'react-native';
 
-interface DonationCardProps {
-  title: string;
-  onPress: () => void;
-}
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = (width - 48) / 2; // 16px padding on each side, 16px gap between cards
 
-const DonationCard = ({ title, onPress }: DonationCardProps) => (
-  <TouchableOpacity style={styles.card} onPress={onPress}>
-    <View style={styles.cardContent}>
-      <Text style={styles.cardTitle}>{title}</Text>
-      <TouchableOpacity style={styles.donateButton}>
-        <Text style={styles.donateButtonText}>Donate</Text>
-      </TouchableOpacity>
+const FundraiserCard = ({ id, title, amount, onPress }) => (
+  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
+    <View style={styles.cardImageContainer}>
+      <Image
+        source={{ uri: 'https://via.placeholder.com/100' }} // Replace with actual image if available
+        style={styles.cardImage}
+      />
     </View>
+    <Text style={styles.cardTitle} numberOfLines={2}>
+      {title}
+    </Text>
+    <Text style={styles.cardAmount}>{`$${amount.toLocaleString()}`}</Text>
   </TouchableOpacity>
 );
 
@@ -26,9 +37,10 @@ export default function CategoryScreen({ route }) {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const response = await fetch(`http://192.168.0.105:8080/campaign/category?category=${encodeURIComponent(category)}`);
+        const response = await fetch(
+          `http://192.168.0.106:8080/campaign/category?category=${encodeURIComponent(category)}`
+        );
         if (!response.ok) {
-
           throw new Error('Failed to fetch campaigns');
         }
         const data = await response.json();
@@ -63,12 +75,21 @@ export default function CategoryScreen({ route }) {
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Campaigns in {category}</Text>
       <View style={styles.grid}>
-        {donations.map((donation: { id: number; title: string }) => (
-          <DonationCard
+        {donations.map((donation, index) => (
+          <View
             key={donation.id}
-            title={donation.title}
-            onPress={() => console.log(`Selected donation: ${donation.title}`)}
-          />
+            style={[
+              styles.cardWrapper,
+              index % 2 !== 0 && { marginLeft: 16 }, // Add spacing between cards in a row
+            ]}
+          >
+            <FundraiserCard
+              id={donation.id}
+              title={donation.title}
+              amount={donation.raisedAmount}
+              onPress={(id) => console.log(`Selected donation with ID: ${id}`)}
+            />
+          </View>
         ))}
       </View>
     </ScrollView>
@@ -79,54 +100,55 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7FAFC',
+    paddingHorizontal: 16,
   },
   header: {
     fontSize: 24,
     fontWeight: '700',
     color: '#2D3748',
-    padding: 16,
+    marginVertical: 16,
+    marginBottom: 24, // Adds extra space below the heading
   },
   grid: {
-    padding: 16,
-    gap: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  cardWrapper: {
+    width: CARD_WIDTH,
+    marginBottom: 16,
   },
   card: {
-    backgroundColor: 'white',
-    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderRadius: 8,
     overflow: 'hidden',
-    marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
   },
-  cardContent: {
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  cardImageContainer: {
+    height: 120,
+    backgroundColor: '#E2E8F0',
+  },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#2D3748',
-    flex: 1,
-    marginRight: 12,
-  },
-  donateButton: {
-    backgroundColor: '#4299E1',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  donateButtonText: {
-    color: 'white',
-    fontSize: 14,
     fontWeight: '600',
+    color: '#2D3748',
+    padding: 8,
+    lineHeight: 20,
+    flexWrap: 'wrap',
+  },
+  cardAmount: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#4299E1',
+    padding: 8,
   },
   loaderContainer: {
     flex: 1,
