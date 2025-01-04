@@ -28,12 +28,11 @@ const AppNavigator = () => {
             headerShown: false,
           }}
         >
-          
+          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"MainScreen"} component={MainScreen} />
           <Stack.Screen name={"FundraiserDetailsScreen"} component={FundraiserDetailsScreen} />
           <Stack.Screen name={"ExploreScreen"} component={ExploreScreen} />
           <Stack.Screen name={"HomeScreen"} component={HomeScreen} />
-          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"SignupScreen"} component={SignupScreen} />
           <Stack.Screen name={"CreateFundraiser"} component={CreateFundraiser} />
           <Stack.Screen name={"FundraiserBeneficiary"} component={FundraiserBeneficiary} />

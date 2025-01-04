@@ -19,7 +19,7 @@ public class UserController {
         return userservice.getAllUsers();
     }
 
-    @GetMapping("/users")
+    @GetMapping("api/v1/users")
     public List<User> getAllUser() {
         return userservice.getAllUsers();
     }
@@ -33,7 +33,7 @@ public class UserController {
         return userservice.addUser(user);
     }
 
-    @PostMapping("/register")
+    @PostMapping("api/v1/register")
     public User register(@RequestBody User user) {
         return userservice.register(user);
 

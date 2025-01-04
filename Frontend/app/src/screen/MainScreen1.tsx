@@ -17,11 +17,11 @@ import { useNavigation } from '@react-navigation/native';
 
 const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
 
-const FundraiserCard = ({ id, title, amount, onPress }) => (
-    <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
+const FundraiserCard = ({ id, title, amount, onPress, imageUrl }) => (
+  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
     <View style={styles.cardImageContainer}>
       <Image
-        source={{ uri: 'https://placeholder.com/100' }} // Replace with actual image if available
+        source={{ uri: imageUrl || 'https://placeholder.com/100' }} // Use dynamic imageUrl or fallback to placeholder
         style={styles.cardImage}
       />
     </View>
@@ -29,6 +29,7 @@ const FundraiserCard = ({ id, title, amount, onPress }) => (
     <Text style={styles.cardAmount}>{amount}</Text>
   </TouchableOpacity>
 );
+
 
 const ContributorCircle = ({ image, name }) => (
   <View style={styles.contributorContainer}>
@@ -50,6 +51,7 @@ const FundraiserSection = ({ title, data, onPressFundraiser }) => (
             key={item.id}
             id={item.id}
             title={item.title}
+            imageUrl={`${API_BASE_URL}/campaigns/${item.picture}`}
             amount={item.goalAmount-item.raisedAmount}
             onPress={onPressFundraiser}
           />
@@ -165,7 +167,7 @@ export default function MainScreen1() {
           <FlatList
             data={topContributors}
             renderItem={({ item }) => (
-              <ContributorCircle image={item.profileImage || 'https://placeholder.com/50'} name={item.name} />
+              <ContributorCircle image={'http://192.168.0.106:8080/photos/users/item.picture' || 'https://placeholder.com/50'} name={item.name} />
             )}
             keyExtractor={(item) => item.id}
             horizontal

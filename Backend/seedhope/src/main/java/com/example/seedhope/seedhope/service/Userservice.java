@@ -67,6 +67,8 @@ public class Userservice implements PaymentObserver {
                 .setEmail(user.getEmail())
                 .setUsername(user.getUsername())
                 .setPassword(encoder.encode(user.getPassword()))
+                .setPicture(user.getPicture())
+                .setDonatedAmount(user.getDonatedAmount())
                 .setContactno(user.getContactno())  // Setting the contact number
                 .build();
 
@@ -107,15 +109,15 @@ public class Userservice implements PaymentObserver {
     public String verify(User user) {
         // Authenticate the user using the AuthenticationManager
         Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
 
         // Check if authentication is successful
         if (authentication.isAuthenticated()) {
-            String username = authentication.getName();
+            String email = authentication.getName();
 
             // Retrieve the user from the database using the username
-            User authenticatedUser = userRepository.findByUsername(username);
+            User authenticatedUser = userRepository.findByUsername(email);
 
             // Check if the user exists in the database
             if (authenticatedUser == null) {
@@ -123,7 +125,7 @@ public class Userservice implements PaymentObserver {
             }
 
             // Generate a JWT token for the authenticated user
-            return jwtService.generateToken(username); // Pass username or modify the JWTService to handle User object
+            return jwtService.generateToken(email); // Pass username or modify the JWTService to handle User object
         } else {
             return "Authentication failed";
         }
