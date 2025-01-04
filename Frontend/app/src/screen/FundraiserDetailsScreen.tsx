@@ -97,7 +97,7 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
         </TouchableOpacity>
 
         {/* Fundraiser Image */}
-        <Image source={{ uri: fundraiser.imageUrl }} style={styles.image} />
+        <Image source={{ uri: `http://192.168.0.106:8080/campaigns/${fundraiser.photoUrl}` }} style={styles.image} />
 
         <View style={styles.content}>
           {/* Fundraiser Title and Due Date */}

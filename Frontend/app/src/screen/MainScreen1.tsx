@@ -17,12 +17,13 @@ import { useNavigation } from '@react-navigation/native';
 
 const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
 
-const FundraiserCard = ({ id, title, amount, onPress, imageUrl }) => (
+const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
   <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
     <View style={styles.cardImageContainer}>
       <Image
-        source={{ uri: imageUrl || 'https://placeholder.com/100' }} // Use dynamic imageUrl or fallback to placeholder
+        source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
         style={styles.cardImage}
+        resizeMode="cover" // Ensure the image covers the entire area
       />
     </View>
     <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
@@ -51,7 +52,7 @@ const FundraiserSection = ({ title, data, onPressFundraiser }) => (
             key={item.id}
             id={item.id}
             title={item.title}
-            imageUrl={`${API_BASE_URL}/campaigns/${item.picture}`}
+            imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
             amount={item.goalAmount-item.raisedAmount}
             onPress={onPressFundraiser}
           />
@@ -74,10 +75,10 @@ export default function MainScreen1() {
   const [topContributors, setTopContributors] = useState([]);
   const [loading, setLoading] = useState(true);
    const staticTrendingFundraisers = [
-      { id: '1', title: 'Save the Forest', amount: '$5,000' },
-      { id: '2', title: 'Clean Water Project', amount: '$3,000' },
-      { id: '3', title: 'Education Fund', amount: '$8,000' },
-      { id: '4', title: 'Medical Aid', amount: '$12,000' },
+      { id: '100', title: 'Save the Forest', photoUrl:'camp1.jpg', amount: '$5,000' },
+      { id: '200', title: 'Clean Water Project', photoUrl:'camp2.jpg',amount: '$3,000' },
+      { id: '300', title: 'Education Fund', photoUrl:'camp3.jpg',amount: '$8,000' },
+      { id: '400', title: 'Medical Aid', photoUrl:'camp4.jpg',amount: '$12,000' },
     ];
 
   useEffect(() => {
@@ -167,7 +168,7 @@ export default function MainScreen1() {
           <FlatList
             data={topContributors}
             renderItem={({ item }) => (
-              <ContributorCircle image={'http://192.168.0.106:8080/photos/users/item.picture' || 'https://placeholder.com/50'} name={item.name} />
+              <ContributorCircle image={`http://192.168.0.106:8080/user/${item.picture}` || 'https://placeholder.com/50'} name={item.name} />
             )}
             keyExtractor={(item) => item.id}
             horizontal
