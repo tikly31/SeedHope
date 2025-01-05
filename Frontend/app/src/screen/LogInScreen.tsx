@@ -15,6 +15,9 @@ import axios from "axios";
 import { colors } from "../utils/colors";
 import MainScreen from "./MainScreen";
 
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
+
 import * as Google from 'expo-auth-session/providers/google'
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
@@ -33,7 +36,7 @@ const GOOGLE_WEB_CLIENT_ID = "853660126141-kn2kjcl3vq3t6c962u711p53p62qimlk.apps
 WebBrowser.maybeCompleteAuthSession();
 
 
-const API_BASE_URL = 'http://192.168.0.106:8080';
+// const API_BASE_URL = 'http://192.168.0.106:8080';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -133,7 +136,7 @@ const handleLogin = async () => {
   try {
     // Make a POST request to the login endpoint
     const response = await axios.post(`${API_BASE_URL}/api/v1/login`, { email, password });
-
+    console.log("Here is the response : " , response.data);
     if (response.status === 200) {
       const token = response.data; // Assume backend returns the JWT token on successful login
       console.log("Login successful. Token received:", token);

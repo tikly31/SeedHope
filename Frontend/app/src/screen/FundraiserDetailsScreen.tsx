@@ -15,7 +15,9 @@ import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
 
-const API_BASE_URL = 'http://192.168.0.106:8080';
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
+// const API_BASE_URL = 'http://192.168.0.106:8080';
 
 interface FundraiserDetailsProps {
   route: {
@@ -97,7 +99,7 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
         </TouchableOpacity>
 
         {/* Fundraiser Image */}
-        <Image source={{ uri: `http://192.168.0.106:8080/campaigns/${fundraiser.photoUrl}` }} style={styles.image} />
+        <Image source={{ uri: `${API_BASE_URL}/campaigns/${fundraiser.photoUrl}` }} style={styles.image} />
 
         <View style={styles.content}>
           {/* Fundraiser Title and Due Date */}

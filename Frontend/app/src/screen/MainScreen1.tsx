@@ -15,7 +15,9 @@ import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
 
-const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
+// const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
 
 const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
   <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
@@ -168,7 +170,7 @@ export default function MainScreen1() {
           <FlatList
             data={topContributors}
             renderItem={({ item }) => (
-              <ContributorCircle image={`http://192.168.0.106:8080/user/${item.picture}` || 'https://placeholder.com/50'} name={item.name} />
+              <ContributorCircle image={`${API_BASE_URL}/user/${item.picture}` || 'https://placeholder.com/50'} name={item.name} />
             )}
             keyExtractor={(item) => item.id}
             horizontal

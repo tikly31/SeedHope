@@ -10,21 +10,23 @@ import {
   Dimensions,
 } from 'react-native';
 
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
+
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2; // 16px padding on each side, 16px gap between cards
 
-const FundraiserCard = ({ id, title, amount, onPress }) => (
+const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
   <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
     <View style={styles.cardImageContainer}>
       <Image
-        source={{ uri: 'https://via.placeholder.com/100' }} // Replace with actual image if available
+        source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
         style={styles.cardImage}
+        resizeMode="cover" // Ensure the image covers the entire area
       />
     </View>
-    <Text style={styles.cardTitle} numberOfLines={2}>
-      {title}
-    </Text>
-    <Text style={styles.cardAmount}>{`$${amount.toLocaleString()}`}</Text>
+    <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
+    <Text style={styles.cardAmount}>{amount}</Text>
   </TouchableOpacity>
 );
 
@@ -38,7 +40,7 @@ export default function CategoryScreen({ route }) {
     const fetchCampaigns = async () => {
       try {
         const response = await fetch(
-          `http://192.168.0.106:8080/campaign/category?category=${encodeURIComponent(category)}`
+          `${API_BASE_URL}/campaign/category?category=${encodeURIComponent(category)}`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch campaigns');
@@ -86,7 +88,8 @@ export default function CategoryScreen({ route }) {
             <FundraiserCard
               id={donation.id}
               title={donation.title}
-              amount={donation.raisedAmount}
+              amount={donation.goalAmount-donation.raisedAmount}
+              imageUrl={`${API_BASE_URL}/campaigns/${donation.photoUrl}`}
               onPress={(id) => console.log(`Selected donation with ID: ${id}`)}
             />
           </View>
