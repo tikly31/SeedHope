@@ -4,6 +4,7 @@ import com.example.seedhope.seedhope.model.User;
 import com.example.seedhope.seedhope.repository.UserRepository;
 import com.example.seedhope.seedhope.service.Userservice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class UserController {
         return userservice.getAllUsers();
     }
 
-    @GetMapping("/users")
+    @GetMapping("api/v1/users")
     public List<User> getAllUser() {
         return userservice.getAllUsers();
     }
@@ -51,7 +52,11 @@ public class UserController {
         return userservice.getCurrentUser();
     }
 
-
+    @GetMapping("/contributors")
+    public ResponseEntity<List<User>> getTopContributors() {
+        List<User> topContributors = userservice.getTopContributors();
+        return ResponseEntity.ok(topContributors);
+    }
 
 
 }

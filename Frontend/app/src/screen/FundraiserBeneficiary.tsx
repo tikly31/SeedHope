@@ -18,7 +18,7 @@ export default function FundraiserBeneficiary({ navigation }) {
   const options = [
     {
       id: 'yourself',
-      icon: 'hand',
+      icon: 'hand-wave',
       title: 'Yourself',
       description: 'Funds are delivered directly to your bank account',
     },

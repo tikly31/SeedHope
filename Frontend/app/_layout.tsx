@@ -1,8 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import HomeScreen from "./src/screen/HomeScreen";
 import LoginScreen from "./src/screen/LogInScreen";
+import HomeScreen from "./src/screen/HomeScreen";
 import SignupScreen from "./src/screen/SignUpScreen";
 import MainScreen from "./src/screen/MainScreen1";
 import CreateFundraiser from "./src/screen/CreateFundraiser"
@@ -29,12 +29,11 @@ const AppNavigator = () => {
             headerShown: false,
           }}
         >
-          
+          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"MainScreen"} component={MainScreen} />
           <Stack.Screen name={"FundraiserDetailsScreen"} component={FundraiserDetailsScreen} />
           <Stack.Screen name={"ExploreScreen"} component={ExploreScreen} />
           <Stack.Screen name={"HomeScreen"} component={HomeScreen} />
-          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"SignupScreen"} component={SignupScreen} />
           <Stack.Screen name={"CreateFundraiser"} component={CreateFundraiser} />
           <Stack.Screen name={"FundraiserBeneficiary"} component={FundraiserBeneficiary} />

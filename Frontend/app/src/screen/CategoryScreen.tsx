@@ -1,49 +1,98 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-// import { Heart } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from 'react-native';
 
-interface DonationCardProps {
-  title: string;
-  onPress: () => void;
-}
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
-const DonationCard = ({ title, onPress }: DonationCardProps) => (
-  <TouchableOpacity style={styles.card} onPress={onPress}>
-    <View style={styles.cardContent}>
-      <Text style={styles.cardTitle}>{title}</Text>
-      <TouchableOpacity style={styles.donateButton}>
-        <Text style={styles.donateButtonText}>Donate</Text>
-      </TouchableOpacity>
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = (width - 48) / 2; // 16px padding on each side, 16px gap between cards
+
+const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
+  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
+    <View style={styles.cardImageContainer}>
+      <Image
+        source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
+        style={styles.cardImage}
+        resizeMode="cover" // Ensure the image covers the entire area
+      />
     </View>
+    <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
+    <Text style={styles.cardAmount}>{amount}</Text>
   </TouchableOpacity>
 );
 
 export default function CategoryScreen({ route }) {
   const { category } = route.params;
-  console.log(`Selected category: ${category}`);
-  
-  // Mock data - replace with your actual data
-  const donations = [
-    { id: 1, title: "Support Local Hospital" },
-    { id: 2, title: "Medical Equipment Fund" },
-    { id: 3, title: "Healthcare for Children" },
-    { id: 4, title: "Emergency Medical Aid" },
-    { id: 5, title: "Medical Research Support" },
-    { id: 6, title: "Community Health Project" },
-    { id: 7, title: "Rural Healthcare Initiative" },
-    { id: 8, title: "Medical Training Program" },
-    { id: 9, title: "Healthcare Access Fund" },
-  ];
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/campaign/category?category=${encodeURIComponent(category)}`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch campaigns');
+        }
+        const data = await response.json();
+        setDonations(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCampaigns();
+  }, [category]);
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#4299E1" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
+      <Text style={styles.header}>Campaigns in {category}</Text>
       <View style={styles.grid}>
-        {donations.map((donation) => (
-          <DonationCard
+        {donations.map((donation, index) => (
+          <View
             key={donation.id}
-            title={donation.title}
-            onPress={() => console.log(`Selected donation: ${donation.title}`)}
-          />
+            style={[
+              styles.cardWrapper,
+              index % 2 !== 0 && { marginLeft: 16 }, // Add spacing between cards in a row
+            ]}
+          >
+            <FundraiserCard
+              id={donation.id}
+              title={donation.title}
+              amount={donation.goalAmount-donation.raisedAmount}
+              imageUrl={`${API_BASE_URL}/campaigns/${donation.photoUrl}`}
+              onPress={(id) => console.log(`Selected donation with ID: ${id}`)}
+            />
+          </View>
         ))}
       </View>
     </ScrollView>
@@ -54,47 +103,70 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7FAFC',
+    paddingHorizontal: 16,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#2D3748',
+    marginVertical: 16,
+    marginBottom: 24, // Adds extra space below the heading
   },
   grid: {
-    padding: 16,
-    gap: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  cardWrapper: {
+    width: CARD_WIDTH,
+    marginBottom: 16,
   },
   card: {
-    backgroundColor: 'white',
-    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderRadius: 8,
     overflow: 'hidden',
-    marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
   },
-  cardContent: {
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  cardImageContainer: {
+    height: 120,
+    backgroundColor: '#E2E8F0',
+  },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#2D3748',
-    flex: 1,
-    marginRight: 12,
-  },
-  donateButton: {
-    backgroundColor: '#4299E1',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  donateButtonText: {
-    color: 'white',
-    fontSize: 14,
     fontWeight: '600',
+    color: '#2D3748',
+    padding: 8,
+    lineHeight: 20,
+    flexWrap: 'wrap',
+  },
+  cardAmount: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#4299E1',
+    padding: 8,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  errorText: {
+    color: '#E53E3E',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });

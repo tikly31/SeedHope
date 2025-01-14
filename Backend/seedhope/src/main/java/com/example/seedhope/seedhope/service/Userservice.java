@@ -67,6 +67,8 @@ public class Userservice implements PaymentObserver {
                 .setEmail(user.getEmail())
                 .setUsername(user.getUsername())
                 .setPassword(encoder.encode(user.getPassword()))
+                .setPicture(user.getPicture())
+                .setDonatedAmount(user.getDonatedAmount())
                 .setContactno(user.getContactno())  // Setting the contact number
                 .build();
 
@@ -110,18 +112,22 @@ public class Userservice implements PaymentObserver {
 //        System.out.println(user.getUsername());
         // Authenticate the user using the AuthenticationManager
         Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
 
         System.out.println(authentication.isAuthenticated());
 
         // Check if authentication is successful
         if (authentication.isAuthenticated()) {
-            String username = authentication.getName();
+            String email = authentication.getName();
 
             // Retrieve the user from the database using the username
+<<<<<<< HEAD
             User authenticatedUser = userRepository.findByUsername(username);
             System.out.println(authenticatedUser + "hi");
+=======
+            User authenticatedUser = userRepository.findByUsername(email);
+>>>>>>> 5e0117ab2ed9ea47a4cbeca8bcda35b7e4e50db2
 
             // Check if the user exists in the database
             if (authenticatedUser == null) {
@@ -129,7 +135,7 @@ public class Userservice implements PaymentObserver {
             }
 
             // Generate a JWT token for the authenticated user
-            return jwtService.generateToken(username); // Pass username or modify the JWTService to handle User object
+            return jwtService.generateToken(email); // Pass username or modify the JWTService to handle User object
         } else {
             return "Authentication failed";
         }
@@ -166,5 +172,9 @@ public class Userservice implements PaymentObserver {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         return userRepository.findByUsername(username);
+    }
+
+    public List<User> getTopContributors() {
+        return userRepository.findAllByOrderByDonatedAmountDesc();
     }
 }
