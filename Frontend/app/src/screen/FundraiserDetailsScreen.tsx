@@ -74,7 +74,9 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
             <Text style={styles.description}>{fundraiser.description}</Text>
           </View>
 
-          <TouchableOpacity style={styles.donateButton}>
+          <TouchableOpacity style={styles.donateButton}
+            onPress={() => navigation.navigate('DonationPage')}
+          >
             <Text style={styles.donateButtonText}>Donate</Text>
           </TouchableOpacity>
         </View>

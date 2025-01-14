@@ -11,7 +11,7 @@ public class PaymentResponse {
     private String status;
     private String gatewayPageURL;
     private String message;
-    private String transactionId;
+    private String trancationId;
 
     public String getStatus() {
         return status;
@@ -37,12 +37,12 @@ public class PaymentResponse {
         this.message = message;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getTrancationId() {
+        return trancationId;
     }
 
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
+    public void setTrancationId(String trancationId) {
+        this.trancationId = trancationId;
     }
 
 }

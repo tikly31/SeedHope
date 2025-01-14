@@ -17,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payment")
+@CrossOrigin(origins = "http://localhost:8081")
 @Slf4j
 public class PaymentController {
 
@@ -31,6 +32,7 @@ public class PaymentController {
     public ResponseEntity<PaymentResponse> initiatePayment(@Valid @RequestBody PaymentRequest paymentRequest) {
         try {
             PaymentResponse response = paymentService.initiatePayment(paymentRequest);
+            System.out.println(paymentRequest);
             return ResponseEntity.ok(response);
         } catch (PaymentException e) {
             log.error("Payment initiation failed", e);

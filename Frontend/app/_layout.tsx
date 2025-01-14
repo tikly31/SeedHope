@@ -16,6 +16,7 @@ import ProfileScreen from "./src/screen/ProfileScreen";
 import EditProfileScreen from "./src/screen/EditProfileScreen";
 import CategoryScreen from "./src/screen/CategoryScreen";
 import FundraiserDetailsScreen from "./src/screen/FundraiserDetailsScreen";
+import DonationPage from "./src/screen/DonationPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +45,7 @@ const AppNavigator = () => {
           <Stack.Screen name={"ProfileScreen"} component={ProfileScreen} />
           <Stack.Screen name={"EditProfileScreen"} component={EditProfileScreen} />
           <Stack.Screen name={"CategoryScreen"} component={CategoryScreen} />
+          <Stack.Screen name={"DonationPage"} component={DonationPage} />
         </Stack.Navigator>
       // </NavigationContainer>
     // </GestureHandlerRootView>

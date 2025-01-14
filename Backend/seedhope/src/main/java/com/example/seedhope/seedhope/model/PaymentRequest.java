@@ -8,69 +8,67 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaymentRequest {
-    private String transactionId;
-    private Double amount;
-    private String currency;
-    private String customerName;
-    private String customerEmail;
-    private String customerPhone;
-    private String productInfo;
+    public double amount;
+  public String name;
+  public String email;
+  public String phone;
+  public String notes;
+  public String trancationId;
+  public String  campaignId;
 
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public Double getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public String getCurrency() {
-        return currency;
+    public String getName() {
+        return name;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public String getEmail() {
+        return email;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getCustomerEmail() {
-        return customerEmail;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public String getCustomerPhone() {
-        return customerPhone;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setCustomerPhone(String customerPhone) {
-        this.customerPhone = customerPhone;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
-    public String getProductInfo() {
-        return productInfo;
+    public String getTrancationId() {
+        return trancationId;
     }
 
-    public void setProductInfo(String productInfo) {
-        this.productInfo = productInfo;
+    public void setTrancationId(String trancationId) {
+        this.trancationId = trancationId;
     }
 
+    public String getCampaignId() {
+        return campaignId;
+    }
 
+    public void setCampaignId(String campaignId) {
+        this.campaignId = campaignId;
+    }
 }

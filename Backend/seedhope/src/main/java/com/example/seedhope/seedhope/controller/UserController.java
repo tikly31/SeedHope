@@ -32,8 +32,9 @@ public class UserController {
         return userservice.addUser(user);
     }
 
-    @PostMapping("/register")
+    @PostMapping("api/v1/register")
     public User register(@RequestBody User user) {
+
         return userservice.register(user);
 
     }

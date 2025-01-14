@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 // PaymentServiceImpl.java (Implementation)
+
+
+
 @Service
 @Slf4j
 public class PaymentServiceImpl implements PaymentService {
@@ -47,32 +50,28 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponse initiatePayment(PaymentRequest paymentRequest) {
         try {
-            // Create MultiValueMap instead of HashMap
+            // Prepare the request payload
             MultiValueMap<String, String> postData = new LinkedMultiValueMap<>();
-
-            // Add parameters to MultiValueMap
             postData.add("store_id", storeId);
             postData.add("store_passwd", storePassword);
             postData.add("total_amount", String.valueOf(paymentRequest.getAmount()));
-            postData.add("currency", paymentRequest.getCurrency());
-            postData.add("tran_id", paymentRequest.getTransactionId());
+            postData.add("currency", "BDT");
+            postData.add("tran_id", paymentRequest.getTrancationId());
             postData.add("success_url", "http://localhost:8080/api/payment/success");
             postData.add("fail_url", "http://localhost:8080/api/payment/fail");
             postData.add("cancel_url", "http://localhost:8080/api/payment/cancel");
-            postData.add("cus_name", paymentRequest.getCustomerName());
-            postData.add("cus_email", paymentRequest.getCustomerEmail());
-            postData.add("cus_phone", paymentRequest.getCustomerPhone());
-            postData.add("product_info", paymentRequest.getProductInfo());
+            postData.add("cus_name", paymentRequest.getName());
+            postData.add("cus_email", paymentRequest.getEmail());
+            postData.add("cus_phone", paymentRequest.getPhone());
+            postData.add("product_profile", paymentRequest.getCampaignId());
 
             // Set headers
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            // Create request entity
-            HttpEntity<MultiValueMap<String, String>> requestEntity =
-                    new HttpEntity<>(postData, headers);
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(postData, headers);
 
-            // Make API call
+            // Make the API call
             ResponseEntity<String> response = restTemplate.exchange(
                     sslCommerzApiUrl,
                     HttpMethod.POST,
@@ -80,19 +79,24 @@ public class PaymentServiceImpl implements PaymentService {
                     String.class
             );
 
-            // Parse response
+            // Parse the response
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(response.getBody());
 
-            // Save initial payment status
-            saveInitialPaymentStatus(paymentRequest);
+            if (rootNode.has("status") && "SUCCESS".equalsIgnoreCase(rootNode.get("status").asText())) {
+                // Save initial payment status
+                saveInitialPaymentStatus(paymentRequest);
 
-            return new PaymentResponse(
-                    "SUCCESS",
-                    rootNode.get("GatewayPageURL").asText(),
-                    "Payment initiation successful",
-                    paymentRequest.getTransactionId()
-            );
+                return new PaymentResponse(
+                        "SUCCESS",
+                        rootNode.get("GatewayPageURL").asText(),
+                        "Payment initiation successful",
+                        paymentRequest.getTrancationId()
+                );
+            } else {
+                log.error("Payment API returned an error: {}", response.getBody());
+                throw new PaymentException("Payment initiation failed: " + rootNode.get("failedreason").asText());
+            }
 
         } catch (Exception e) {
             log.error("Payment initiation failed", e);
@@ -102,15 +106,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void saveInitialPaymentStatus(PaymentRequest paymentRequest) {
         PaymentStatus paymentStatus = new PaymentStatus();
-        paymentStatus.setTransactionId(paymentRequest.getTransactionId());
+        paymentStatus.setTransactionId(paymentRequest.getTrancationId());
         paymentStatus.setAmount(paymentRequest.getAmount());
         paymentStatus.setStatus("INITIATED");
         paymentStatus.setCreatedAt(LocalDateTime.now());
         paymentStatus.setUpdatedAt(LocalDateTime.now());
-        paymentStatus.setCustomerInfo(paymentRequest.getCustomerName());
-
+        paymentStatus.setCustomerInfo(paymentRequest.getName());
         paymentRepository.save(paymentStatus);
     }
+
     @Override
     public PaymentStatus validatePayment(Map<String, String> sslCommerzResponse) {
         String transactionId = sslCommerzResponse.get("tran_id");
@@ -131,24 +135,4 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findByTransactionId(transactionId)
                 .orElseThrow(() -> new PaymentException("Transaction not found"));
     }
-
-    private Map<String, String> prepareSSLCommerzRequest(PaymentRequest paymentRequest) {
-        Map<String, String> postData = new HashMap<>();
-        postData.put("store_id", storeId);
-        postData.put("store_passwd", storePassword);
-        postData.put("total_amount", String.valueOf(paymentRequest.getAmount()));
-        postData.put("currency", paymentRequest.getCurrency());
-        postData.put("tran_id", paymentRequest.getTransactionId());
-        postData.put("success_url", "your_success_url");
-        postData.put("fail_url", "your_fail_url");
-        postData.put("cancel_url", "your_cancel_url");
-        postData.put("cus_name", paymentRequest.getCustomerName());
-        postData.put("cus_email", paymentRequest.getCustomerEmail());
-        postData.put("cus_phone", paymentRequest.getCustomerPhone());
-        postData.put("product_info", paymentRequest.getProductInfo());
-
-        return postData;
-    }
-
-
 }

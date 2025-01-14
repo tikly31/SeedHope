@@ -105,10 +105,15 @@ public class Userservice implements PaymentObserver {
     }
 
     public String verify(User user) {
+        System.out.println(1);
+        System.out.println(user.getPassword() + " " + user.getUsername() + "hi");
+//        System.out.println(user.getUsername());
         // Authenticate the user using the AuthenticationManager
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
         );
+
+        System.out.println(authentication.isAuthenticated());
 
         // Check if authentication is successful
         if (authentication.isAuthenticated()) {
@@ -116,6 +121,7 @@ public class Userservice implements PaymentObserver {
 
             // Retrieve the user from the database using the username
             User authenticatedUser = userRepository.findByUsername(username);
+            System.out.println(authenticatedUser + "hi");
 
             // Check if the user exists in the database
             if (authenticatedUser == null) {
