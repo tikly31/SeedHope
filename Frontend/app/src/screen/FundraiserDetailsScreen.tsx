@@ -31,7 +31,7 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
   const { fundId } = route.params;
   const navigation = useNavigation();
 
-  console.log('Here with fundId:', fundId);
+  // console.log('Here with fundId:', fundId);
 
   const [fundraiser, setFundraiser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -135,14 +135,9 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
             <Text style={styles.description}>{fundraiser.description}</Text>
           </View>
 
-<<<<<<< HEAD
           <TouchableOpacity style={styles.donateButton}
-            onPress={() => navigation.navigate('DonationPage')}
+            onPress={() => navigation.navigate('DonationPage', {fundId})}
           >
-=======
-          {/* Donate Button */}
-          <TouchableOpacity style={styles.donateButton}>
->>>>>>> 5e0117ab2ed9ea47a4cbeca8bcda35b7e4e50db2
             <Text style={styles.donateButtonText}>Donate</Text>
           </TouchableOpacity>
         </View>

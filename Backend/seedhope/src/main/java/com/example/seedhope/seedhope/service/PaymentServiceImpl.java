@@ -38,8 +38,13 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${sslcommerz.api.url}")
     private String sslCommerzApiUrl;
 
+    @Value("${api.base.url.andriod}")
+    private String api_base_url_andriod;
+
     private final PaymentRepository paymentRepository;
     private final RestTemplate restTemplate;
+    @Autowired
+    private CampaignService campaignService;
 
     @Autowired
     public PaymentServiceImpl(PaymentRepository paymentRepository, RestTemplate restTemplate) {
@@ -50,6 +55,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponse initiatePayment(PaymentRequest paymentRequest) {
         try {
+            // push into the database
+            System.out.println(paymentRequest);
+
             // Prepare the request payload
             MultiValueMap<String, String> postData = new LinkedMultiValueMap<>();
             postData.add("store_id", storeId);
@@ -57,9 +65,9 @@ public class PaymentServiceImpl implements PaymentService {
             postData.add("total_amount", String.valueOf(paymentRequest.getAmount()));
             postData.add("currency", "BDT");
             postData.add("tran_id", paymentRequest.getTrancationId());
-            postData.add("success_url", "http://localhost:8080/api/payment/success");
-            postData.add("fail_url", "http://localhost:8080/api/payment/fail");
-            postData.add("cancel_url", "http://localhost:8080/api/payment/cancel");
+            postData.add("success_url", api_base_url_andriod+"/api/payment/success/" + paymentRequest.getTrancationId());
+            postData.add("fail_url", api_base_url_andriod +"/api/payment/fail/" + paymentRequest.getTrancationId());
+            postData.add("cancel_url",  api_base_url_andriod +"/api/payment/cancel/" + paymentRequest.getTrancationId());
             postData.add("cus_name", paymentRequest.getName());
             postData.add("cus_email", paymentRequest.getEmail());
             postData.add("cus_phone", paymentRequest.getPhone());
@@ -112,11 +120,13 @@ public class PaymentServiceImpl implements PaymentService {
         paymentStatus.setCreatedAt(LocalDateTime.now());
         paymentStatus.setUpdatedAt(LocalDateTime.now());
         paymentStatus.setCustomerInfo(paymentRequest.getName());
+        paymentStatus.setCampaignId(paymentRequest.getCampaignId());
         paymentRepository.save(paymentStatus);
     }
 
     @Override
     public PaymentStatus validatePayment(Map<String, String> sslCommerzResponse) {
+
         String transactionId = sslCommerzResponse.get("tran_id");
         String status = sslCommerzResponse.get("status");
 
@@ -127,6 +137,17 @@ public class PaymentServiceImpl implements PaymentService {
         paymentStatus.setUpdatedAt(LocalDateTime.now());
         paymentStatus.setPaymentMethod(sslCommerzResponse.get("card_type"));
 
+        return paymentRepository.save(paymentStatus);
+    }
+
+    @Override
+    public PaymentStatus updateStatus(String transactionId, String status) {
+        PaymentStatus paymentStatus = paymentRepository.findByTransactionId(transactionId)
+                .orElseThrow(() -> new PaymentException("Transaction not found"));
+        paymentStatus.setStatus(status);
+        paymentStatus.setUpdatedAt(LocalDateTime.now());
+        if(status.equals("SUCCESS"))
+                campaignService.updateRaisedAmount(Long.parseLong(paymentStatus.getCampaignId()), paymentStatus.getAmount());
         return paymentRepository.save(paymentStatus);
     }
 

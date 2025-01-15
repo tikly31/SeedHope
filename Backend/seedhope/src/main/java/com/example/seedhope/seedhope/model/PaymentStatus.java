@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.sql.Struct;
 import java.time.LocalDateTime;
 
 @Data
@@ -19,6 +20,8 @@ public class PaymentStatus {
     private LocalDateTime updatedAt;
     private String paymentMethod;
     private String customerInfo;
+
+    private String campaignId;
 
     public String getTransactionId() {
         return transactionId;
@@ -74,6 +77,14 @@ public class PaymentStatus {
 
     public void setCustomerInfo(String customerInfo) {
         this.customerInfo = customerInfo;
+    }
+
+    public String getCampaignId() {
+        return campaignId;
+    }
+
+    public void setCampaignId(String campaignId) {
+        this.campaignId = campaignId;
     }
 
 

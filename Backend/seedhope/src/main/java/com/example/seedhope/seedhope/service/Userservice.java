@@ -122,12 +122,9 @@ public class Userservice implements PaymentObserver {
             String email = authentication.getName();
 
             // Retrieve the user from the database using the username
-<<<<<<< HEAD
-            User authenticatedUser = userRepository.findByUsername(username);
-            System.out.println(authenticatedUser + "hi");
-=======
+
             User authenticatedUser = userRepository.findByUsername(email);
->>>>>>> 5e0117ab2ed9ea47a4cbeca8bcda35b7e4e50db2
+
 
             // Check if the user exists in the database
             if (authenticatedUser == null) {

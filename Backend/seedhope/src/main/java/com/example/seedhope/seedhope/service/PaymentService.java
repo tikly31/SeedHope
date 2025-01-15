@@ -12,5 +12,6 @@ import java.util.Map;
 public interface PaymentService {
     PaymentResponse initiatePayment(PaymentRequest paymentRequest);
     PaymentStatus validatePayment(Map<String, String> sslCommerzResponse);
+    PaymentStatus updateStatus(String transactionId, String status);
     PaymentStatus getPaymentStatus(String transactionId);
 }

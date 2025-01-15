@@ -23,8 +23,14 @@ public class CampaignController {
 
     @PostMapping("/campaign")
     public Campaign addCampaign(@RequestBody Campaign campaign){
-        System.out.println(campaign);
         return campaignService.addCampaign(campaign);
+    }
+    @PostMapping("/campaign/all")
+    public List<Campaign> addAllCampaigns(@RequestBody List<Campaign> campaigns){
+        for(Campaign campaign : campaigns){
+            campaignService.addCampaign(campaign);
+        }
+        return campaigns;
     }
 
     @GetMapping("/campaign")

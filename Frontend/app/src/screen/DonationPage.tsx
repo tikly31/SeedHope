@@ -10,17 +10,41 @@ import {
   Platform,
   Animated,
   SafeAreaView,
-  Linking,
+  Modal,
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
+import { WebView } from 'react-native-webview';
+import { useNavigation } from '@react-navigation/native';
+
+import AlertModal from '../components/AlertModal';
+
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 const presetAmounts = [100, 500, 1000, 5000];
 const fadeAnim = new Animated.Value(1);
 
-export default function DonationPage() {
+
+interface FundraiserDetailsProps {
+  route: {
+    params: {
+      fundId: number;
+    };
+  };
+}
+
+
+export default function DonationPage({ route }: FundraiserDetailsProps) {
+  // console.log('DonationPage:', route.params);
+
+  const { fundId } = route.params;
+  const navigation = useNavigation();
+
+  // console.log('Here with fundId:', fundId);
+ 
   const [amount, setAmount] = useState('');
   const [selectedPreset, setSelectedPreset] = useState(null);
   const [name, setName] = useState('');
@@ -30,7 +54,15 @@ export default function DonationPage() {
 
   const [trancationId, setTrancationId] = useState('');
 
-  const [campaignId, setCampaignId] = useState('');
+  const [campaignId, setCampaignId] = useState(fundId);
+
+   // New state for payment gateway modal
+   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
+   const [paymentGatewayUrl, setPaymentGatewayUrl] = useState('');
+
+   const [alertVisible, setAlertVisible] = useState(false);
+   const [alertType, setAlertType] = useState<'success' | 'failure'>('success');
+   const [alertMessage, setAlertMessage] = useState('');
 
   React.useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -51,6 +83,8 @@ export default function DonationPage() {
     setSelectedPreset(null);
   };
 
+  
+
   const generateTransactionId = () => {
     const timestamp = Date.now().toString(36); // Convert current time to base-36
     const randomString = Math.random().toString(36).substring(2, 10); // Generate a random alphanumeric string
@@ -60,13 +94,14 @@ export default function DonationPage() {
   const postApicall = async (donation) => {
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/payment/initiate',
+        `${API_BASE_URL}/api/payment/initiate`,
         donation,
         {
           headers: { 'Content-Type': 'application/json' },
         }
       );
-      console.log('Payment Initiated Successfully:', response.data);
+      // console.log('Payment Initiated Successfully:', response);
+      // console.log('Payment Initiated Successfully:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error Initiating Payment:', error.message);
@@ -80,7 +115,8 @@ export default function DonationPage() {
     const trancationId = generateTransactionId();
 
     setTrancationId(trancationId);
-    setCampaignId("4");
+   
+    
 
     console.log('Amount:', amount);
     console.log('Name:', name);
@@ -100,33 +136,107 @@ export default function DonationPage() {
       campaignId
     };
 
-
-    const response = await postApicall(donation);
     
 
-    if (response && response.gatewayPageURL) {
-      console.log('Redirecting to:', response.gatewayPageURL);
-      window.location.replace(response.gatewayPageURL);
 
-    } else {
-      console.error('Invalid response or missing gateway URL.');
+    try {
+      const response = await postApicall(donation);
+
+      if (response && response.gatewayPageURL) {
+        // Set WebView URL and show modal
+        setPaymentGatewayUrl(response.gatewayPageURL);
+        setPaymentModalVisible(true);
+      } else {
+        Alert.alert('Error', 'Unable to process payment. Please try again.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Payment initiation failed. Please try again.');
+    }
+  };
+  
+  const updateSuccessPayment = async (trancationId) => {
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/payment/success/${trancationId}`
+      );
+      console.log('Payment Updated Successfully:', response);
+      console.log('Payment Updated Successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error Updating Payment:', error.message);
     }
 
-    
+  };
 
+  const updateFailurePayment = async (trancationId) => {
 
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/payment/fail/${trancationId}`
+      );
+      // console.log('Payment Updated Successfully:', response);
+      // console.log('Payment Updated Successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error Updating Payment:', error.message);
+    }
 
+  };
 
+  const handleWebViewNavigationStateChange = (newNavState) => {
+    const { url } = newNavState;
 
+    // console.log('WebView URL:', url);
 
+    // Customize these conditions based on your payment gateway's response URLs
+    if (url.includes('/success')) {
+      setPaymentModalVisible(false);
+      setAlertType('success');
 
+      
+      setAlertMessage('Payment completed successfully');
+      setAlertVisible(true);
+      
+      
+      // Add your success handling logic
 
+      updateSuccessPayment(trancationId);
+
+    } else if (url.includes('/fail')) {
+      setPaymentModalVisible(false);
+      setAlertType('failure');
+      setAlertMessage('Payment was unsuccessful. Please try again.');
+      setAlertVisible(true);
+
+      // Add your failure handling logic
+      updateFailurePayment(trancationId);
+    }
+  };
+
+  const handleAlertClose = () => {
+    setAlertVisible(false);
+    if (alertType === 'success') {
+      navigation.navigate('FundraiserDetailsScreen', {fundId});
+    }
+    if(alertType === 'failure'){
+      navigation.navigate('DonationPage', {fundId});
+    }
   };
 
   const isValidForm = amount && name && email && phone;
 
   return (
     <SafeAreaView style={styles.container}>
+
+      <AlertModal
+        visible={alertVisible}
+        type={alertType}
+        message={alertMessage}
+        onClose={handleAlertClose}
+        onAction={alertType === 'success' ? handleAlertClose : undefined}
+      />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoidingView}
@@ -280,11 +390,72 @@ export default function DonationPage() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+
+        {/* Payment Gateway Modal */}
+      <Modal
+        visible={isPaymentModalVisible}
+        onRequestClose={() => setPaymentModalVisible(false)}
+        animationType="slide"
+        transparent={false}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity 
+              onPress={() => setPaymentModalVisible(false)}
+              style={styles.modalCloseButton}
+            >
+              <MaterialIcons name="close" size={24} color="black" />
+              <Text style={styles.modalCloseText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <WebView
+            source={{ uri: paymentGatewayUrl }}
+            style={styles.webview}
+            onNavigationStateChange={handleWebViewNavigationStateChange}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            startInLoadingState={true}
+          />
+        </SafeAreaView>
+      </Modal>      
+
+
     </SafeAreaView>
   );
 }
 
+
+// Add these to your existing styles
+const additionalStyles = {
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  modalHeader: {
+    padding: 15,
+    alignItems: 'flex-end',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e1e1e1',
+  },
+  modalCloseButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  modalCloseText: {
+    marginLeft: 5,
+    fontSize: 16,
+  },
+  webview: {
+    flex: 1,
+  },
+};
+
+
 const styles = StyleSheet.create({
+
+
+
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -457,4 +628,28 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  modalHeader: {
+    padding: 15,
+    alignItems: 'flex-end',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e1e1e1',
+  },
+  modalCloseButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  modalCloseText: {
+    marginLeft: 5,
+    fontSize: 16,
+  },
+  webview: {
+    flex: 1,
+  },
+
+
 });

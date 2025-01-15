@@ -31,7 +31,8 @@ const AppNavigator = () => {
         >
           <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"MainScreen"} component={MainScreen} />
-          <Stack.Screen name={"FundraiserDetailsScreen"} component={FundraiserDetailsScreen} />
+          <Stack.Screen name={"DonationPage"} component={DonationPage} />
+          <Stack.Screen name={"FundraiserDetailsScreen"} component={FundraiserDetailsScreen}/>
           <Stack.Screen name={"ExploreScreen"} component={ExploreScreen} />
           <Stack.Screen name={"HomeScreen"} component={HomeScreen} />
           <Stack.Screen name={"SignupScreen"} component={SignupScreen} />
@@ -44,7 +45,6 @@ const AppNavigator = () => {
           <Stack.Screen name={"ProfileScreen"} component={ProfileScreen} />
           <Stack.Screen name={"EditProfileScreen"} component={EditProfileScreen} />
           <Stack.Screen name={"CategoryScreen"} component={CategoryScreen} />
-          <Stack.Screen name={"DonationPage"} component={DonationPage} />
         </Stack.Navigator>
       // </NavigationContainer>
     // </GestureHandlerRootView>
