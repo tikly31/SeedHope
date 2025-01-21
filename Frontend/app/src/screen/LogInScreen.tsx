@@ -92,9 +92,6 @@ useEffect(() => {
           picture: decoded.picture
         };
         console.log("user");
-        
-        
-
     }
   }, [response]);
 

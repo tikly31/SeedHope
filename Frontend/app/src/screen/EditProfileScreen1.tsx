@@ -7,39 +7,49 @@ import {
   Image,
   StyleSheet,
   ScrollView,
-  Switch,
-  Platform,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 
 interface ProfileData {
   name: string;
   email: string;
   username: string;
-  password: string;
+  password: string; // This can be used for the current password
   contactno: string;
   picture: string;
   provider: string;
   bio: string;
   gender: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }
 
 export default function EditProfileScreen() {
   const navigation = useNavigation();
   const [profileData, setProfileData] = useState<ProfileData>({
-    name: 'Istahak Islam',
-    email: 'istahak@example.com',
-    username: '_0istahak',
-    password: '',
-    contactno: '+880123456789',
-    picture: '/placeholder.svg?height=200&width=200',
-    provider: 'email',
-    bio: 'NAi',
-    gender: 'Male',
+    name: '',
+    email: '',
+    username: '',
+    password: '123', // Simulated stored password
+    contactno: '',
+    picture: '',
+    provider: '',
+    bio: '',
+    gender: '',
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
   });
-  const [showThreadsBadge, setShowThreadsBadge] = useState(true);
+
+  const [error, setError] = useState({
+    currentPassword: false,
+    newPassword: false,
+    confirmNewPassword: false,
+  });
 
   const handleBack = () => {
     navigation.goBack();
@@ -60,11 +70,55 @@ export default function EditProfileScreen() {
 
   const updateField = (field: keyof ProfileData, value: string) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
+
+    // Clear the error for the specific field if the user starts typing
+    if (error[field]) {
+      setError(prev => ({ ...prev, [field]: false }));
+    }
   };
 
   const handleSave = async () => {
-    // Implement save logic here
     console.log('Saving profile:', profileData);
+  };
+
+  const handleChangePassword = async () => {
+    const storedPassword = profileData.password; // Simulated stored password
+
+    // Clear previous errors
+    setError({
+      currentPassword: false,
+      newPassword: false,
+      confirmNewPassword: false,
+    });
+
+    // Check if the current password is valid
+    if (profileData.currentPassword !== storedPassword) {
+      setError(prev => ({ ...prev, currentPassword: true }));
+      alert("Current password is invalid!");
+      updateField('currentPassword', '');
+      updateField('newPassword', '');
+      updateField('confirmNewPassword', '');
+      return;
+    }
+
+    // Check if new password and confirm password match
+    if (profileData.newPassword !== profileData.confirmNewPassword) {
+      setError(prev => ({ ...prev, confirmNewPassword: true }));
+      alert("New passwords do not match!");
+      updateField('currentPassword', '');
+      updateField('newPassword', '');
+      updateField('confirmNewPassword', '');
+      return;
+    }
+
+    // Here you would typically send the new password to your backend to update it
+    console.log('Changing password to:', profileData.newPassword);
+    alert("Password changed successfully!");
+
+    // Optionally, reset the password fields
+    updateField('currentPassword', '');
+    updateField('newPassword', '');
+    updateField('confirmNewPassword', '');
   };
 
   return (
@@ -149,32 +203,57 @@ export default function EditProfileScreen() {
             />
           </View>
 
-          <TouchableOpacity style={styles.selectField}>
+          {/* Gender Selector */}
+          <View style={styles.inputGroup}>
             <Text style={styles.label}>Gender</Text>
-            <View style={styles.selectContent}>
-              <Text style={styles.selectText}>{profileData.gender}</Text>
-              <Feather name="chevron-down" size={20} color="#666" />
-            </View>
-          </TouchableOpacity>
+            <Picker
+              selectedValue={profileData.gender}
+              onValueChange={(itemValue) => updateField('gender', itemValue)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Male" value="Male" />
+              <Picker.Item label="Female" value="Female" />
+              <Picker.Item label="Others" value="Others" />
+            </Picker>
+          </View>
 
-          <TouchableOpacity style={styles.linkButton}>
-            <Text style={styles.linkButtonText}>Add Link</Text>
-          </TouchableOpacity>
-
-          <View style={styles.switchContainer}>
-            <View style={styles.switchTextContainer}>
-              <Text style={styles.switchTitle}>Show Threads badge</Text>
-              <Text style={styles.switchDescription}>
-                When turned off, the Instagram badge on your Threads profile will also disappear.
-              </Text>
-            </View>
-            <Switch
-              value={showThreadsBadge}
-              onValueChange={setShowThreadsBadge}
-              trackColor={{ false: '#767577', true: '#81b0ff' }}
-              thumbColor={showThreadsBadge ? '#007AFF' : '#f4f3f4'}
+          {/* Password Change Fields */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Current Password</Text>
+            <TextInput
+              style={[styles.input, error.currentPassword && styles.errorInput]}
+              value={profileData.currentPassword}
+              onChangeText={(value) => updateField('currentPassword', value)}
+              placeholder="Current Password"
+              secureTextEntry
             />
           </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>New Password</Text>
+            <TextInput
+              style={[styles.input, error.newPassword && styles.errorInput]}
+              value={profileData.newPassword}
+              onChangeText={(value) => updateField('newPassword', value)}
+              placeholder="New Password"
+              secureTextEntry
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Confirm New Password</Text>
+            <TextInput
+              style={[styles.input, error.confirmNewPassword && styles.errorInput]}
+              value={profileData.confirmNewPassword}
+              onChangeText={(value) => updateField('confirmNewPassword', value)}
+              placeholder="Confirm New Password"
+              secureTextEntry
+            />
+          </View>
+
+          <TouchableOpacity onPress={handleChangePassword} style={styles.changePasswordButton}>
+            <Text style={styles.changePasswordButtonText}>Change Password</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -252,48 +331,25 @@ const styles = StyleSheet.create({
     height: 100,
     textAlignVertical: 'top',
   },
-  selectField: {
-    marginBottom: 20,
-  },
-  selectContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  picker: {
+    height: 50,
+    width: '100%',
     borderWidth: 1,
     borderColor: '#dbdbdb',
     borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
   },
-  selectText: {
-    fontSize: 16,
-    color: '#1c1c1e',
-  },
-  linkButton: {
-    marginBottom: 20,
-  },
-  linkButtonText: {
-    color: '#007AFF',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  changePasswordButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 8,
+    paddingVertical: 12,
     alignItems: 'center',
-    marginBottom: 20,
   },
-  switchTextContainer: {
-    flex: 1,
-    marginRight: 16,
-  },
-  switchTitle: {
+  changePasswordButtonText: {
+    color: '#fff',
     fontSize: 16,
-    color: '#1c1c1e',
-    marginBottom: 4,
+    fontWeight: '600',
   },
-  switchDescription: {
-    fontSize: 14,
-    color: '#666',
+  errorInput: {
+    borderColor: 'red',
   },
 });
