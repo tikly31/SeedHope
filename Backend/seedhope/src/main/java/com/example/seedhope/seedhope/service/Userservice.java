@@ -47,11 +47,6 @@ public class Userservice implements PaymentObserver {
         if (!isValidEmail(user.getEmail())) {
             throw new IllegalArgumentException("Invalid email format");
         }
-
-        // Step 2: Check if the email or username already exists
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            throw new IllegalArgumentException("Username is already taken");
-        }
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new IllegalArgumentException("Email is already registered");
         }
@@ -63,13 +58,9 @@ public class Userservice implements PaymentObserver {
 
         // Step 4: Create a new User instance using the builder, encoding the password
         User newUser = new User.UserBuilder()
-                .setName(user.getName())
                 .setEmail(user.getEmail())
-                .setUsername(user.getUsername())
                 .setPassword(encoder.encode(user.getPassword()))
-                .setPicture(user.getPicture())
-                .setDonatedAmount(user.getDonatedAmount())
-                .setContactno(user.getContactno())  // Setting the contact number
+                .setContactno(user.getContactno())
                 .build();
 
         // Step 5: Save the user to the database
@@ -107,31 +98,27 @@ public class Userservice implements PaymentObserver {
     }
 
     public String verify(User user) {
-        System.out.println(1);
-        System.out.println(user.getPassword() + " " + user.getUsername() + "hi");
-//        System.out.println(user.getUsername());
         // Authenticate the user using the AuthenticationManager
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
 
-        System.out.println(authentication.isAuthenticated());
+
 
         // Check if authentication is successful
         if (authentication.isAuthenticated()) {
             String email = authentication.getName();
 
+
             // Retrieve the user from the database using the username
 
-            User authenticatedUser = userRepository.findByUsername(email);
+            User authenticatedUser = userRepository.findByEmail(email);
 
 
             // Check if the user exists in the database
             if (authenticatedUser == null) {
                 throw new UserNotFoundException("User not found");
             }
-
-            // Generate a JWT token for the authenticated user
             return jwtService.generateToken(email); // Pass username or modify the JWTService to handle User object
         } else {
             return "Authentication failed";
@@ -167,8 +154,8 @@ public class Userservice implements PaymentObserver {
     public User getCurrentUser() {
         // Get the current authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return userRepository.findByUsername(username);
+        String email = authentication.getName();
+        return userRepository.findByEmail(email);
     }
 
     public List<User> getTopContributors() {
