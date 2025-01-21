@@ -35,7 +35,10 @@ public class UserController {
 
     @PostMapping("api/v1/register")
     public User register(@RequestBody User user) {
-
+//        System.out.println("Registering user");
+//        System.out.println(user.getEmail());
+//        System.out.println(user.getPassword());
+//        System.out.println(user.getContactno());
         return userservice.register(user);
 
     }
@@ -47,7 +50,7 @@ public class UserController {
 
 
     // current logged in user details endpoint
-    @GetMapping("/currentuser")
+    @GetMapping("/me")
     public User getCurrentUser() {
         return userservice.getCurrentUser();
     }
@@ -57,6 +60,8 @@ public class UserController {
         List<User> topContributors = userservice.getTopContributors();
         return ResponseEntity.ok(topContributors);
     }
+
+
 
 
 }
