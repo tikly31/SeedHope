@@ -38,8 +38,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${sslcommerz.api.url}")
     private String sslCommerzApiUrl;
 
-    @Value("${api.base.url.andriod}")
-    private String api_base_url_andriod;
+    @Value("${api_base_url_android}")
+    private String api_base_url_android;
 
     private final PaymentRepository paymentRepository;
     private final RestTemplate restTemplate;
@@ -65,9 +65,9 @@ public class PaymentServiceImpl implements PaymentService {
             postData.add("total_amount", String.valueOf(paymentRequest.getAmount()));
             postData.add("currency", "BDT");
             postData.add("tran_id", paymentRequest.getTrancationId());
-            postData.add("success_url", api_base_url_andriod+"/api/payment/success/" + paymentRequest.getTrancationId());
-            postData.add("fail_url", api_base_url_andriod +"/api/payment/fail/" + paymentRequest.getTrancationId());
-            postData.add("cancel_url",  api_base_url_andriod +"/api/payment/cancel/" + paymentRequest.getTrancationId());
+            postData.add("success_url", api_base_url_android+"/api/payment/success/" + paymentRequest.getTrancationId());
+            postData.add("fail_url", api_base_url_android +"/api/payment/fail/" + paymentRequest.getTrancationId());
+            postData.add("cancel_url",  api_base_url_android +"/api/payment/cancel/" + paymentRequest.getTrancationId());
             postData.add("cus_name", paymentRequest.getName());
             postData.add("cus_email", paymentRequest.getEmail());
             postData.add("cus_phone", paymentRequest.getPhone());
