@@ -1,46 +1,50 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useState } from "react";
-import { colors } from "../utils/colors";
-// import { fonts } from "../utils/fonts";
 
-import Ionicons from "react-native-vector-icons/Ionicons";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react"
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { useNavigation } from "@react-navigation/native"
+import Ionicons from "react-native-vector-icons/Ionicons"
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
+import { colors } from "../utils/colors"
+import CONFIG from "./config"
+import AlertModal from "../components/AlertModal"
+
+const API_BASE_URL = CONFIG.API_BASE_URL
 
 const SignupScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
-  // State variables for input fields
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [secureEntry, setSecureEntry] = useState(true);
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [phone, setPhone] = useState("")
+  const [secureEntry, setSecureEntry] = useState(true)
+
+  // New state for AlertModal
+  const [alertVisible, setAlertVisible] = useState(false)
+  const [alertType, setAlertType] = useState<"success" | "failure">("success")
+  const [alertMessage, setAlertMessage] = useState("")
 
   const handleGoBack = () => {
-    navigation.goBack();
-  };
+    navigation.goBack()
+  }
 
   const handleLogin = () => {
-    navigation.navigate("LOGIN");
-  };
+    navigation.navigate("LoginScreen")
+  }
+
+  const showAlert = (type: "success" | "failure", message: string) => {
+    setAlertType(type)
+    setAlertMessage(message)
+    setAlertVisible(true)
+  }
 
   const handleSignup = async () => {
-    // Validate inputs
     if (!email || !password || !phone) {
-      alert("Please fill all fields.");
-      return;
+      showAlert("failure", "Please fill all the fields!")
+      return
     }
 
     try {
-      // Send data to the backend (replace with your backend URL)
-      const response = await fetch("https://localhost:8080/register", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,22 +52,27 @@ const SignupScreen = () => {
         body: JSON.stringify({
           email,
           password,
-          phone,
+          contactno: phone,
         }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
       if (response.ok) {
-        // Handle successful signup (e.g., navigate to login)
-        alert("Signup successful!");
-        navigation.navigate("LOGIN");
+        showAlert("success", "Signup successful!")
       } else {
-        alert(data.message || "Signup failed!");
+        showAlert("failure", data.message || "Signup failed!")
       }
     } catch (error) {
-      alert("An error occurred. Please try again.");
+      showAlert("failure", "An error occurred. Please try again.")
     }
-  };
+  }
+
+  const handleAlertClose = () => {
+    setAlertVisible(false)
+    if (alertType === "success") {
+      navigation.navigate("LoginScreen")
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -84,7 +93,7 @@ const SignupScreen = () => {
             placeholderTextColor={colors.secondary}
             keyboardType="email-address"
             value={email}
-            onChangeText={setEmail} // Handle email input
+            onChangeText={setEmail}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -95,30 +104,25 @@ const SignupScreen = () => {
             placeholderTextColor={colors.secondary}
             secureTextEntry={secureEntry}
             value={password}
-            onChangeText={setPassword} // Handle password input
+            onChangeText={setPassword}
           />
           <TouchableOpacity
             onPress={() => {
-              setSecureEntry((prev) => !prev);
+              setSecureEntry((prev) => !prev)
             }}
           >
             <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
           </TouchableOpacity>
         </View>
         <View style={styles.inputContainer}>
-          <SimpleLineIcons
-            name={"screen-smartphone"}
-            size={30}
-            color={colors.secondary}
-          />
+          <SimpleLineIcons name={"screen-smartphone"} size={30} color={colors.secondary} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your phone no"
             placeholderTextColor={colors.secondary}
-            secureTextEntry={secureEntry}
             keyboardType="phone-pad"
             value={phone}
-            onChangeText={setPhone} // Handle phone input
+            onChangeText={setPhone}
           />
         </View>
 
@@ -127,10 +131,7 @@ const SignupScreen = () => {
         </TouchableOpacity>
         <Text style={styles.continueText}>or continue with</Text>
         <TouchableOpacity style={styles.googleButtonContainer}>
-          <Image
-            source={require("../assets/google.png")}
-            style={styles.googleImage}
-          />
+          <Image source={require("../assets/google.png")} style={styles.googleImage} />
           <Text style={styles.googleText}>Google</Text>
         </TouchableOpacity>
         <View style={styles.footerContainer}>
@@ -140,11 +141,18 @@ const SignupScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
-  );
-};
 
-export default SignupScreen;
+      <AlertModal visible={alertVisible} type={alertType} message={alertMessage} onClose={handleAlertClose} />
+    </View>
+  )
+}
+
+export default SignupScreen
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {

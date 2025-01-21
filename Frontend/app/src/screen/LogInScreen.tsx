@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { colors } from "../utils/colors";
 import MainScreen from "./MainScreen";
+import { jwtDecode } from 'jwt-decode';
 
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
@@ -21,7 +22,9 @@ const API_BASE_URL = CONFIG.API_BASE_URL;
 import * as Google from 'expo-auth-session/providers/google'
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
-import jwtDecode from "jwt-decode";
+
+import AlertModal from '../components/AlertModal';
+
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -45,6 +48,12 @@ const LoginScreen = () => {
   const [secureEntry, setSecureEntry] = useState(true);
 
 const [validUsers, setValidUsers] = useState([]);
+
+
+  // New state for AlertModal
+    const [alertVisible, setAlertVisible] = useState(false)
+    const [alertType, setAlertType] = useState<"success" | "failure">("success")
+    const [alertMessage, setAlertMessage] = useState("")
 
 useEffect(() => {
   const fetchUsers = async () => {
@@ -118,40 +127,106 @@ useEffect(() => {
 
 
   
+  const showAlert = (type: "success" | "failure", message: string) => {
+    setAlertType(type)
+    setAlertMessage(message)
+    setAlertVisible(true)
+  }
 
+  
+  const get_current_user = async (token) => {
+    if (!token) {
+      return null;
+    }
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json", // Ensure the correct content type
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        // Handle non-200 responses
+        console.error('Failed to fetch user:', response.status, response.statusText);
+        return null;
+      }
+  
+      const data = await response.json(); // Parse the JSON response
+      return data; // Return the parsed data
+    } catch (error) {
+      console.error('Error fetching user:', error.message);
+      return null; // Return null in case of an error
+    }
+  };
 
 
 const handleLogin = async () => {
   if (!email || !password) {
-    Alert.alert("Error", "Please enter both email and password.");
+    showAlert("failure", "Please fill all the fields!")
+    // Alert.alert("Error", "Please enter both email and password.");
     return;
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+$/; // Simplified email regex
   if (!emailRegex.test(email)) {
-    Alert.alert("Error", "Please enter a valid email address.");
+    showAlert("failure", "Please enter a valid email address!")
+    // Alert.alert("Error", "Please enter a valid email address.");
     return;
   }
 
   try {
+
+    // console.log("Here is the email and password : " , email , password);
+   
     // Make a POST request to the login endpoint
-    const response = await axios.post(`${API_BASE_URL}/api/v1/login`, { email, password });
-    console.log("Here is the response : " , response.data);
+    const response = await fetch(`${API_BASE_URL}/api/v1/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+    console.log("Here is the response : " , response);
     if (response.status === 200) {
-      const token = response.data; // Assume backend returns the JWT token on successful login
-      console.log("Login successful. Token received:", token);
+      
 
-      // Store the JWT token for subsequent requests
-      await AsyncStorage.setItem("authToken", token);
+      const responseBody = await response.text(); // Use .json() if the server returns JSON
 
-      // Navigate to the main screen
-      navigation.navigate("MainScreen");
+      // // Assuming the response body is a JSON string containing the token
+      // const data = JSON.parse(responseBody); // Parse the JSON string
+      // const token = data.token; // Extract the token from the parsed data
+
+      console.log("Here is the token : " , responseBody);
+
+      const token = responseBody;
+      if(AsyncStorage.getItem("token") !== null){
+        await AsyncStorage.removeItem("token");
+      }
+      // save the token in async storage
+      await AsyncStorage.setItem("token", token);
+      // get the current user
+      const user = await get_current_user(token);
+      console.log("Here is the user : " , user);
+      if(user.name === null || user.name === undefined || user.picture === null || user.picture === undefined){
+        showAlert("success", "Login successful! Please complete your profile.")
+      } else {
+        navigation.navigate("MainScreen");
+      }
+      // Save the token in AsyncStorage
     } else {
-      Alert.alert("Error", "Invalid email or password. Please try again.");
+      // Alert.alert("Error", "Invalid email or password. Please try again.");
+      showAlert("failure", "Invalid email or password. Please try again!")
     }
   } catch (error) {
     console.error("Login error:", error);
-    Alert.alert("Error", "Unable to login. Please check your credentials and try again.");
+    // Alert.alert("Error", "Unable to login. Please check your credentials and try again.");
+    showAlert("failure", "Unable to login. Please check your credentials and try again!")
   }
 };
 
@@ -162,6 +237,16 @@ const handleLogin = async () => {
 
   const handleSignup = () => {
     navigation.navigate("SignupScreen");
+  };
+
+  const handleAlertClose = () => {
+
+    setAlertVisible(false);
+    if (alertType === "success") {
+      navigation.navigate("ProfileScreen1");
+    }
+   
+
   };
 
   return (
@@ -226,6 +311,8 @@ const handleLogin = async () => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <AlertModal visible={alertVisible} type={alertType} message={alertMessage} onClose={handleAlertClose} />
     </View>
   );
 };
