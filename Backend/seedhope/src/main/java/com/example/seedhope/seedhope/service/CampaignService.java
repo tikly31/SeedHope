@@ -61,7 +61,7 @@ public class CampaignService implements PaymentObserver {
     }
 
     public List<Campaign> getAllApprovedCampaigns() {
-        return campaignRepository.findByStatus(Campaign.Status.APPROVED);
+        return campaignRepository.findByStatus(Campaign.Status.PENDING);
     }
 
     public Optional<Campaign> getCampaignById(Long id) {

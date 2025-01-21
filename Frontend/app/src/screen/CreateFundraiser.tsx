@@ -8,8 +8,8 @@ import {
   ScrollView,
   SafeAreaView,
 } from 'react-native';
-
 import { Picker } from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import BottomNavBar from '../components/BottomNavBar';
 
 const categories = [
@@ -21,11 +21,26 @@ export default function CreateFundraiser({ navigation }) {
   const [selectedCity, setSelectedCity] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [dueDate, setDueDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const cities = ['Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal'];
 
-  // Check if all required fields are filled
   const isFormValid = selectedCity && zipCode && selectedCategory;
+
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) setDueDate(selectedDate);
+  };
+
+  const handleContinue = () => {
+    if (isFormValid) {
+      navigation.navigate('FundraiserBeneficiary', {
+        dueDate : dueDate.toISOString().split('T')[0],
+        category: selectedCategory,
+      });
+    }
+  };
 
   return (
     <SafeAreaView style={styles.containers}>
@@ -57,6 +72,24 @@ export default function CreateFundraiser({ navigation }) {
           />
         </View>
 
+        <Text style={styles.question}>Select Due Date</Text>
+        <TouchableOpacity
+          onPress={() => setShowDatePicker(true)}
+          style={styles.datePickerButton}
+        >
+          <Text style={styles.datePickerText}>
+            {dueDate.toDateString()}
+          </Text>
+        </TouchableOpacity>
+        {showDatePicker && (
+          <DateTimePicker
+            value={dueDate}
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
+          />
+        )}
+
         <Text style={styles.question}>
           What best describes why you're fundraising?
         </Text>
@@ -81,12 +114,9 @@ export default function CreateFundraiser({ navigation }) {
         </View>
 
         <TouchableOpacity
-          style={[
-            styles.continueButton,
-            !isFormValid && styles.continueButtonDisabled, // Apply disabled style
-          ]}
-          disabled={!isFormValid} // Disable button if form is not valid
-          onPress={() => navigation.navigate('FundraiserBeneficiary')}
+          style={[styles.continueButton, !isFormValid && styles.continueButtonDisabled]}
+          disabled={!isFormValid}
+          onPress={handleContinue}
         >
           <Text style={styles.continueButtonText}>Continue</Text>
         </TouchableOpacity>
@@ -138,6 +168,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     fontSize: 16,
+  },
+  datePickerButton: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    marginBottom: 25,
+    backgroundColor: '#fff',
+  },
+  datePickerText: {
+    fontSize: 16,
+    color: '#333',
   },
   categoriesContainer: {
     marginTop: 10,

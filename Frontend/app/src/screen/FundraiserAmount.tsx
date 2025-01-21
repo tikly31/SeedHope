@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,16 +14,19 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import BottomNavBar from '../components/BottomNavBar';
 
-export default function FundraiserAmount({navigation}) {
+export default function FundraiserAmount({ navigation, route }) {
   const [amount, setAmount] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const scaleAnim = new Animated.Value(1);
 
+  // Retrieve data from the previous page
+  const { dueDate, category} = route.params;
+
   const handleAmountChange = (text: string) => {
     const numericValue = text.replace(/[^0-9]/g, '');
     setAmount(numericValue);
-    
-    // Animate button when valid amount is entered
+
+    // Animate button when a valid amount is entered
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 1.05,
@@ -47,83 +50,93 @@ export default function FundraiserAmount({navigation}) {
 
   const isValidAmount = amount !== '' && parseInt(amount, 10) > 0;
 
+  const handleContinue = () => {
+    if (isValidAmount) {
+      navigation.navigate('FundraiserDetails', {
+        dueDate,
+        category,
+        amount: parseInt(amount, 10),
+      });
+    }
+  };
+
   return (
     <SafeAreaView style={styles.containers}>
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <LinearGradient
-        colors={['#ffffff', '#f8f9fa']}
-        style={styles.gradient}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
       >
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text style={styles.title}>
-              Tell us how much you'd like to raise...
-            </Text>
-            <Text style={styles.subtitle}>
-              Set a realistic goal to help your campaign succeed
-            </Text>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <View style={[
-              styles.inputWrapper,
-              isFocused && styles.inputWrapperFocused
-            ]}>
-              <Text style={styles.currencyPrefix}>BDT</Text>
-              <TextInput
-                style={styles.input}
-                value={formatAmount(amount)}
-                onChangeText={handleAmountChange}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                placeholder="0"
-                keyboardType="numeric"
-                placeholderTextColor="#999"
-                selectionColor="#007AFF"
-              />
-            </View>
-            <View style={styles.helperTextContainer}>
-              <Text style={styles.helperText}>
-                Fundraisers like yours typically aim to raise{' '}
-                <Text style={styles.highlightText}>500k BDT</Text>
+        <LinearGradient
+          colors={['#ffffff', '#f8f9fa']}
+          style={styles.gradient}
+        >
+          <View style={styles.content}>
+            <View style={styles.header}>
+              <Text style={styles.title}>
+                Tell us how much you'd like to raise...
+              </Text>
+              <Text style={styles.subtitle}>
+                Set a realistic goal to help your campaign succeed
               </Text>
             </View>
-          </View>
 
-          <Animated.View 
-            style={[
-              styles.buttonContainer,
-              { transform: [{ scale: scaleAnim }] }
-            ]}
-          >
-            <TouchableOpacity
+            <View style={styles.inputContainer}>
+              <View style={[
+                styles.inputWrapper,
+                isFocused && styles.inputWrapperFocused
+              ]}>
+                <Text style={styles.currencyPrefix}>BDT</Text>
+                <TextInput
+                  style={styles.input}
+                  value={formatAmount(amount)}
+                  onChangeText={handleAmountChange}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  placeholder="0"
+                  keyboardType="numeric"
+                  placeholderTextColor="#999"
+                  selectionColor="#007AFF"
+                />
+              </View>
+              <View style={styles.helperTextContainer}>
+                <Text style={styles.helperText}>
+                  Fundraisers like yours typically aim to raise{' '}
+                  <Text style={styles.highlightText}>500k BDT</Text>
+                </Text>
+              </View>
+            </View>
+
+            <Animated.View
               style={[
-                styles.continueButton,
-                !isValidAmount && styles.continueButtonDisabled,
+                styles.buttonContainer,
+                { transform: [{ scale: scaleAnim }] }
               ]}
-              disabled={!isValidAmount}
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate('FundraiserDetails')}
             >
-              <LinearGradient
-                colors={isValidAmount ? ['#007AFF', '#0055FF'] : ['#ccc', '#bbb']}
-                style={styles.buttonGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+              <TouchableOpacity
+                style={[
+                  styles.continueButton,
+                  !isValidAmount && styles.continueButtonDisabled,
+                ]}
+                disabled={!isValidAmount}
+                activeOpacity={0.8}
+                onPress={handleContinue}
               >
-                <Text style={styles.continueButtonText}>Continue</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
-      </LinearGradient>
-    </KeyboardAvoidingView>
-    <View style={styles.bottomnavbar}>
-      <BottomNavBar navigation={navigation} activeScreen="Create" />
-    </View>
+                <LinearGradient
+                  colors={isValidAmount ? ['#007AFF', '#0055FF'] : ['#ccc', '#bbb']}
+                  style={styles.buttonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={styles.continueButtonText}>Continue</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+        </LinearGradient>
+      </KeyboardAvoidingView>
+      <View style={styles.bottomnavbar}>
+        <BottomNavBar navigation={navigation} activeScreen="Create" />
+      </View>
     </SafeAreaView>
   );
 }
