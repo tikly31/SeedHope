@@ -16,6 +16,8 @@ import ProfileScreen from "./src/screen/ProfileScreen";
 import EditProfileScreen from "./src/screen/EditProfileScreen";
 import CategoryScreen from "./src/screen/CategoryScreen";
 import FundraiserDetailsScreen from "./src/screen/FundraiserDetailsScreen";
+import PostListScreen from "./src/screen/PostListScreen";
+import PostDetailsScreen from "./src/screen/PostDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,8 +30,9 @@ const AppNavigator = () => {
             headerShown: false,
           }}
         >
-          
           <Stack.Screen name={"MainScreen"} component={MainScreen} />
+          <Stack.Screen name={"PostListScreen"} component={PostListScreen} />
+          <Stack.Screen name={"PostDetails"} component={PostDetailsScreen} />
           <Stack.Screen name={"FundraiserDetailsScreen"} component={FundraiserDetailsScreen} />
           <Stack.Screen name={"ExploreScreen"} component={ExploreScreen} />
           <Stack.Screen name={"HomeScreen"} component={HomeScreen} />

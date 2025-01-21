@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,13 @@ import {
   TouchableOpacity,
   SafeAreaView,
   FlatList,
+  TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import BottomNavBar from '../components/BottomNavBar';
+import { useNavigation } from '@react-navigation/native';
+import FundraiserDetailsScreen from './FundraiserDetailsScreen';
+
 // Mock data for fundraisers
 const mockFundraisers = [
   { id: '1', title: 'Save the Forest', amount: '$5,000' },
@@ -20,14 +24,30 @@ const mockFundraisers = [
 ];
 
 const mockContributors = [
-  { id: '1', name: 'John D.', image: 'https://placeholder.com/50' },
-  { id: '2', name: 'Sarah M.', image: 'https://placeholder.com/50' },
-  { id: '3', name: 'Mike R.', image: 'https://placeholder.com/50' },
-  { id: '4', name: 'Lisa K.', image: 'https://placeholder.com/50' },
+  { id: '1', name: 'John D.', image: 'https://placeholder.com/50', contribution: '$100' },
+  { id: '2', name: 'Sarah M.', image: 'https://placeholder.com/50', contribution: '$50' },
+  { id: '3', name: 'Mike R.', image: 'https://placeholder.com/50', contribution: '$25' },
+  { id: '4', name: 'Lisa K.', image: 'https://placeholder.com/50', contribution: '$10' },
+  { id: '5', name: 'David S.', image: 'https://placeholder.com/50', contribution: '$5' },
+  { id: '6', name: 'Jane D.', image: 'https://placeholder.com/50', contribution: '$1' },
+  { id: '7', name: 'Alex P.', image: 'https://placeholder.com/50', contribution: '$1' },
+  { id: '8', name: 'Emily W.', image: 'https://placeholder.com/50', contribution: '$1' },
 ];
 
-const FundraiserCard = ({ title, amount }) => (
-  <TouchableOpacity style={styles.card}>
+// Sort contributors by contribution amount and get the top 5
+const sortedContributors = mockContributors
+  .sort((a, b) => parseFloat(b.contribution.slice(1)) - parseFloat(a.contribution.slice(1)))
+  .slice(0, 5);
+
+interface FundraiserCardProps {
+  id: string;
+  title: string;
+  amount: string;
+  onPress: (id: string) => void;
+}
+
+const FundraiserCard = ({ id, title, amount, onPress }: FundraiserCardProps) => (
+  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
     <View style={styles.cardImageContainer}>
       <Image
         source={{ uri: 'https://placeholder.com/100' }}
@@ -46,13 +66,19 @@ const ContributorCircle = ({ image, name }) => (
   </TouchableOpacity>
 );
 
-const FundraiserSection = ({ title, data }) => (
+const FundraiserSection = ({ title, data, onPressFundraiser }) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>{title}</Text>
     <FlatList
       data={data}
       renderItem={({ item }) => (
-        <FundraiserCard title={item.title} amount={item.amount} />
+        <FundraiserCard
+          key={item.id}
+          id={item.id}
+          title={item.title}
+          amount={item.amount}
+          onPress={onPressFundraiser}
+        />
       )}
       keyExtractor={item => item.id}
       horizontal
@@ -63,6 +89,24 @@ const FundraiserSection = ({ title, data }) => (
 );
 
 export default function MainScreen1() {
+  const navigation = useNavigation();
+  const [searchInput, setSearchInput] = useState('');
+  const [filteredFundraisers, setFilteredFundraisers] = useState(mockFundraisers);
+
+  const handlePressFundraiser = (fundId: string) => {
+    navigation.navigate('FundraiserDetailsScreen', {
+      fundId,
+    });
+  };
+
+  const handleSearch = (text: string) => {
+    setSearchInput(text);
+    const filtered = mockFundraisers.filter(fundraiser =>
+      fundraiser.title.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredFundraisers(filtered);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -82,36 +126,42 @@ export default function MainScreen1() {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#666" />
-        <Text style={styles.searchPlaceholder}>Search fundraisers...</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search fundraisers..."
+          value={searchInput}
+          onChangeText={handleSearch}
+        />
       </View>
 
       {/* Main Content */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        <FundraiserSection title="Trending Fundraisers" data={mockFundraisers} />
-        <FundraiserSection title="Emergency Fundraisers" data={mockFundraisers} />
-        <FundraiserSection title="Recent Fundraisers" data={mockFundraisers} />
-        <FundraiserSection title="Successful Fundraisers" data={mockFundraisers} />
+        <FundraiserSection
+          title="Trending Fundraisers"
+          data={filteredFundraisers}
+          onPressFundraiser={handlePressFundraiser}
+        />
+        <FundraiserSection
+          title="Emergency Fundraisers"
+          data={filteredFundraisers}
+          onPressFundraiser={handlePressFundraiser}
+        />
+        <FundraiserSection
+          title="Recent Fundraisers"
+          data={filteredFundraisers}
+          onPressFundraiser={handlePressFundraiser}
+        />
+        <FundraiserSection
+          title="Successful Fundraisers"
+          data={filteredFundraisers}
+          onPressFundraiser={handlePressFundraiser}
+        />
 
         {/* Top Contributors */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Contributors</Text>
           <FlatList
-            data={mockContributors}
-            renderItem={({ item }) => (
-              <ContributorCircle image={item.image} name={item.name} />
-            )}
-            keyExtractor={item => item.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.contributorList}
-          />
-        </View>
-
-        {/* Top Fundraisers */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Top Fundraisers</Text>
-          <FlatList
-            data={mockContributors}
+            data={sortedContributors}
             renderItem={({ item }) => (
               <ContributorCircle image={item.image} name={item.name} />
             )}
@@ -124,25 +174,7 @@ export default function MainScreen1() {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      {/* <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="home" size={24} color="#333" />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="compass" size={24} color="#666" />
-          <Text style={styles.navText}>Explore</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="add-circle" size={24} color="#666" />
-          <Text style={styles.navText}>Create</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="person" size={24} color="#666" />
-          <Text style={styles.navText}>Profile</Text>
-        </TouchableOpacity>
-      </View> */}
-      {/* <BottomNavBar navigation={navigation} activeScreen="MainScreen" /> */}
+      <BottomNavBar navigation={navigation} activeScreen="Home" isAdmin={true} />
     </SafeAreaView>
   );
 }
@@ -175,8 +207,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     borderRadius: 8,
   },
-  searchPlaceholder: {
+  searchInput: {
     marginLeft: 8,
+    flex: 1,
     color: '#666',
   },
   section: {
@@ -241,21 +274,5 @@ const styles = StyleSheet.create({
     marginTop: 4,
     maxWidth: 60,
     textAlign: 'center',
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    backgroundColor: '#fff',
-  },
-  navItem: {
-    alignItems: 'center',
-  },
-  navText: {
-    fontSize: 12,
-    marginTop: 4,
-    color: '#666',
   },
 });

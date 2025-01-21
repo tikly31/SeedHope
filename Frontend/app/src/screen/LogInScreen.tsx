@@ -73,9 +73,6 @@ const LoginScreen = () => {
           picture: decoded.picture
         };
         console.log("user");
-        
-        
-
     }
   }, [response]);
 

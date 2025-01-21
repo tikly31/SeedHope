@@ -10,14 +10,17 @@ import { Ionicons } from '@expo/vector-icons';
 
 interface BottomNavBarProps {
   navigation: any;
-  activeScreen: 'MainScreen1' | 'ExploreScreen' | 'Create' | 'Profile';
+  activeScreen: 'MainScreen1' | 'ExploreScreen' | 'Create' | 'Profile' | 'PostList';
+  isAdmin ?: boolean;
 }
 
-export default function BottomNavBar({ navigation, activeScreen }: BottomNavBarProps) {
+export default function BottomNavBar({ navigation, activeScreen, isAdmin = false }: BottomNavBarProps) {
   const navItems = [
     { name: 'MainScreen', label: 'Home', icon: 'home-outline' },
     { name: 'ExploreScreen', label: 'Explore', icon: 'compass-outline' },
-    { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
+    isAdmin 
+      ? { name: 'PostListScreen', label: 'Approve', icon: 'checkmark-circle-outline' }
+      : { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
     { name: 'ProfileScreen', label: 'Profile', icon: 'person-outline' },
   ];
 

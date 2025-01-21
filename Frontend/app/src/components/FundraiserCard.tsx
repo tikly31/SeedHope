@@ -1,44 +1,59 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
-import { ProgressBar, MD3Colors } from 'react-native-paper';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
 interface FundraiserCardProps {
+  id: string;
   title: string;
-  progress: number; // Percentage
+  amount: string;
+  onPress: (id: string) => void;
 }
 
-
-const FundraiserCard: React.FC<FundraiserCardProps> = ({ title, progress }) => {
-  return (
-    <View style={styles.card}>
+const FundraiserCard: React.FC<FundraiserCardProps> = ({ id, title, amount, onPress }) => (
+  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
+    <View style={styles.cardImageContainer}>
       <Image
-        style={styles.image}
-        source={{ uri: 'https://media-cldnry.s-nbcnews.com/image/upload/t_fit-760w,f_auto,q_auto:best/rockcms/2024-11/241109-gaza-05-aa-6f8a85.jpg' }}
+        source={{ uri: 'https://placeholder.com/100' }}
+        style={styles.cardImage}
       />
-      <Text style={styles.title}>{title}</Text>
-      <ProgressBar progress={0.5} color={MD3Colors.error50} />
-      {/* <ProgressBarAndroid styleAttr="Horizontal" progress={progress / 100} /> */}
     </View>
-  );
-};
+    <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
+    <Text style={styles.cardAmount}>{amount}</Text>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   card: {
+    width: 160,
+    marginHorizontal: 4,
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginBottom: 16,
-    padding: 16,
-    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  image: {
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 8,
+  cardImageContainer: {
+    width: '100%',
+    height: 120,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    overflow: 'hidden',
   },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
+  cardImage: {
+    width: '100%',
+    height: '100%',
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    padding: 8,
+  },
+  cardAmount: {
+    fontSize: 14,
+    color: '#2196F3',
+    paddingHorizontal: 8,
+    paddingBottom: 8,
   },
 });
 

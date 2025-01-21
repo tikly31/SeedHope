@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 interface FundraiserDetailsProps {
   route: {
@@ -19,13 +19,18 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
   const fundraiser = {
     id: fundId,
     title: "Emergency Medical Equipment",
-    dueDate: "2024-01-31",
+    dueDate: "2024-01-31", // ISO format
     raisedAmount: 15000,
     requiredAmount: 50000,
     description: "Urgent funding needed for essential medical equipment in rural areas. This initiative aims to provide basic healthcare facilities to underserved communities.",
     imageUrl: "https://placeholder.com/medical-equipment",
-    isUrgent: true,
   };
+
+  // Calculate if it's urgent based on the current date and due date
+  const currentDate = new Date();
+  const dueDate = new Date(fundraiser.dueDate);
+  const remainingTime = (dueDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24); // in days
+  const isUrgent = remainingTime <= 3;
 
   const progress = (fundraiser.raisedAmount / fundraiser.requiredAmount) * 100;
 
@@ -36,7 +41,7 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
           style={styles.backButton} 
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#000" /> {/* Updated Icon */}
+          <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
 
         <Image 
@@ -66,7 +71,7 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
           </View>
 
           <View style={styles.descriptionContainer}>
-            {fundraiser.isUrgent && (
+            {isUrgent && (
               <View style={styles.urgentTag}>
                 <Text style={styles.urgentText}>URGENT</Text>
               </View>

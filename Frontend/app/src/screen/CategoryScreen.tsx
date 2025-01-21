@@ -1,52 +1,85 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-// import { Heart } from 'lucide-react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, ActivityIndicator, Text } from 'react-native';
+import DonationCard from '../components/DonationCard';
+import BottomNavBar from '../components/BottomNavBar';
 
-interface DonationCardProps {
-  title: string;
-  onPress: () => void;
-}
-
-const DonationCard = ({ title, onPress }: DonationCardProps) => (
-  <TouchableOpacity style={styles.card} onPress={onPress}>
-    <View style={styles.cardContent}>
-      <Text style={styles.cardTitle}>{title}</Text>
-      <TouchableOpacity style={styles.donateButton}>
-        <Text style={styles.donateButtonText}>Donate</Text>
-      </TouchableOpacity>
-    </View>
-  </TouchableOpacity>
-);
-
-export default function CategoryScreen({ route }) {
+export default function CategoryScreen({ route, navigation }) {
   const { category } = route.params;
-  console.log(`Selected category: ${category}`);
-  
-  // Mock data - replace with your actual data
-  const donations = [
-    { id: 1, title: "Support Local Hospital" },
-    { id: 2, title: "Medical Equipment Fund" },
-    { id: 3, title: "Healthcare for Children" },
-    { id: 4, title: "Emergency Medical Aid" },
-    { id: 5, title: "Medical Research Support" },
-    { id: 6, title: "Community Health Project" },
-    { id: 7, title: "Rural Healthcare Initiative" },
-    { id: 8, title: "Medical Training Program" },
-    { id: 9, title: "Healthcare Access Fund" },
-  ];
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDonations = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const mockDonations = [
+          { id: 1, title: "Support Local Hospital", currentAmount: 5000, totalAmount: 10000, dueDate: "2025-12-31", category: "Medicine" },
+          { id: 2, title: "Medical Equipment Fund", currentAmount: 3000, totalAmount: 5000, dueDate: "2025-11-15", category: "Medicine" },
+          { id: 3, title: "Healthcare for Children", currentAmount: 2000, totalAmount: 8000, dueDate: "2025-10-20", category: "Children" },
+          { id: 4, title: "Emergency Medical Aid", currentAmount: 7500, totalAmount: 10000, dueDate: "2025-09-30", category: "Emergency" },
+          { id: 5, title: "Medical Research Support", currentAmount: 1500, totalAmount: 5000, dueDate: "2025-12-01", category: "Research" },
+          { id: 6, title: "Community Health Project", currentAmount: 4000, totalAmount: 7000, dueDate: "2025-11-10", category: "Community" },
+          { id: 7, title: "Rural Healthcare Initiative", currentAmount: 2500, totalAmount: 6000, dueDate: "2025-10-05", category: "Community" },
+          { id: 8, title: "Medical Training Program", currentAmount: 1000, totalAmount: 3000, dueDate: "2025-11-25", category: "Education" },
+          { id: 9, title: "Healthcare Access Fund", currentAmount: 6000, totalAmount: 9000, dueDate: "2025-12-15", category: "Access" },
+        ];
+
+        const currentDate = new Date();
+        const filteredDonations = mockDonations.filter(donation => {
+          const donationDueDate = new Date(donation.dueDate);
+          return donation.category === category && donationDueDate >= currentDate;
+        });
+
+        setTimeout(() => {
+          setDonations(filteredDonations);
+          setLoading(false);
+        }, 1000);
+      } catch (error) {
+        setError('Failed to fetch donations');
+        setLoading(false);
+      }
+    };
+
+    fetchDonations();
+  }, [category]);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#3182CE" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.grid}>
-        {donations.map((donation) => (
-          <DonationCard
-            key={donation.id}
-            title={donation.title}
-            onPress={() => console.log(`Selected donation: ${donation.title}`)}
-          />
-        ))}
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.grid}>
+          {donations.map((donation) => (
+            <DonationCard
+              key={donation.id}
+              title={donation.title}
+              currentAmount={donation.currentAmount}
+              totalAmount={donation.totalAmount}
+              dueDate={donation.dueDate}
+              onPress={() => console.log(`Selected donation: ${donation.title}`)}
+            />
+          ))}
+        </View>
+      </ScrollView>
+      <BottomNavBar navigation={navigation} activeScreen="Home" isAdmin={true} />
+    </View>
   );
 }
 
@@ -55,46 +88,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F7FAFC',
   },
+  scrollContent: {
+    paddingBottom: 80, // Ensure content doesn't overlap with the navbar
+  },
   grid: {
     padding: 16,
     gap: 12,
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  cardContent: {
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  cardTitle: {
+  errorText: {
+    color: 'red',
     fontSize: 16,
-    fontWeight: '500',
-    color: '#2D3748',
-    flex: 1,
-    marginRight: 12,
-  },
-  donateButton: {
-    backgroundColor: '#4299E1',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  donateButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
   },
 });
