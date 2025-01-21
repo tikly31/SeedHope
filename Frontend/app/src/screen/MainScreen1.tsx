@@ -100,15 +100,10 @@ export default function MainScreen1() {
       </View>
 
       {/* Search Bar */}
-      <View style={styles.searchContainer}>
+      <TouchableOpacity style={styles.searchContainer} onPress={() => navigation.navigate("SearchScreen")}>
         <Ionicons name="search" size={20} color="#666" />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search fundraisers..."
-          value={searchInput}
-          onChangeText={handleSearch}
-        />
-      </View>
+        <Text style={styles.searchPlaceholder}>Search fundraisers...</Text>
+      </TouchableOpacity>
 
       {/* Main Content */}
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -180,19 +175,18 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 20,
-    marginRight: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 20,
     marginBottom: 20,
-    padding: 6,
-    backgroundColor: '#f5f5f5',
+    padding: 10,
+    backgroundColor: "#f5f5f5",
     borderRadius: 8,
   },
-  searchInput: {
+  searchPlaceholder: {
     marginLeft: 8,
+    color: "#666",
     flex: 1,
-    color: '#666',
   },
   contributorList: {
     paddingHorizontal: 12,

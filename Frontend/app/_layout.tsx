@@ -21,6 +21,7 @@ import PostDetailsScreen from "./src/screen/PostDetailsScreen";
 import DonationPage from "./src/screen/DonationPage";
 import ProfileScreen1 from "./src/screen/ProfileScreen1";
 import EditProfileScreen1 from "./src/screen/EditProfileScreen1";
+import SearchScreen from "./src/screen/SearchScreen";
 import LogoutScreen from "./src/screen/LogoutScreen";
 
 const Stack = createNativeStackNavigator();
@@ -34,9 +35,10 @@ const AppNavigator = () => {
             headerShown: false,
           }}
         >
-          <Stack.Screen name={"EditProfileScreen1"} component={EditProfileScreen1} />
-          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"MainScreen"} component={MainScreen} />
+          <Stack.Screen name={"EditProfileScreen1"} component={EditProfileScreen1} />
+          <Stack.Screen name={"SearchScreen"} component={SearchScreen} />
+          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"ProfileScreen1"} component={ProfileScreen1} />
           <Stack.Screen name={"PostListScreen"} component={PostListScreen} />
           <Stack.Screen name={"PostDetails"} component={PostDetailsScreen} />
