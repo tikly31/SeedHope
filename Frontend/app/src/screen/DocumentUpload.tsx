@@ -34,13 +34,13 @@ export default function DocumentUpload({ navigation, route }) {
   useEffect(() => {
     const fetchCurrentUserId = async () => {
       try {
-        const token = await AsyncStorage.getItem('authToken');
+        const token = await AsyncStorage.getItem('token');
         if (!token) {
           console.error('No token found!');
           return;
         }
 
-        const response = await fetch(`http://${API_BASE_URL}/currentuser`, {
+        const response = await fetch(`${API_BASE_URL}/me`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -54,7 +54,7 @@ export default function DocumentUpload({ navigation, route }) {
         }
 
         const userData = await response.json();
-        setOrganizerId(userData.id); // Extract and set organizer ID
+        setOrganizerId(userData.id);
       } catch (error) {
         console.error('Error fetching current user:', error);
       }
@@ -63,50 +63,54 @@ export default function DocumentUpload({ navigation, route }) {
     fetchCurrentUserId();
   }, []);
 
-  const uploadDocumentToServer = async (fileUri: string, fileName: string) => {
-    try {
-      const token = await AsyncStorage.getItem('authToken');
-      if (!token) {
-        Alert.alert('Error', 'No authentication token found.');
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('file', {
-        uri: fileUri,
-        name: fileName,
-        type: 'image/jpeg', // or 'image/png', depending on the file type
-      });
-
-      const response = await fetch(`http://${API_BASE_URL}/upload/photo`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        console.error('Failed to upload document:', response.statusText);
-        Alert.alert('Error', 'Failed to upload the document.');
-        return;
-      }
-
-      const result = await response.text(); // Backend returns success message or path
-      console.log('File uploaded successfully:', result);
-      Alert.alert('Success', 'File uploaded successfully!');
-    } catch (error) {
-      console.error('Error uploading document:', error);
-      Alert.alert('Error', 'An error occurred while uploading the document.');
+const uploadDocumentToServer = async (fileUri: string, fileName: string) => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      Alert.alert('Error', 'No authentication token found.');
+      return;
     }
-  };
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri: fileUri,
+      name: fileName,
+      type: 'image/jpeg',
+    });
+
+    const response = await fetch(`${API_BASE_URL}/upload/photo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      console.error('Failed to upload document:', response.statusText);
+      Alert.alert('Error', 'Failed to upload the document.');
+      return;
+    }
+
+    // Get the URL returned by the backend
+    const uploadedFileUrl = await response.text();
+    console.log('File uploaded successfully:', uploadedFileUrl);
+
+    // Store the correct URL instead of the local URI
+    setDocuments([{ name: fileName, size: 0, uri: uploadedFileUrl }]);
+
+    Alert.alert('Success', 'File uploaded successfully!');
+  } catch (error) {
+    console.error('Error uploading document:', error);
+    Alert.alert('Error', 'An error occurred while uploading the document.');
+  }
+};
 
 
   const handleDocumentPick = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: ['image/*'], // Accept only image files
+        type: ['image/*'],
         copyToCacheDirectory: true,
       });
 
@@ -127,51 +131,34 @@ export default function DocumentUpload({ navigation, route }) {
     }
   };
 
-
-  const simulateUpload = () => {
-    setIsUploading(true);
-    uploadProgress.setValue(0);
-
-    Animated.timing(uploadProgress, {
-      toValue: 100,
-      duration: 2000,
-      useNativeDriver: false,
-    }).start(() => {
-      setIsUploading(false);
-    });
-  };
-
   const handleSubmit = async () => {
     if (!organizerId) {
-      Alert.alert('Error', 'Failed to fetch the organizer ID.');
+      Alert.alert('Error', 'Organizer ID is not set yet. Please wait a moment and try again.');
       return;
     }
 
     try {
-      const token = await AsyncStorage.getItem('authToken');
+      const token = await AsyncStorage.getItem('token');
       if (!token) {
         Alert.alert('Error', 'No authentication token found.');
         return;
       }
 
-      // Add `organizerId` and document details to the campaign
       const campaignData = {
-        title: campaign.title, // Campaign title passed from the previous page
-        description: campaign.details, // Campaign description
-        category: campaign.category, // Campaign category
-        goalAmount: campaign.amount, // Goal amount for the campaign
-        dueDate: campaign.dueDate, // Due date of the campaign
-        organizerId: organizerId, // Organizer ID fetched from the backend
-        photoUrl: documents.length > 0 ? documents[0].uri : null, // First document URI as photo URL
-        raisedAmount: 0.0, // Initial raised amount is 0.0
-        status: 'PENDING', // Default status is PENDING
-        creationDate: new Date().toISOString().split('T')[0], // Current date and time
+        title: campaign.title,
+        description: campaign.details,
+        category: campaign.category,
+        goalAmount: campaign.amount,
+        dueDate: campaign.dueDate,
+        organizerId: organizerId, // Ensure organizer ID is properly set
+        photoUrl: documents.length > 0 ? documents[0].uri : null,
+        raisedAmount: 0.0,
+        status: 'PENDING'
       };
 
-      const response = await fetch(`http://${API_BASE_URL}/campaign`, {
+      const response = await fetch(`${API_BASE_URL}/campaign`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(campaignData),
@@ -379,3 +366,5 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+
+

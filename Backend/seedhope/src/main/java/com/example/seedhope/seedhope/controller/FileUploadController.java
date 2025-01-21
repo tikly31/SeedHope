@@ -1,27 +1,39 @@
 package com.example.seedhope.seedhope.controller;
 
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.http.ResponseEntity;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
 
-
+@RestController
+@RequestMapping("/uploads")
 public class FileUploadController {
-    private static final String UPLOAD_DIRECTORY = "D:\\SeedHope\\Backend\\seedhope\\src\\main\\resources\\photos\\campaigns\\";
+    private static final String UPLOAD_DIRECTORY = "D:/SeedHope/uploads/";
 
     @PostMapping("/photo")
-    public String uploadPhoto(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<String> uploadPhoto(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
-            return "File upload failed: file is empty.";
+            return ResponseEntity.badRequest().body("File upload failed: file is empty.");
         }
 
-        // Save file to the specified directory with the original filename
-        File destination = new File(UPLOAD_DIRECTORY + file.getOriginalFilename());
-        file.transferTo(destination);
+        try {
+            // Ensure the directory exists
+            Path uploadPath = Paths.get(UPLOAD_DIRECTORY);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
 
-        return "File uploaded successfully: " + destination.getAbsolutePath();
+            // Save file with a unique name
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            File destination = new File(UPLOAD_DIRECTORY + fileName);
+            file.transferTo(destination);
+
+            // Return the file URL
+            return ResponseEntity.ok(fileName);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("File upload failed.");
+        }
     }
 }
