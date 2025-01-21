@@ -13,76 +13,89 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import BottomNavBar from '../components/BottomNavBar';
 
-export default function FundraiserDetails({navigation}) {
+export default function FundraiserDetails({ navigation, route }) {
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
   const characterLimit = 500;
 
+  // Destructure the passed params from route
+  const { dueDate, category, amount} = route.params || {};
+
   const isValidForm = title.trim().length > 0 && details.trim().length > 0;
+
+  const handleContinue = () => {
+    // Create Campaign object
+    const campaign = {
+      dueDate,
+      category,
+      amount,
+      title,
+      details,
+    };
+
+    console.log('Created Campaign:', campaign);
+
+    // Pass Campaign object to the next screen
+    navigation.navigate('DocumentUpload', { campaign });
+  };
 
   return (
     <SafeAreaView style={styles.containers}>
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
-    >
-      <LinearGradient
-        colors={['#ffffff', '#f8f9fa']}
-        style={styles.gradient}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.container}
       >
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.inputSection}>
-            <Text style={styles.sectionTitle}>Give your fundraiser a title</Text>
-            <TextInput
-              style={styles.input}
-              value={title}
-              onChangeText={setTitle}
-              placeholder="Enter title"
-              placeholderTextColor="#999"
-              maxLength={characterLimit}
-            />
-            <Text style={styles.characterCount}>{title.length}/{characterLimit}</Text>
-          </View>
-
-          <View style={styles.inputSection}>
-            <Text style={styles.sectionTitle}>Why are you raising this fund?</Text>
-            <TextInput
-              style={[styles.input, styles.multilineInput]}
-              value={details}
-              onChangeText={setDetails}
-              placeholder="Add details..."
-              placeholderTextColor="#999"
-              multiline
-              textAlignVertical="top"
-            />
-          </View>
-        </ScrollView>
-
-        <TouchableOpacity
-          style={[
-            styles.button,
-            !isValidForm && styles.buttonDisabled,
-          ]}
-          disabled={!isValidForm}
-          activeOpacity={0.8}
-          onPress={() => navigation.navigate('DocumentUpload')}
-        >
-          <LinearGradient
-            colors={isValidForm ? ['#007AFF', '#0055FF'] : ['#ccc', '#bbb']}
-            style={styles.buttonGradient}
+        <LinearGradient colors={['#ffffff', '#f8f9fa']} style={styles.gradient}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
           >
-            <Text style={styles.buttonText}>Continue</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </LinearGradient>
-    </KeyboardAvoidingView>
-    <View style={styles.bottomNav}>
-      <BottomNavBar navigation={navigation} activeScreen="Create" />
-    </View>
+            <View style={styles.inputSection}>
+              <Text style={styles.sectionTitle}>Give your fundraiser a title</Text>
+              <TextInput
+                style={styles.input}
+                value={title}
+                onChangeText={setTitle}
+                placeholder="Enter title"
+                placeholderTextColor="#999"
+                maxLength={characterLimit}
+              />
+              <Text style={styles.characterCount}>{title.length}/{characterLimit}</Text>
+            </View>
+
+            <View style={styles.inputSection}>
+              <Text style={styles.sectionTitle}>Why are you raising this fund?</Text>
+              <TextInput
+                style={[styles.input, styles.multilineInput]}
+                value={details}
+                onChangeText={setDetails}
+                placeholder="Add details..."
+                placeholderTextColor="#999"
+                multiline
+                textAlignVertical="top"
+              />
+            </View>
+          </ScrollView>
+
+          <TouchableOpacity
+            style={[styles.button, !isValidForm && styles.buttonDisabled]}
+            disabled={!isValidForm}
+            activeOpacity={0.8}
+            onPress={handleContinue}
+          >
+            <LinearGradient
+              colors={isValidForm ? ['#007AFF', '#0055FF'] : ['#ccc', '#bbb']}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonText}>Continue</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </LinearGradient>
+      </KeyboardAvoidingView>
+      <View style={styles.bottomNav}>
+        <BottomNavBar navigation={navigation} activeScreen="Create" />
+      </View>
     </SafeAreaView>
   );
 }

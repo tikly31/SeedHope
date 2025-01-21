@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { colors } from "../utils/colors";
 import MainScreen from "./MainScreen";
+import { decode as atob } from 'base-64';
 
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
