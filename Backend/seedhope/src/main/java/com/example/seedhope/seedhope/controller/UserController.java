@@ -35,10 +35,6 @@ public class UserController {
 
     @PostMapping("api/v1/register")
     public User register(@RequestBody User user) {
-//        System.out.println("Registering user");
-//        System.out.println(user.getEmail());
-//        System.out.println(user.getPassword());
-//        System.out.println(user.getContactno());
         return userservice.register(user);
 
     }
