@@ -8,9 +8,11 @@ import {
   TouchableOpacity,
   SafeAreaView,
   FlatList,
+  ActivityIndicator,
   TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
 import FundraiserSection from '../components/FundraiserSection';
@@ -19,37 +21,9 @@ import logo from '../assets/image.png';
 import profile from '../assets/profile.jpg';
 import defaultContributorImage from '../assets/default_contributor.jpg';
 
-// Mock data for fundraisers
-const mockFundraisers = [
-  { id: '1', title: 'Save the Forest', amount: '$5,000' },
-  { id: '2', title: 'Clean Water Project', amount: '$3,000' },
-  { id: '3', title: 'Education Fund', amount: '$8,000' },
-  { id: '4', title: 'Medical Aid', amount: '$12,000' },
-];
-
-// Mock data for contributors
-const mockContributors = [
-  { id: '1', name: 'John D.', image: '', contribution: '$100' },
-  { id: '2', name: 'Sarah M.', image: '', contribution: '$50' },
-  { id: '3', name: 'Mike R.', image: '', contribution: '$25' },
-  { id: '4', name: 'Lisa K.', image: '', contribution: '$10' },
-  { id: '5', name: 'David S.', image: '', contribution: '$5' },
-  { id: '6', name: 'Jane D.', image: '', contribution: '$1' },
-  { id: '7', name: 'Alex P.', image: '', contribution: '$1' },
-  { id: '8', name: 'Emily W.', image: '', contribution: '$1' },
-];
-
-// Function to fetch fundraisers
-const fetchFundraisers = async () => {
-  // Replace this with an API call in the future
-  return mockFundraisers;
-};
-
-// Function to fetch contributors
-const fetchContributors = async () => {
-  // Replace this with an API call in the future
-  return mockContributors;
-};
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
+// const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
 
 export default function MainScreen1() {
   const navigation = useNavigation();
@@ -72,10 +46,43 @@ export default function MainScreen1() {
     loadData();
   }, []);
 
-  const handlePressFundraiser = (fundId: string) => {
-    navigation.navigate('FundraiserDetailsScreen', {
-      fundId,
-    });
+  const [emergencyFundraisers, setEmergencyFundraisers] = useState([]);
+  const [recentFundraisers, setRecentFundraisers] = useState([]);
+  const [successfulFundraisers, setSuccessfulFundraisers] = useState([]);
+  const [topContributors, setTopContributors] = useState([]);
+  const [loading, setLoading] = useState(true);
+   const staticTrendingFundraisers = [
+      { id: '100', title: 'Save the Forest', photoUrl:'camp1.jpg', amount: '$5,000' },
+      { id: '200', title: 'Clean Water Project', photoUrl:'camp2.jpg',amount: '$3,000' },
+      { id: '300', title: 'Education Fund', photoUrl:'camp3.jpg',amount: '$8,000' },
+      { id: '400', title: 'Medical Aid', photoUrl:'camp4.jpg',amount: '$12,000' },
+    ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [emergencyRes, recentRes, successfulRes, contributorsRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/campaign/sorted?sortBy=emergency`),
+          axios.get(`${API_BASE_URL}/campaign/sorted?sortBy=recent`),
+          axios.get(`${API_BASE_URL}/campaign/successful`),
+          axios.get(`${API_BASE_URL}/contributors`),
+        ]);
+        setEmergencyFundraisers(emergencyRes.data);
+        setRecentFundraisers(recentRes.data);
+        setSuccessfulFundraisers(successfulRes.data);
+        setTopContributors(contributorsRes.data);
+      } catch (error) {
+        console.error('Error fetching data:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handlePressFundraiser = (fundId) => {
+    console.log('Navigating with fundId:', fundId);
+    navigation.navigate('FundraiserDetailsScreen', { fundId });
   };
 
   const handleSearch = (text: string) => {
@@ -85,6 +92,14 @@ export default function MainScreen1() {
     );
     setFundraisers(filtered);
   };
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#2196F3" />
+        <Text>Loading fundraisers...</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -111,22 +126,22 @@ export default function MainScreen1() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <FundraiserSection
           title="Trending Fundraisers"
-          data={fundraisers}
+          data={staticTrendingFundraisers}
           onPressFundraiser={handlePressFundraiser}
         />
         <FundraiserSection
           title="Emergency Fundraisers"
-          data={fundraisers}
+          data={emergencyFundraisers}
           onPressFundraiser={handlePressFundraiser}
         />
         <FundraiserSection
           title="Recent Fundraisers"
-          data={fundraisers}
+          data={recentFundraisers}
           onPressFundraiser={handlePressFundraiser}
         />
         <FundraiserSection
           title="Successful Fundraisers"
-          data={fundraisers}
+          data={successfulFundraisers}
           onPressFundraiser={handlePressFundraiser}
         />
 
@@ -134,14 +149,11 @@ export default function MainScreen1() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Contributors</Text>
           <FlatList
-            data={contributors}
+            data={topContributors}
             renderItem={({ item }) => (
-              <ContributorCircle
-                image={item.image || defaultContributorImage}
-                name={item.name}
-              />
+              <ContributorCircle image={`${API_BASE_URL}/user/${item.picture}` || defaultContributorImage} name={item.name} />
             )}
-            keyExtractor={item => item.id}
+            keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.contributorList}
@@ -202,5 +214,66 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 16,
     marginBottom: 12,
+  },
+  fundraiserList: {
+    paddingHorizontal: 12,
+  },
+  contributorContainer: {
+    alignItems: 'center',
+    marginHorizontal: 8,
+  },
+  contributorImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  contributorName: {
+    fontSize: 12,
+    marginTop: 4,
+    maxWidth: 60,
+    textAlign: 'center',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    width: 160,
+    marginHorizontal: 4,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardImageContainer: {
+    width: '100%',
+    height: 120,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    overflow: 'hidden',
+  },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    padding: 8,
+  },
+  cardAmount: {
+    fontSize: 14,
+    color: '#2196F3',
+    paddingHorizontal: 8,
+    paddingBottom: 8,
+  },
+  noDataText: {
+    marginLeft: 16,
+    fontSize: 14,
+    color: '#999',
   },
 });

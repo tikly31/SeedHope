@@ -12,94 +12,88 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import BottomNavBar from '../components/BottomNavBar';
 
-
-
 const categories = [
-  ['Animals', 'Medical', 'Family'],
-  ['Education', 'Monthly Bills', 'Sports'],
-  ['Travel', 'Environment'],
+  ['Medical', 'Education', 'Disaster'],
+  ['Environment', 'Emergency'],
 ];
 
-export default function CreateFundraiser({navigation}) {
-  
-
-    
+export default function CreateFundraiser({ navigation }) {
   const [selectedCity, setSelectedCity] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  const cities = [
-    'Dhaka',
-    'Chittagong',
-    'Sylhet',
-    'Rajshahi',
-    'Khulna',
-    'Barisal',
-  ];
+  const cities = ['Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal'];
+
+  // Check if all required fields are filled
+  const isFormValid = selectedCity && zipCode && selectedCategory;
 
   return (
-     <SafeAreaView style={styles.containers}>
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Let's begin fundraising!</Text>
-      
-      <Text style={styles.question}>Where will the funds go?</Text>
-      
-      <View style={styles.inputContainer}>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={selectedCity}
-            onValueChange={(itemValue) => setSelectedCity(itemValue)}
-            style={styles.picker}
-          >
-            <Picker.Item label="Select a city" value="" />
-            {cities.map((city) => (
-              <Picker.Item key={city} label={city} value={city} />
-            ))}
-          </Picker>
+    <SafeAreaView style={styles.containers}>
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Let's begin fundraising!</Text>
+
+        <Text style={styles.question}>Where will the funds go?</Text>
+
+        <View style={styles.inputContainer}>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedCity}
+              onValueChange={(itemValue) => setSelectedCity(itemValue)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Select a city" value="" />
+              {cities.map((city) => (
+                <Picker.Item key={city} label={city} value={city} />
+              ))}
+            </Picker>
+          </View>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Zip Code"
+            value={zipCode}
+            onChangeText={setZipCode}
+            keyboardType="numeric"
+          />
         </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Zip Code"
-          value={zipCode}
-          onChangeText={setZipCode}
-          keyboardType="numeric"
-        />
+        <Text style={styles.question}>
+          What best describes why you're fundraising?
+        </Text>
+
+        <View style={styles.categoriesContainer}>
+          {categories.map((row, rowIndex) => (
+            <View key={rowIndex} style={styles.categoryRow}>
+              {row.map((category) => (
+                <TouchableOpacity
+                  key={category}
+                  style={[
+                    styles.categoryButton,
+                    selectedCategory === category && styles.selectedCategory,
+                  ]}
+                  onPress={() => setSelectedCategory(category)}
+                >
+                  <Text style={styles.categoryText}>{category}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ))}
+        </View>
+
+        <TouchableOpacity
+          style={[
+            styles.continueButton,
+            !isFormValid && styles.continueButtonDisabled, // Apply disabled style
+          ]}
+          disabled={!isFormValid} // Disable button if form is not valid
+          onPress={() => navigation.navigate('FundraiserBeneficiary')}
+        >
+          <Text style={styles.continueButtonText}>Continue</Text>
+        </TouchableOpacity>
+      </ScrollView>
+      <View style={styles.bottomnavbar}>
+        <BottomNavBar navigation={navigation} activeScreen="Create" />
       </View>
-
-      <Text style={styles.question}>
-        What best describes why you're fundraising?
-      </Text>
-
-      <View style={styles.categoriesContainer}>
-        {categories.map((row, rowIndex) => (
-          <View key={rowIndex} style={styles.categoryRow}>
-            {row.map((category) => (
-              <TouchableOpacity
-                key={category}
-                style={[
-                  styles.categoryButton,
-                  selectedCategory === category && styles.selectedCategory,
-                ]}
-                onPress={() => setSelectedCategory(category)}
-              >
-                <Text style={styles.categoryText}>{category}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ))}
-      </View>
-
-      <TouchableOpacity style={styles.continueButton} 
-        // Navigate to FundraiserBeneficiary for the "Continue" button
-        onPress={() => navigation.navigate('FundraiserBeneficiary')}
-      >
-        <Text style={styles.continueButtonText}>Continue</Text>
-      </TouchableOpacity>
-    </ScrollView>
-    <View style={styles.bottomnavbar}>
-      <BottomNavBar  navigation={navigation} activeScreen="Create" />
-    </View>
     </SafeAreaView>
   );
 }
@@ -179,13 +173,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 30,
   },
+  continueButtonDisabled: {
+    backgroundColor: '#B0BEC5', // Gray color for disabled state
+  },
   continueButtonText: {
-    color: '#fff',
+    color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
   },
   bottomnavbar: {
-    // Add bottomnavbar styles here fixed bottom of the screen
     position: 'absolute',
     bottom: 0,
     width: '100%',

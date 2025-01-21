@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,6 +67,8 @@ public class Userservice implements PaymentObserver {
                 .setEmail(user.getEmail())
                 .setUsername(user.getUsername())
                 .setPassword(encoder.encode(user.getPassword()))
+                .setPicture(user.getPicture())
+                .setDonatedAmount(user.getDonatedAmount())
                 .setContactno(user.getContactno())  // Setting the contact number
                 .build();
 
@@ -104,17 +107,24 @@ public class Userservice implements PaymentObserver {
     }
 
     public String verify(User user) {
+        System.out.println(1);
+        System.out.println(user.getPassword() + " " + user.getUsername() + "hi");
+//        System.out.println(user.getUsername());
         // Authenticate the user using the AuthenticationManager
         Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
+
+        System.out.println(authentication.isAuthenticated());
 
         // Check if authentication is successful
         if (authentication.isAuthenticated()) {
-            String username = authentication.getName();
+            String email = authentication.getName();
 
             // Retrieve the user from the database using the username
-            User authenticatedUser = userRepository.findByUsername(username);
+
+            User authenticatedUser = userRepository.findByUsername(email);
+
 
             // Check if the user exists in the database
             if (authenticatedUser == null) {
@@ -122,7 +132,7 @@ public class Userservice implements PaymentObserver {
             }
 
             // Generate a JWT token for the authenticated user
-            return jwtService.generateToken(username); // Pass username or modify the JWTService to handle User object
+            return jwtService.generateToken(email); // Pass username or modify the JWTService to handle User object
         } else {
             return "Authentication failed";
         }
@@ -154,4 +164,14 @@ public class Userservice implements PaymentObserver {
         UpdateDonatedAmount(user, amount);
     }
 
+    public User getCurrentUser() {
+        // Get the current authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return userRepository.findByUsername(username);
+    }
+
+    public List<User> getTopContributors() {
+        return userRepository.findAllByOrderByDonatedAmountDesc();
+    }
 }

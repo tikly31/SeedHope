@@ -1,8 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import HomeScreen from "./src/screen/HomeScreen";
 import LoginScreen from "./src/screen/LogInScreen";
+import HomeScreen from "./src/screen/HomeScreen";
 import SignupScreen from "./src/screen/SignUpScreen";
 import MainScreen from "./src/screen/MainScreen1";
 import CreateFundraiser from "./src/screen/CreateFundraiser"
@@ -18,6 +18,7 @@ import CategoryScreen from "./src/screen/CategoryScreen";
 import FundraiserDetailsScreen from "./src/screen/FundraiserDetailsScreen";
 import PostListScreen from "./src/screen/PostListScreen";
 import PostDetailsScreen from "./src/screen/PostDetailsScreen";
+import DonationPage from "./src/screen/DonationPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,9 +35,10 @@ const AppNavigator = () => {
           <Stack.Screen name={"PostListScreen"} component={PostListScreen} />
           <Stack.Screen name={"PostDetails"} component={PostDetailsScreen} />
           <Stack.Screen name={"FundraiserDetailsScreen"} component={FundraiserDetailsScreen} />
+          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
+          <Stack.Screen name={"DonationPage"} component={DonationPage} />
           <Stack.Screen name={"ExploreScreen"} component={ExploreScreen} />
           <Stack.Screen name={"HomeScreen"} component={HomeScreen} />
-          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"SignupScreen"} component={SignupScreen} />
           <Stack.Screen name={"CreateFundraiser"} component={CreateFundraiser} />
           <Stack.Screen name={"FundraiserBeneficiary"} component={FundraiserBeneficiary} />

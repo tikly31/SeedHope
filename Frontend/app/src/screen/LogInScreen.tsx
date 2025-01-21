@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -15,11 +15,15 @@ import axios from "axios";
 import { colors } from "../utils/colors";
 import MainScreen from "./MainScreen";
 
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
+
 import * as Google from 'expo-auth-session/providers/google'
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import jwtDecode from "jwt-decode";
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -32,7 +36,7 @@ const GOOGLE_WEB_CLIENT_ID = "853660126141-kn2kjcl3vq3t6c962u711p53p62qimlk.apps
 WebBrowser.maybeCompleteAuthSession();
 
 
-
+// const API_BASE_URL = 'http://192.168.0.106:8080';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -40,14 +44,20 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [secureEntry, setSecureEntry] = useState(true);
 
-  const validUsers = [
-    { email: "test1@example.com", password: "password123" },
-    { email: "test2@example.com", password: "securePass456" },
-    { email: "test3@example.com", password: "mySecret789" },
-    { email: "user@example.com", password: "password123" },
-    { email: "admin@example.com", password: "adminAccess!" },
-    { email: "i@gmail.com", password: "1" },
-  ];
+const [validUsers, setValidUsers] = useState([]);
+
+useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/v1/users`);
+      setValidUsers(response.data); // Assuming response.data is an array of users
+    } catch (error) {
+      console.error('Error fetching users:', error.message);
+    }
+  };
+
+  fetchUsers();
+}, []);
 
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
@@ -103,40 +113,52 @@ const LoginScreen = () => {
   }
 
 
+
   
-  
 
 
- 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please enter both email and password.");
-      return;
-    }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      Alert.alert("Error", "Please enter a valid email address.");
-      return;
-    }
+const handleLogin = async () => {
+  if (!email || !password) {
+    Alert.alert("Error", "Please enter both email and password.");
+    return;
+  }
 
-    const user = validUsers.find(
-      (user) => user.email === email && user.password === password
-    );
+  const emailRegex = /^[^\s@]+@[^\s@]+$/; // Simplified email regex
+  if (!emailRegex.test(email)) {
+    Alert.alert("Error", "Please enter a valid email address.");
+    return;
+  }
 
-    if (user) {
-      navigation.navigate("MAINSCREEN");
+  try {
+    // Make a POST request to the login endpoint
+    const response = await axios.post(`${API_BASE_URL}/api/v1/login`, { email, password });
+    console.log("Here is the response : " , response.data);
+    if (response.status === 200) {
+      const token = response.data; // Assume backend returns the JWT token on successful login
+      console.log("Login successful. Token received:", token);
+
+      // Store the JWT token for subsequent requests
+      await AsyncStorage.setItem("authToken", token);
+
+      // Navigate to the main screen
+      navigation.navigate("MainScreen");
     } else {
       Alert.alert("Error", "Invalid email or password. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("Login error:", error);
+    Alert.alert("Error", "Unable to login. Please check your credentials and try again.");
+  }
+};
+
 
   const handleGoBack = () => {
     navigation.goBack();
   };
 
   const handleSignup = () => {
-    navigation.navigate("SIGNUP");
+    navigation.navigate("SignupScreen");
   };
 
   return (

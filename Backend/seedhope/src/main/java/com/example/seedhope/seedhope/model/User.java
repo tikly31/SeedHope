@@ -29,6 +29,7 @@ public class User {
         this.contactno = builder.contactno;
         this.picture = builder.picture;
         this.provider = builder.provider;
+        this.donatedAmount = builder.donatedAmount;
     }
 
     // Getters

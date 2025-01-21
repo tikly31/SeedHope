@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class JWTService {
 
 
-    private String secretkey = "";
+    private String secretkey = "a";
 
     public JWTService() {
 
@@ -83,7 +83,11 @@ public class JWTService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-
+    // Extract the userid from the token
+    public Long extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        return Long.parseLong(claims.get("userId").toString());
+    }
 
 
 

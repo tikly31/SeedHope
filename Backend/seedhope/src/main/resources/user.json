@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "username": "johndoe",
+    "password": "$2a$12$qn74wWvr2CpUSiibxFPpf.CTCZWbFqiWzhWgbMGTT0ItS2mhSNhpK",
+    "contactno": "01111111111",
+    "picture": null,
+    "provider": null,
+    "donatedAmount": 0.0
+  },
+  {
+    "id": 3,
+    "name": "Istahak Islam",
+    "email": "istahak123@gmail.com",
+    "username": "Istahak",
+    "password": "1234",
+    "contactno": "01234567891",
+    "picture": "user2.jpg",
+    "provider": null,
+    "donatedAmount": 0.0
+  },
+  {
+    "id": 4,
+    "name": "Maisha Noor",
+    "email": "maisha123@gmail.com",
+    "username": "Tikly",
+    "password": "1234",
+    "contactno": "01234567891",
+    "picture": "user3.jpg",
+    "provider": null,
+    "donatedAmount": 0.0
+  },
+  {
+    "id": 5,
+    "name": "Rifat Khan",
+    "email": "rifat123@gmail.com",
+    "username": "Rifat",
+    "password": "1234",
+    "contactno": "01234567891",
+    "picture": "user4.jpg",
+    "provider": null,
+    "donatedAmount": 0.0
+  },
+  {
+    "id": 2,
+    "name": "Abdullah Al Tanzim",
+    "email": "tanzimshafin411@gmail.com",
+    "username": "Tanzim",
+    "password": "1234",
+    "contactno": "01234567891",
+    "picture": "user1.jpg",
+    "provider": null,
+    "donatedAmount": 1000.0
+  },
+  {
+    "id": 6,
+    "name": "Tony Stark",
+    "email": "rifat@gmail.com",
+    "username": "Tony",
+    "password": "$2a$12$KoM7ZntOAxm.WqM0VOdOsupp5iblkfRjphHrKz5ZG1W0Wh9zdctxa",
+    "contactno": "01234567891",
+    "picture": null,
+    "provider": null,
+    "donatedAmount": null
+  },
+  {
+    "id": 7,
+    "name": "A",
+    "email": "tony@gmail.com",
+    "username": "AA",
+    "password": "$2a$12$cSaxG87mTaNR3Nfb/O/9xemCtKKp/e7GGMmCbBMt8s/uOlAvWhRAe",
+    "contactno": "01234567891",
+    "picture": null,
+    "provider": null,
+    "donatedAmount": null
+  }
+]
