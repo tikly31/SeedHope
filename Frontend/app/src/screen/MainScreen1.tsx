@@ -20,46 +20,30 @@ import ContributorCircle from '../components/ContributorCircle';
 import logo from '../assets/image.png';
 import profile from '../assets/profile.jpg';
 import defaultContributorImage from '../assets/default_contributor.jpg';
-
 import CONFIG from './config';
+
 const API_BASE_URL = CONFIG.API_BASE_URL;
-// const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
 
 export default function MainScreen1() {
   const navigation = useNavigation();
   const [searchInput, setSearchInput] = useState('');
   const [fundraisers, setFundraisers] = useState([]);
   const [contributors, setContributors] = useState([]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      const fetchedFundraisers = await fetchFundraisers();
-      setFundraisers(fetchedFundraisers);
-
-      const fetchedContributors = await fetchContributors();
-      const sortedContributors = fetchedContributors
-        .sort((a, b) => parseFloat(b.contribution.slice(1)) - parseFloat(a.contribution.slice(1)))
-        .slice(0, 5);
-      setContributors(sortedContributors);
-    };
-
-    loadData();
-  }, []);
-
   const [emergencyFundraisers, setEmergencyFundraisers] = useState([]);
   const [recentFundraisers, setRecentFundraisers] = useState([]);
   const [successfulFundraisers, setSuccessfulFundraisers] = useState([]);
   const [topContributors, setTopContributors] = useState([]);
   const [loading, setLoading] = useState(true);
-   const staticTrendingFundraisers = [
-      { id: '100', title: 'Save the Forest', photoUrl:'camp1.jpg', amount: '$5,000' },
-      { id: '200', title: 'Clean Water Project', photoUrl:'camp2.jpg',amount: '$3,000' },
-      { id: '300', title: 'Education Fund', photoUrl:'camp3.jpg',amount: '$8,000' },
-      { id: '400', title: 'Medical Aid', photoUrl:'camp4.jpg',amount: '$12,000' },
-    ];
+
+  const staticTrendingFundraisers = [
+    { id: '100', title: 'Save the Forest', photoUrl: 'camp1.jpg', amount: '$5,000' },
+    { id: '200', title: 'Clean Water Project', photoUrl: 'camp2.jpg', amount: '$3,000' },
+    { id: '300', title: 'Education Fund', photoUrl: 'camp3.jpg', amount: '$8,000' },
+    { id: '400', title: 'Medical Aid', photoUrl: 'camp4.jpg', amount: '$12,000' },
+  ];
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadData = async () => {
       try {
         const [emergencyRes, recentRes, successfulRes, contributorsRes] = await Promise.all([
           axios.get(`${API_BASE_URL}/campaign/sorted?sortBy=emergency`),
@@ -67,6 +51,7 @@ export default function MainScreen1() {
           axios.get(`${API_BASE_URL}/campaign/successful`),
           axios.get(`${API_BASE_URL}/contributors`),
         ]);
+
         setEmergencyFundraisers(emergencyRes.data);
         setRecentFundraisers(recentRes.data);
         setSuccessfulFundraisers(successfulRes.data);
@@ -77,21 +62,24 @@ export default function MainScreen1() {
         setLoading(false);
       }
     };
-    fetchData();
+
+    loadData();
   }, []);
 
   const handlePressFundraiser = (fundId) => {
-    console.log('Navigating with fundId:', fundId);
+    // console.log('Navigating with fundId:', fundId);
     navigation.navigate('FundraiserDetailsScreen', { fundId });
   };
 
   const handleSearch = (text: string) => {
     setSearchInput(text);
-    const filtered = fundraisers.filter(fundraiser =>
+    // Assuming you want to filter the fundraisers based on the search input
+    const filtered = staticTrendingFundraisers.filter(fundraiser =>
       fundraiser.title.toLowerCase().includes(text.toLowerCase())
     );
     setFundraisers(filtered);
   };
+
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
@@ -151,7 +139,10 @@ export default function MainScreen1() {
           <FlatList
             data={topContributors}
             renderItem={({ item }) => (
-              <ContributorCircle image={`${API_BASE_URL}/user/${item.picture}` || defaultContributorImage} name={item.name} />
+              <ContributorCircle 
+                image={item.picture ? `${API_BASE_URL}/user/${item.picture}` : defaultContributorImage} 
+                name={item.name} 
+              />
             )}
             keyExtractor={(item) => item.id}
             horizontal
@@ -218,62 +209,11 @@ const styles = StyleSheet.create({
   fundraiserList: {
     paddingHorizontal: 12,
   },
-  contributorContainer: {
-    alignItems: 'center',
-    marginHorizontal: 8,
-  },
-  contributorImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-  contributorName: {
-    fontSize: 12,
-    marginTop: 4,
-    maxWidth: 60,
-    textAlign: 'center',
-  },
   loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  card: {
-    width: 160,
-    marginHorizontal: 4,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardImageContainer: {
-    width: '100%',
-    height: 120,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    overflow: 'hidden',
-  },
-  cardImage: {
-    width: '100%',
-    height: '100%',
-  },
-  cardTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    padding: 8,
-  },
-  cardAmount: {
-    fontSize: 14,
-    color: '#2196F3',
-    paddingHorizontal: 8,
-    paddingBottom: 8,
-  },
-  noDataText: {
-    marginLeft: 16,
-    fontSize: 14,
-    color: '#999',
-  },
 });
+
+export default MainScreen1;

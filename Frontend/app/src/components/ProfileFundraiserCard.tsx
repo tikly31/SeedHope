@@ -9,7 +9,7 @@ interface FundraiserCardProps {
   onPress: (id: string) => void;
 }
 
-const FundraiserCard: React.FC<FundraiserCardProps> = ({ id, title, amount, imageUri, onPress }) => (
+const ProfileFundraiserCard: React.FC<FundraiserCardProps> = ({ id, title, amount, imageUri, onPress }) => (
   <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
     <View style={styles.cardImageContainer}>
       <Image
@@ -24,8 +24,8 @@ const FundraiserCard: React.FC<FundraiserCardProps> = ({ id, title, amount, imag
 
 const styles = StyleSheet.create({
   card: {
-    width: 160,
-    marginHorizontal: 4,
+    width: 120,
+    margin: 4,
     backgroundColor: '#fff',
     borderRadius: 8,
     shadowColor: '#000',
@@ -35,8 +35,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardImageContainer: {
-    width: '100%',
-    height: 120,
+    width: '95%',
+    height: 80,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     overflow: 'hidden',
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FundraiserCard;
+export default ProfileFundraiserCard;

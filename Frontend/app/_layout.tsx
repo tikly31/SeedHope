@@ -34,11 +34,13 @@ const AppNavigator = () => {
             headerShown: false,
           }}
         >
+          <Stack.Screen name={"EditProfileScreen1"} component={EditProfileScreen1} />
+          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"MainScreen"} component={MainScreen} />
+          <Stack.Screen name={"ProfileScreen1"} component={ProfileScreen1} />
           <Stack.Screen name={"PostListScreen"} component={PostListScreen} />
           <Stack.Screen name={"PostDetails"} component={PostDetailsScreen} />
           <Stack.Screen name={"FundraiserDetailsScreen"} component={FundraiserDetailsScreen} />
-          <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"DonationPage"} component={DonationPage} />
           <Stack.Screen name={"ExploreScreen"} component={ExploreScreen} />
           <Stack.Screen name={"HomeScreen"} component={HomeScreen} />
@@ -52,8 +54,6 @@ const AppNavigator = () => {
           <Stack.Screen name={"ProfileScreen"} component={ProfileScreen} />
           <Stack.Screen name={"EditProfileScreen"} component={EditProfileScreen} />
           <Stack.Screen name={"CategoryScreen"} component={CategoryScreen} />
-          <Stack.Screen name={"ProfileScreen1"} component={ProfileScreen1} />
-          <Stack.Screen name={"EditProfileScreen1"} component={EditProfileScreen1} />
           <Stack.Screen name={"LogoutScreen"} component={LogoutScreen} />
         </Stack.Navigator>
       // </NavigationContainer>

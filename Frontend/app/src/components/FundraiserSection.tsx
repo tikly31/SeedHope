@@ -2,9 +2,16 @@ import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import FundraiserCard from './FundraiserCard'; // Adjust the path as necessary
 
+interface Fundraiser {
+  id: string;
+  title: string;
+  amount: string;
+  imageUri: string; // Add imageUri to the Fundraiser type
+}
+
 interface FundraiserSectionProps {
   title: string;
-  data: Array<{ id: string; title: string; amount: string }>;
+  data: Fundraiser[]; // Update the data type to include the new Fundraiser type
   onPressFundraiser: (id: string) => void;
 }
 
@@ -19,6 +26,7 @@ const FundraiserSection: React.FC<FundraiserSectionProps> = ({ title, data, onPr
           id={item.id}
           title={item.title}
           amount={item.amount}
+          imageUri={item.imageUri} // Pass the imageUri to FundraiserCard
           onPress={onPressFundraiser}
         />
       )}

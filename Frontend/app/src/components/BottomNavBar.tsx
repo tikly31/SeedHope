@@ -18,10 +18,10 @@ export default function BottomNavBar({ navigation, activeScreen, isAdmin = false
   const navItems = [
     { name: 'MainScreen', label: 'Home', icon: 'home-outline' },
     { name: 'ExploreScreen', label: 'Explore', icon: 'compass-outline' },
-    isAdmin 
-      ? { name: 'PostListScreen', label: 'Approve', icon: 'checkmark-circle-outline' }
-      : { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
-    { name: 'ProfileScreen', label: 'Profile', icon: 'person-outline' },
+    // isAdmin 
+    //   ? { name: 'PostListScreen', label: 'Approve', icon: 'checkmark-circle-outline' }
+    //   : { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
+    { name: 'ProfileScreen1', label: 'Profile', icon: 'person-outline' },
   ];
 
   return (

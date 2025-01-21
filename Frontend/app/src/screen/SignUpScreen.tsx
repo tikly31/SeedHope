@@ -38,6 +38,7 @@ const SignupScreen = () => {
   }
 
   const handleSignup = async () => {
+    console.log(email, password, phone);
     if (!email || !password || !phone) {
       showAlert("failure", "Please fill all the fields!")
       return
