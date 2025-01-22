@@ -63,6 +63,17 @@ public class UserController {
         return userservice.updateUser(user);
     }
 
+    @PutMapping("update/password")
+    public User updatePassword(@RequestBody User user) {
+        return userservice.updatePassword(user);
+    }
+
+
+    @GetMapping("passwordChecker/{rawPassword}")
+    public String passwordChecker(@PathVariable String rawPassword) {
+        return userservice.verifyPassword(rawPassword);
+    }
+
 
 
 }

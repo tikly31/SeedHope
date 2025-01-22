@@ -32,3 +32,33 @@ export const get_current_user = async () => {
     return null;
   }
 };
+
+
+export const passwordChecker = async (rawPassword) => {
+  try {
+    const token = await AsyncStorage.getItem('token'); // Retrieve the token from AsyncStorage
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/passwordChecker/${encodeURIComponent(rawPassword)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`, // Include the token in the request headers
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to check password');
+    }
+    // console.log("response + pass" , response);
+
+    const isPasswordCorrect = await response.text(); // Assuming the response is a boolean
+    // console.log("isPass", isPasswordCorrect);
+    return isPasswordCorrect;
+  } catch (error) {
+    console.error('Error checking password:', error);
+    throw error;
+  }
+};

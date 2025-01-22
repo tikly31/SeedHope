@@ -132,34 +132,6 @@ useEffect(() => {
   }
 
   
-  // const get_current_user = async (token) => {
-  //   if (!token) {
-  //     return null;
-  //   }
-  
-  //   try {
-  //     const response = await fetch(`${API_BASE_URL}/me`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json", // Ensure the correct content type
-  //         "Authorization": `Bearer ${token}`,
-  //       },
-  //     });
-  
-  //     if (!response.ok) {
-  //       // Handle non-200 responses
-  //       console.error('Failed to fetch user:', response.status, response.statusText);
-  //       return null;
-  //     }
-  
-  //     const data = await response.json(); // Parse the JSON response
-  //     return data; // Return the parsed data
-  //   } catch (error) {
-  //     console.error('Error fetching user:', error.message);
-  //     return null; // Return null in case of an error
-  //   }
-  // };
-
 
 const handleLogin = async () => {
   if (!email || !password) {

@@ -14,7 +14,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { get_current_user } from './apiUtils';
+import { get_current_user, passwordChecker } from './apiUtils';
+import { pickImage } from './imagePickerUtils';
+import AlertModal from '../components/AlertModal';
 
 import CONFIG from './config';
 
@@ -58,6 +60,11 @@ export default function EditProfileScreen() {
     confirmNewPassword: false,
   });
 
+    // New state for AlertModal
+    const [alertVisible, setAlertVisible] = useState(false)
+    const [alertType, setAlertType] = useState<"success" | "failure">("success")
+    const [alertMessage, setAlertMessage] = useState("")
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -76,6 +83,7 @@ export default function EditProfileScreen() {
               provider: userData.provider || '',
               bio: userData.bio || '',
               gender: userData.gender || '',
+              password: userData.password || '',
             }));
           }
         }
@@ -91,16 +99,17 @@ export default function EditProfileScreen() {
     navigation.goBack();
   };
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+  const showAlert = (type: "success" | "failure", message: string) => {
+    setAlertType(type)
+    setAlertMessage(message)
+    setAlertVisible(true)
+  }
 
-    if (!result.canceled && result.assets[0].uri) {
-      setProfileData(prev => ({ ...prev, picture: result.assets[0].uri }));
+  const handlePickImage  = async () => {
+    const result = await pickImage();
+
+    if (result) {
+      setProfileData(prev => ({ ...prev, picture: result}));
     }
   };
 
@@ -143,20 +152,33 @@ export default function EditProfileScreen() {
   
       if (response.ok) {
         const updatedUser = await response.json();
-        alert("Profile updated successfully!");
+        showAlert("success", "Profile updated successfully!");
+        // alert("Profile updated successfully!");
         setProfileData(updatedUser); // Update local state with the response data
       } else {
-        alert("Failed to update profile");
+        showAlert("failure", "Failed to update profile");
+        // alert("Failed to update profile");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("An error occurred while updating the profile");
+      // alert("An error occurred while updating the profile");
+      showAlert("failure", "An error occurred while updating the profile");
     }
   };
 
 
   const handleChangePassword = async () => {
     const storedPassword = profileData.password; // Simulated stored password
+    console.log("storedPassword", storedPassword);
+    // decode the password for encodeing i used bycrypt, now decode it
+
+    
+
+    
+
+
+    
+
 
     // Clear previous errors
     setError({
@@ -165,10 +187,15 @@ export default function EditProfileScreen() {
       confirmNewPassword: false,
     });
 
+    const res = await passwordChecker(profileData.currentPassword);
+
+    
+
     // Check if the current password is valid
-    if (profileData.currentPassword !== storedPassword) {
+    if (res !== "ok") {
       setError(prev => ({ ...prev, currentPassword: true }));
-      alert("Current password is invalid!");
+      // alert("Current password is invalid!");
+      showAlert("failure", "Current password is invalid!");
       updateField('currentPassword', '');
       updateField('newPassword', '');
       updateField('confirmNewPassword', '');
@@ -178,7 +205,8 @@ export default function EditProfileScreen() {
     // Check if new password and confirm password match
     if (profileData.newPassword !== profileData.confirmNewPassword) {
       setError(prev => ({ ...prev, confirmNewPassword: true }));
-      alert("New passwords do not match!");
+      // alert("New passwords do not match!");
+      showAlert("failure", "New passwords do not match!");
       updateField('currentPassword', '');
       updateField('newPassword', '');
       updateField('confirmNewPassword', '');
@@ -186,13 +214,54 @@ export default function EditProfileScreen() {
     }
 
     // Here you would typically send the new password to your backend to update it
-    console.log('Changing password to:', profileData.newPassword);
-    alert("Password changed successfully!");
+    
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      showAlert("failure", "User not authenticated");
+      return;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/update/password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        // currentPassword: profileData.currentPassword,
+        password: profileData.newPassword,
+      }),
+    });
+
+    if (response.ok) {
+      showAlert("success", "Password changed successfully!");
+      // Optionally, reset the password fields
+      updateField('currentPassword', '');
+      updateField('newPassword', '');
+      updateField('confirmNewPassword', '');
+    } else {
+      showAlert("failure", "Failed to change password");
+    }
+  } catch (error) {
+    console.error("Error changing password:", error);
+    showAlert("failure", "An error occurred while changing the password");
+  }
 
     // Optionally, reset the password fields
     updateField('currentPassword', '');
     updateField('newPassword', '');
     updateField('confirmNewPassword', '');
+  };
+
+  const handleAlertClose = () => {
+
+    setAlertVisible(false);
+    if (alertType === "success") {
+      navigation.navigate("ProfileScreen1");
+    }
+   
+
   };
 
   return (
@@ -211,7 +280,7 @@ export default function EditProfileScreen() {
       <ScrollView style={styles.content}>
         {/* Profile Picture */}
         <View style={styles.profilePictureContainer}>
-          <TouchableOpacity onPress={pickImage}>
+          <TouchableOpacity onPress={handlePickImage}>
             <Image
               source={{ uri: profileData.picture }}
               style={styles.profilePicture}
@@ -330,6 +399,7 @@ export default function EditProfileScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <AlertModal visible={alertVisible} type={alertType} message={alertMessage} onClose={handleAlertClose} />
     </View>
   );
 }

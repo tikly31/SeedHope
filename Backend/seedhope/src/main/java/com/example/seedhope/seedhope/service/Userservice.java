@@ -85,17 +85,17 @@ public class Userservice implements PaymentObserver {
         return matcher.matches();
     }
 
-    public User updatePassword(User user, String newPassword) {
-        User updatedUser = new User.UserBuilder()
-                .setId(user.getId())
-                .setName(user.getName())
-                .setEmail(user.getEmail())
-                .setUsername(user.getUsername())
-                .setPassword(encoder.encode(newPassword))
-                .build();
-
-        return userRepository.save(updatedUser);
-    }
+//    public User updatePassword(User user, String newPassword) {
+//        User updatedUser = new User.UserBuilder()
+//                .setId(user.getId())
+//                .setName(user.getName())
+//                .setEmail(user.getEmail())
+//                .setUsername(user.getUsername())
+//                .setPassword(encoder.encode(newPassword))
+//                .build();
+//
+//        return userRepository.save(updatedUser);
+//    }
 
     public String verify(User user) {
         // Authenticate the user using the AuthenticationManager
@@ -181,4 +181,31 @@ public class Userservice implements PaymentObserver {
         return userRepository.save(existingUser);
 
     }
+
+    public User updatePassword(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User existingUser = userRepository.findByEmail(email);
+        if (existingUser == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        // update the existing user with the new details
+        existingUser.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(existingUser);
+    }
+
+    public String verifyPassword(String rawPassword) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User existingUser = userRepository.findByEmail(email);
+        if (existingUser == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        String encodedPassword = existingUser.getPassword();
+        if(encoder.matches(rawPassword, encodedPassword))
+            return "ok";
+        else return "notOk";
+    }
+
+
 }
