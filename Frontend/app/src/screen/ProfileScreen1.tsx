@@ -1,62 +1,64 @@
-import React, { useState } from "react"
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, FlatList } from "react-native"
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons"
-import { useNavigation } from "@react-navigation/native"
-import BottomNavBar from "../components/BottomNavBar"
-import ProfileFundraiserCard from "../components/ProfileFundraiserCard"
-import profile from "../assets/profile.jpg"
+import React, { useState } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, FlatList } from "react-native";
+import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import BottomNavBar from "../components/BottomNavBar";
+import FundraiserItem from "../components/FundraiserItem"; // Import the new FundraiserItem component
+import DonationItem from "../components/DonationItem"
+import profile from "../assets/profile.jpg";
 
-const { width } = Dimensions.get("window")
-const PROFILE_IMAGE_SIZE = 80
+const { width } = Dimensions.get("window");
+const PROFILE_IMAGE_SIZE = 80;
 
 export default function ProfileScreen() {
-  const [activeTab, setActiveTab] = useState("fundraisers")
-  const [username, setUsername] = useState("rahman_ajij")
-  const [name, setName] = useState("Ajij Rahman")
-  const [bio, setBio] = useState("Helping others through fundraising")
-  const navigation = useNavigation()
+  const [activeTab, setActiveTab] = useState("fundraisers");
+  const [username, setUsername] = useState("rahman_ajij");
+  const [name, setName] = useState("Ajij Rahman");
+  const [bio, setBio] = useState("Helping others through fundraising");
+  const navigation = useNavigation();
 
   const fundraisers = [
-    { id: "1", title: "Medical Fund", amount: "৳50,000", imageUri: "https://example.com/image1.jpg" },
-    { id: "2", title: "Education Support", amount: "৳30,000", imageUri: "https://example.com/image2.jpg" },
-    { id: "3", title: "Emergency Aid", amount: "৳25,000", imageUri: "https://example.com/image3.jpg" },
-    { id: "4", title: "Community Project", amount: "৳40,000", imageUri: "https://example.com/image4.jpg" },
-    { id: "5", title: "Environmental Cause", amount: "৳35,000", imageUri: "https://example.com/image5.jpg" },
-    { id: "6", title: "Animal Welfare", amount: "৳20,000", imageUri: "https://example.com/image6.jpg" },
-  ]
+    { id: "1", title: "Medical Fund", raisedAmount: 50000, goalAmount: 100000, dueDate: "2023-12-31", photoUrl: "https://example.com/image1.jpg" },
+    { id: "2", title: "Education Support", raisedAmount: 30000, goalAmount: 50000, dueDate: "2023-11-15", photoUrl: "https://example.com/image2.jpg" },
+    { id: "3", title: "Emergency Aid", raisedAmount: 25000, goalAmount: 40000, dueDate: "2023-10-20", photoUrl: "https://example.com/image3.jpg" },
+    { id: "4", title: "Community Project", raisedAmount: 40000, goalAmount: 60000, dueDate: "2024-01-10", photoUrl: "https://example.com/image4.jpg" },
+    { id: "5", title: "Environmental Cause", raisedAmount: 35000, goalAmount: 50000, dueDate: "2024-05-30", photoUrl: "https://example.com/image5.jpg" },
+    { id: "6", title: "Animal Welfare", raisedAmount: 20000, goalAmount: 30000, dueDate: "2024-03-15", photoUrl: "https://example.com/image6.jpg" },
+  ];
 
   const donations = [
-    { id: '7', title: 'Local Food Bank', amount: '৳15,000', imageUri: 'https://example.com/image7.jpg' },
-    { id: '8', title: 'Children\'s Hospital', amount: '৳250', imageUri: 'https://example.com/image8.jpg' },
-    { id: '9', title: 'Disaster Relief', amount: '৳30,000', imageUri: 'https://example.com/image9.jpg' },
+    { id: '7', title: 'Local Food Bank', donatedAmount: 15000, status: 'success', imageUrl: 'https://example.com/image7.jpg' },
+    { id: '8', title: 'Children\'s Hospital', donatedAmount: 250, status: 'failure', imageUrl: 'https://example.com/image8.jpg' },
+    { id: '9', title: 'Disaster Relief', donatedAmount: 30000, status: 'success', imageUrl: 'https://example.com/image9.jpg' },
   ];
 
   const handleEditProfile = () => {
-    navigation.navigate("EditProfileScreen1")
-  }
+    navigation.navigate("EditProfileScreen1");
+  };
 
   const handleMenu = () => {
-    navigation.navigate("LogoutScreen")
-  }
+    navigation.navigate("LogoutScreen");
+  };
 
   const handlePlus = () => {
-    navigation.navigate("CreateFundraiser")
-  }
+    navigation.navigate("CreateFundraiser");
+  };
 
   const handlePressFundraiser = (fundId) => {
-    // console.log('Navigating with fundId:', fundId);
     navigation.navigate('FundraiserDetailsScreen', { fundId });
-  }
+  };
 
-  const renderItem = ({ item }) => (
-    <ProfileFundraiserCard
-      id={item.id}
-      title={item.title}
-      amount={item.amount}
-      imageUri={item.imageUri}
-      onPress={handlePressFundraiser}
-    />
-  )
+  const renderItem = ({ item }) =>
+    activeTab === "fundraisers" ? (
+      <FundraiserItem item={item} onPress={handlePressFundraiser} />
+    ) : (
+      <DonationItem
+        title={item.title}
+        donatedAmount={item.donatedAmount}
+        status={item.status}
+        imageUrl={item.imageUrl}
+      />
+    )
 
   return (
     <SafeAreaView style={styles.container}>
@@ -133,22 +135,20 @@ export default function ProfileScreen() {
           data={fundraisers}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          numColumns={3}
-          columnWrapperStyle={styles.row}
+          // Removed numColumns to display items in a single column
         />
       ) : (
         <FlatList
           data={donations}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          numColumns={3}
-          columnWrapperStyle={styles.row}
+          // Removed numColumns to display items in a single column
         />
       )}
 
       <BottomNavBar navigation={navigation} activeScreen="Home" isAdmin={true} />
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -255,10 +255,4 @@ const styles = StyleSheet.create({
   activeTab: {
     borderBottomColor: "#007AFF",
   },
-  row: {
-    flex: 1,
-    justifyContent: "space-around",
-    marginBottom: 10,
-  },
-})
-
+});
