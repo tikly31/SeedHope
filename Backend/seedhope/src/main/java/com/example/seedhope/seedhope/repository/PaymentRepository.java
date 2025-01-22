@@ -12,5 +12,5 @@ import  java.util.List;
 public interface PaymentRepository extends JpaRepository<PaymentStatus, String> {
     Optional<PaymentStatus> findByTransactionId(String transactionId);
 
-    List<PaymentStatus> findByCustomerInfo(String customerInfo);
+
 }

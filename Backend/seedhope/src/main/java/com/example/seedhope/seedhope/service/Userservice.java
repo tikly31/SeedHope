@@ -210,5 +210,12 @@ public class Userservice implements PaymentObserver {
         else return "notOk";
     }
 
+    public Long getUserIdByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        return user.getId();
+    }
 
 }

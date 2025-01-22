@@ -80,7 +80,7 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
         if (userData) {
           setName(userData.name);
           setEmail(userData.email);
-          setPhone(userData.phone);
+          setPhone(userData.contactno);
         }
       } catch (error) {
         console.error('Error loading user data:', error);

@@ -138,17 +138,12 @@ public class CampaignService implements PaymentObserver {
         return campaigns;
     }
 
-//    public List<Donation> getDonationsOfAUser(String customerInfo) {
-//        List<Donation> donations = new ArrayList<>();
-//        List<PaymentStatus> paymentStatuses = paymentService.getPaymentStatusesByCustomerInfo(customerInfo);
-//        for (PaymentStatus paymentStatus : paymentStatuses) {
-//            Long campaignId = Long.parseLong(paymentStatus.getCampaignId());
-//            Campaign campaign = campaignRepository.findById(campaignId)
-//                    .orElseThrow(() -> new IllegalArgumentException("Campaign not found"));
-//            Donation donation = new Donation(campaign.getId(), campaign.getTitle(), paymentStatus.getAmount(), campaign.getPhotoUrl());
-//            donations.add(donation);
-//        }
-//        return donations;
-//    }
+    // get campaigns title by id
+
+    public String getCampaignTitleById(Long id){
+        return campaignRepository.findById(id).get().getTitle();
+    }
+
+
 
 }
