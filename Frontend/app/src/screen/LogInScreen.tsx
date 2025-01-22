@@ -15,6 +15,7 @@ import axios from "axios";
 import { colors } from "../utils/colors";
 import MainScreen from "./MainScreen";
 import { jwtDecode } from 'jwt-decode';
+import {get_current_user} from './apiUtils';
 
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
@@ -92,9 +93,6 @@ useEffect(() => {
           picture: decoded.picture
         };
         console.log("user");
-        
-        
-
     }
   }, [response]);
 
@@ -134,33 +132,33 @@ useEffect(() => {
   }
 
   
-  const get_current_user = async (token) => {
-    if (!token) {
-      return null;
-    }
+  // const get_current_user = async (token) => {
+  //   if (!token) {
+  //     return null;
+  //   }
   
-    try {
-      const response = await fetch(`${API_BASE_URL}/me`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json", // Ensure the correct content type
-          "Authorization": `Bearer ${token}`,
-        },
-      });
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/me`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json", // Ensure the correct content type
+  //         "Authorization": `Bearer ${token}`,
+  //       },
+  //     });
   
-      if (!response.ok) {
-        // Handle non-200 responses
-        console.error('Failed to fetch user:', response.status, response.statusText);
-        return null;
-      }
+  //     if (!response.ok) {
+  //       // Handle non-200 responses
+  //       console.error('Failed to fetch user:', response.status, response.statusText);
+  //       return null;
+  //     }
   
-      const data = await response.json(); // Parse the JSON response
-      return data; // Return the parsed data
-    } catch (error) {
-      console.error('Error fetching user:', error.message);
-      return null; // Return null in case of an error
-    }
-  };
+  //     const data = await response.json(); // Parse the JSON response
+  //     return data; // Return the parsed data
+  //   } catch (error) {
+  //     console.error('Error fetching user:', error.message);
+  //     return null; // Return null in case of an error
+  //   }
+  // };
 
 
 const handleLogin = async () => {
@@ -211,13 +209,14 @@ const handleLogin = async () => {
       // save the token in async storage
       await AsyncStorage.setItem("token", token);
       // get the current user
-      const user = await get_current_user(token);
+      const user = await get_current_user();
       console.log("Here is the user : " , user);
       if(user.name === null || user.name === undefined || user.picture === null || user.picture === undefined){
         showAlert("success", "Login successful! Please complete your profile.")
       } else {
         navigation.navigate("MainScreen");
       }
+      // navigation.navigate("MainScreen");
       // Save the token in AsyncStorage
     } else {
       // Alert.alert("Error", "Invalid email or password. Please try again.");

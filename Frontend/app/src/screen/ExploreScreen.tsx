@@ -1,30 +1,20 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import BottomNavBar from '../components/BottomNavBar';
+import { useNavigation } from '@react-navigation/native';
+import CategoryButton from '../components/CategoryButton';
 
-interface CategoryButtonProps {
-  icon: React.ReactNode;
-  label: string;
-  onPress: () => void;
-}
+export default function ExploreScreen() {
+  const navigation = useNavigation();
 
-const CategoryButton = ({ icon, label, onPress }: CategoryButtonProps) => (
-  <TouchableOpacity style={styles.categoryButton} onPress={onPress}>
-    <View style={styles.iconContainer}>
-      {icon}
-    </View>
-    <Text style={styles.categoryLabel}>{label}</Text>
-  </TouchableOpacity>
-);
-
-export default function ExploreScreen({ navigation }) {
   const categories = [
     { icon: <Ionicons name="book-outline" size={32} color="#4A5568" />, label: 'Education' },
     { icon: <Ionicons name="medkit-outline" size={32} color="#4A5568" />, label: 'Medical' },
     { icon: <Ionicons name="cloud-outline" size={32} color="#4A5568" />, label: 'Disaster' },
     { icon: <Ionicons name="leaf-outline" size={32} color="#4A5568" />, label: 'Environment' },
     { icon: <Ionicons name="alarm-outline" size={32} color="#4A5568" />, label: 'Emergency' },
+    { icon: <Ionicons name="ellipsis-horizontal-outline" size={32} color="#4A5568" />, label: 'Other' }, // New category
   ];
 
   // Helper function to group categories into rows of two
@@ -76,33 +66,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 24,
-  },
-  categoryButton: {
-    width: '48%',
-    aspectRatio: 1,
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: '100%',
-    aspectRatio: 1,
-    backgroundColor: 'white',
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  categoryLabel: {
-    marginTop: 8,
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#4A5568',
-    textAlign: 'center',
   },
 });

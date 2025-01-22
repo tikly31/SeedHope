@@ -35,6 +35,7 @@ public class UserController {
 
     @PostMapping("api/v1/register")
     public User register(@RequestBody User user) {
+
         return userservice.register(user);
 
     }
@@ -57,6 +58,10 @@ public class UserController {
         return ResponseEntity.ok(topContributors);
     }
 
+    @PutMapping("update/me")
+    public User updateUser(@RequestBody User user) {
+        return userservice.updateUser(user);
+    }
 
 
 

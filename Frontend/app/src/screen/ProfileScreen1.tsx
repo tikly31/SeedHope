@@ -1,357 +1,264 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
-  SafeAreaView,
-} from 'react-native';
-import { MaterialCommunityIcons, Feather, MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from "react"
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, FlatList } from "react-native"
+import { MaterialCommunityIcons, Feather } from "@expo/vector-icons"
+import { useNavigation } from "@react-navigation/native"
+import BottomNavBar from "../components/BottomNavBar"
+import ProfileFundraiserCard from "../components/ProfileFundraiserCard"
+import profile from "../assets/profile.jpg"
 
-const { width } = Dimensions.get('window');
-const PROFILE_IMAGE_SIZE = 80;
+const { width } = Dimensions.get("window")
+const PROFILE_IMAGE_SIZE = 80
 
 export default function ProfileScreen() {
-  const [activeTab, setActiveTab] = useState('fundraisers');
-  const navigation = useNavigation();
-
-  const highlights = [
-    { id: '1', title: 'Medical', icon: '🏥' },
-    { id: '2', title: 'Education', icon: '📚' },
-    { id: '3', title: 'Emergency', icon: '🆘' },
-    { id: '4', title: 'Community', icon: '🤝' },
-  ];
+  const [activeTab, setActiveTab] = useState("fundraisers")
+  const [username, setUsername] = useState("rahman_ajij")
+  const [name, setName] = useState("Ajij Rahman")
+  const [bio, setBio] = useState("Helping others through fundraising")
+  const navigation = useNavigation()
 
   const fundraisers = [
-    { id: '1', image: '/placeholder.svg?height=200&width=200', title: 'Medical Fund', amount: '৳50,000' },
-    { id: '2', image: '/placeholder.svg?height=200&width=200', title: 'Education Support', amount: '৳30,000' },
-    { id: '3', image: '/placeholder.svg?height=200&width=200', title: 'Emergency Aid', amount: '৳25,000' },
+    { id: "1", title: "Medical Fund", amount: "৳50,000", imageUri: "https://example.com/image1.jpg" },
+    { id: "2", title: "Education Support", amount: "৳30,000", imageUri: "https://example.com/image2.jpg" },
+    { id: "3", title: "Emergency Aid", amount: "৳25,000", imageUri: "https://example.com/image3.jpg" },
+    { id: "4", title: "Community Project", amount: "৳40,000", imageUri: "https://example.com/image4.jpg" },
+    { id: "5", title: "Environmental Cause", amount: "৳35,000", imageUri: "https://example.com/image5.jpg" },
+    { id: "6", title: "Animal Welfare", amount: "৳20,000", imageUri: "https://example.com/image6.jpg" },
+  ]
+
+  const donations = [
+    { id: '7', title: 'Local Food Bank', amount: '৳15,000', imageUri: 'https://example.com/image7.jpg' },
+    { id: '8', title: 'Children\'s Hospital', amount: '৳250', imageUri: 'https://example.com/image8.jpg' },
+    { id: '9', title: 'Disaster Relief', amount: '৳30,000', imageUri: 'https://example.com/image9.jpg' },
   ];
 
-  // handle edit profile button click
   const handleEditProfile = () => {
-    navigation.navigate('EditProfileScreen1');
-  };
+    navigation.navigate("EditProfileScreen1")
+  }
 
-  // handle menu button click
   const handleMenu = () => {
-    // Add your logic here
-    navigation.navigate('LogoutScreen');
-  };
-
-  // handle plus button click
+    navigation.navigate("LogoutScreen")
+  }
 
   const handlePlus = () => {
-    // Add your logic here
-    navigation.navigate('CreateFundraiser');
-  };
+    navigation.navigate("CreateFundraiser")
+  }
+
+  const handlePressFundraiser = (fundId) => {
+    // console.log('Navigating with fundId:', fundId);
+    navigation.navigate('FundraiserDetailsScreen', { fundId });
+  }
+
+  const renderItem = ({ item }) => (
+    <ProfileFundraiserCard
+      id={item.id}
+      title={item.title}
+      amount={item.amount}
+      imageUri={item.imageUri}
+      onPress={handlePressFundraiser}
+    />
+  )
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.usernameContainer}>
-            <Text style={styles.username}>rahman_ajij</Text>
-            <MaterialIcons name="keyboard-arrow-down" size={24} color="#333" />
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.usernameContainer}>
+          <Text style={styles.username}>{username}</Text>
+        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity style={styles.iconButton} onPress={handlePlus}>
+            <Feather name="plus-square" size={24} color="#333" />
           </TouchableOpacity>
-          <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.iconButton} onPress={handlePlus}>
-              <Feather name="plus-square" size={24} color="#333" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton}  onPress={handleMenu}>
-              <Feather name="menu" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Profile Info */}
-        <View style={styles.profileInfo}>
-          <View style={styles.profileImageContainer}>
-            <Image
-              source={{ uri: '/placeholder.svg?height=200&width=200' }}
-              style={styles.profileImage}
-            />
-            <TouchableOpacity style={styles.addStoryButton}>
-              <Feather name="plus" size={20} color="#fff" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>12</Text>
-              <Text style={styles.statLabel}>Fundraisers</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>৳150K</Text>
-              <Text style={styles.statLabel}>Raised</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>24</Text>
-              <Text style={styles.statLabel}>Donated</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Bio */}
-        <View style={styles.bioContainer}>
-          <Text style={styles.name}>Ajij Rahman</Text>
-          <Text style={styles.bioText}>Helping others through fundraising</Text>
-          <Text style={styles.bioText}>🎓 Student at XYZ University</Text>
-          <Text style={styles.bioText}>📍 Dhaka, Bangladesh</Text>
-        </View>
-
-        {/* Action Buttons */}
-        <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
-            <Text style={styles.editButtonText}>Edit Profile</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.shareButton}>
-            <Text style={styles.shareButtonText}>Share Profile</Text>
+          <TouchableOpacity style={styles.iconButton} onPress={handleMenu}>
+            <Feather name="log-out" size={24} color="#333" />
           </TouchableOpacity>
         </View>
+      </View>
 
-        {/* Highlights */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.highlightsContainer}
+      <View style={styles.profileInfo}>
+        <View style={styles.profileImageContainer}>
+          <Image source={profile} style={styles.profileImage} />
+        </View>
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>12</Text>
+            <Text style={styles.statLabel}>Fundraisers</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>৳150K</Text>
+            <Text style={styles.statLabel}>Raised</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>24</Text>
+            <Text style={styles.statLabel}>Donated</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.bioContainer}>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.bioText}>{bio}</Text>
+      </View>
+
+      <View style={styles.actionButtons}>
+        <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
+          <Text style={styles.editButtonText}>Edit Profile</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "fundraisers" && styles.activeTab]}
+          onPress={() => setActiveTab("fundraisers")}
         >
-          {highlights.map((highlight) => (
-            <TouchableOpacity key={highlight.id} style={styles.highlightItem}>
-              <View style={styles.highlightCircle}>
-                <Text style={styles.highlightIcon}>{highlight.icon}</Text>
-              </View>
-              <Text style={styles.highlightTitle}>{highlight.title}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+          <MaterialCommunityIcons
+            name="hand-heart"
+            size={24}
+            color={activeTab === "fundraisers" ? "#007AFF" : "#666"}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "donations" && styles.activeTab]}
+          onPress={() => setActiveTab("donations")}
+        >
+          <MaterialCommunityIcons
+            name="gift-outline"
+            size={24}
+            color={activeTab === "donations" ? "#007AFF" : "#666"}
+          />
+        </TouchableOpacity>
+      </View>
 
-        {/* Tabs */}
-        <View style={styles.tabContainer}>
-          <TouchableOpacity 
-            style={[styles.tab, activeTab === 'fundraisers' && styles.activeTab]}
-            onPress={() => setActiveTab('fundraisers')}
-          >
-            <MaterialCommunityIcons 
-              name="hand-heart" 
-              size={24} 
-              color={activeTab === 'fundraisers' ? '#007AFF' : '#666'}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.tab, activeTab === 'donations' && styles.activeTab]}
-            onPress={() => setActiveTab('donations')}
-          >
-            <MaterialCommunityIcons 
-              name="gift-outline" 
-              size={24} 
-              color={activeTab === 'donations' ? '#007AFF' : '#666'}
-            />
-          </TouchableOpacity>
-        </View>
+      {activeTab === "fundraisers" ? (
+        <FlatList
+          data={fundraisers}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          numColumns={3}
+          columnWrapperStyle={styles.row}
+        />
+      ) : (
+        <FlatList
+          data={donations}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          numColumns={3}
+          columnWrapperStyle={styles.row}
+        />
+      )}
 
-        {/* Grid */}
-        <View style={styles.gridContainer}>
-          {fundraisers.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.gridItem}>
-              <Image source={{ uri: item.image }} style={styles.gridImage} />
-              <View style={styles.gridOverlay}>
-                <Text style={styles.gridTitle}>{item.title}</Text>
-                <Text style={styles.gridAmount}>{item.amount}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+      <BottomNavBar navigation={navigation} activeScreen="Home" isAdmin={true} />
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 25,
+    paddingVertical: 20,
   },
   usernameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   username: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginRight: 5,
   },
   headerActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 15,
   },
   iconButton: {
     padding: 5,
   },
   profileInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 15,
     marginTop: 10,
   },
   profileImageContainer: {
-    position: 'relative',
+    position: "relative",
   },
   profileImage: {
     width: PROFILE_IMAGE_SIZE,
     height: PROFILE_IMAGE_SIZE,
     borderRadius: PROFILE_IMAGE_SIZE / 2,
   },
-  addStoryButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: '#007AFF',
-    borderRadius: 12,
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
   statsContainer: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginLeft: 15,
+    marginTop: 5,
   },
   statItem: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   statNumber: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   statLabel: {
     fontSize: 12,
-    color: '#666',
+    color: "#666",
   },
   bioContainer: {
     padding: 15,
   },
   name: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   bioText: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
     marginBottom: 2,
   },
   actionButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 15,
     gap: 8,
   },
   editButton: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     borderRadius: 6,
-    padding: 8,
+    padding: 15,
+    margin: 10,
   },
   editButtonText: {
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  shareButton: {
-    flex: 1,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 6,
-    padding: 8,
-  },
-  shareButtonText: {
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  highlightsContainer: {
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-  },
-  highlightItem: {
-    alignItems: 'center',
-    marginHorizontal: 5,
-    width: 70,
-  },
-  highlightCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: '#dbdbdb',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  highlightIcon: {
-    fontSize: 24,
-  },
-  highlightTitle: {
-    fontSize: 12,
-    textAlign: 'center',
-    color: '#666',
+    textAlign: "center",
+    fontWeight: "600",
   },
   tabContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderTopWidth: 1,
-    borderTopColor: '#dbdbdb',
+    borderTopColor: "#dbdbdb",
   },
   tab: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'transparent',
+    borderBottomColor: "transparent",
   },
   activeTab: {
-    borderBottomColor: '#007AFF',
+    borderBottomColor: "#007AFF",
   },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  row: {
+    flex: 1,
+    justifyContent: "space-around",
+    marginBottom: 10,
   },
-  gridItem: {
-    width: width / 3,
-    height: width / 3,
-    position: 'relative',
-  },
-  gridImage: {
-    width: '100%',
-    height: '100%',
-  },
-  gridOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: 8,
-  },
-  gridTitle: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  gridAmount: {
-    color: '#fff',
-    fontSize: 11,
-  },
-});
+})
+

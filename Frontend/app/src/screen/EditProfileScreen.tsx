@@ -137,7 +137,7 @@ export default function EditProfileScreen({ navigation }) {
     </ScrollView>
     <View style={styles.bottomNavBar}>
       <BottomNavBar navigation={navigation} activeScreen="Profile" />
-      </View>
+    </View>
     </SafeAreaView>
   );
 }
