@@ -4,32 +4,71 @@ import { MaterialCommunityIcons, Feather } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import BottomNavBar from "../components/BottomNavBar"
 import ProfileFundraiserCard from "../components/ProfileFundraiserCard"
-import profile from "../assets/profile.jpg"
+import { useEffect } from "react"
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { get_current_user,  getCampaignsByOrganizerId, getDonationsOfAUser } from "./apiUtils";
 
+const donation = [
+  { id: '7', title: 'Local Food Bank', amount: '৳15,000', imageUri: 'https://example.com/image7.jpg' },
+  { id: '8', title: 'Children\'s Hospital', amount: '৳250', imageUri: 'https://example.com/image8.jpg' },
+  { id: '9', title: 'Disaster Relief', amount: '৳30,000', imageUri: 'https://example.com/image9.jpg' },
+];
 const { width } = Dimensions.get("window")
 const PROFILE_IMAGE_SIZE = 80
 
 export default function ProfileScreen() {
   const [activeTab, setActiveTab] = useState("fundraisers")
-  const [username, setUsername] = useState("rahman_ajij")
-  const [name, setName] = useState("Ajij Rahman")
-  const [bio, setBio] = useState("Helping others through fundraising")
+  const [username, setUsername] = useState(null)
+  const [name, setName] = useState(null)
+  const [bio, setBio] = useState(null)
+  const [picture, setPicture] = useState(null)
+  const [donateAmount, setDonateAmount] = useState(null)
+  const [fundraisers, setFundraisers] = useState([]);
+  const [donations, setDonations] = useState(donation);
+  
   const navigation = useNavigation()
+  
 
-  const fundraisers = [
-    { id: "1", title: "Medical Fund", amount: "৳50,000", imageUri: "https://example.com/image1.jpg" },
-    { id: "2", title: "Education Support", amount: "৳30,000", imageUri: "https://example.com/image2.jpg" },
-    { id: "3", title: "Emergency Aid", amount: "৳25,000", imageUri: "https://example.com/image3.jpg" },
-    { id: "4", title: "Community Project", amount: "৳40,000", imageUri: "https://example.com/image4.jpg" },
-    { id: "5", title: "Environmental Cause", amount: "৳35,000", imageUri: "https://example.com/image5.jpg" },
-    { id: "6", title: "Animal Welfare", amount: "৳20,000", imageUri: "https://example.com/image6.jpg" },
-  ]
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          const userData = await get_current_user();
+          if (userData) {
+            setUsername(userData.username);
+            setName(userData.name);
+            setBio(userData.bio);
+            setPicture(userData.picture);
+            setDonateAmount(userData.donatedAmount);
+            const userFundraisers = await getCampaignsByOrganizerId(userData.id);
+            if (userFundraisers) {
+              setFundraisers(userFundraisers);
+            }
 
-  const donations = [
-    { id: '7', title: 'Local Food Bank', amount: '৳15,000', imageUri: 'https://example.com/image7.jpg' },
-    { id: '8', title: 'Children\'s Hospital', amount: '৳250', imageUri: 'https://example.com/image8.jpg' },
-    { id: '9', title: 'Disaster Relief', amount: '৳30,000', imageUri: 'https://example.com/image9.jpg' },
-  ];
+            // const userDonations = await getDonationsOfAUser(userData.email);
+            // if (userDonations) {
+            //   setDonations(userDonations);
+            // }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  // const fundraisers = [
+  //   { id: "1", title: "Medical Fund", amount: "৳50,000", imageUri: "https://example.com/image1.jpg" },
+  //   { id: "2", title: "Education Support", amount: "৳30,000", imageUri: "https://example.com/image2.jpg" },
+  //   { id: "3", title: "Emergency Aid", amount: "৳25,000", imageUri: "https://example.com/image3.jpg" },
+  //   { id: "4", title: "Community Project", amount: "৳40,000", imageUri: "https://example.com/image4.jpg" },
+  //   { id: "5", title: "Environmental Cause", amount: "৳35,000", imageUri: "https://example.com/image5.jpg" },
+  //   { id: "6", title: "Animal Welfare", amount: "৳20,000", imageUri: "https://example.com/image6.jpg" },
+  // ]
+
 
   const handleEditProfile = () => {
     navigation.navigate("EditProfileScreen1")
@@ -48,12 +87,22 @@ export default function ProfileScreen() {
     navigation.navigate('FundraiserDetailsScreen', { fundId });
   }
 
-  const renderItem = ({ item }) => (
+  const renderItemf = ({ item }) => (
+    <ProfileFundraiserCard
+      id={item.id}
+      title={item.title}
+      amount={item.goalAmount}
+      imageUri={item.photoUrl}
+      onPress={handlePressFundraiser}
+    />
+  )
+
+  const renderItemd = ({ item }) => (
     <ProfileFundraiserCard
       id={item.id}
       title={item.title}
       amount={item.amount}
-      imageUri={item.imageUri}
+      imageUri={item.imageUrl}
       onPress={handlePressFundraiser}
     />
   )
@@ -76,7 +125,10 @@ export default function ProfileScreen() {
 
       <View style={styles.profileInfo}>
         <View style={styles.profileImageContainer}>
-          <Image source={profile} style={styles.profileImage} />
+          <Image
+            source={picture ? { uri: picture } : require('../assets/profile.jpg')}
+            style={styles.profileImage}
+          />
         </View>
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
@@ -84,8 +136,8 @@ export default function ProfileScreen() {
             <Text style={styles.statLabel}>Fundraisers</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>৳150K</Text>
-            <Text style={styles.statLabel}>Raised</Text>
+            <Text style={styles.statNumber}>{donateAmount}</Text>
+            <Text style={styles.statLabel}>Donated</Text>
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statNumber}>24</Text>
@@ -131,7 +183,7 @@ export default function ProfileScreen() {
       {activeTab === "fundraisers" ? (
         <FlatList
           data={fundraisers}
-          renderItem={renderItem}
+          renderItem={renderItemf}
           keyExtractor={(item) => item.id}
           numColumns={3}
           columnWrapperStyle={styles.row}
@@ -139,7 +191,7 @@ export default function ProfileScreen() {
       ) : (
         <FlatList
           data={donations}
-          renderItem={renderItem}
+          renderItem={renderItemd}
           keyExtractor={(item) => item.id}
           numColumns={3}
           columnWrapperStyle={styles.row}

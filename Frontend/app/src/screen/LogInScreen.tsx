@@ -148,8 +148,10 @@ const handleLogin = async () => {
   }
 
   try {
-
-    // console.log("Here is the email and password : " , email , password);
+    // clear AsyncStorage
+    // await AsyncStorage.clear();
+    
+    console.log("Here is the email and password : " , email , password);
    
     // Make a POST request to the login endpoint
     const response = await fetch(`${API_BASE_URL}/api/v1/login`, {
@@ -168,26 +170,29 @@ const handleLogin = async () => {
 
       const responseBody = await response.text(); // Use .json() if the server returns JSON
 
-      // // Assuming the response body is a JSON string containing the token
-      // const data = JSON.parse(responseBody); // Parse the JSON string
-      // const token = data.token; // Extract the token from the parsed data
-
-      console.log("Here is the token : " , responseBody);
+      
 
       const token = responseBody;
       if(AsyncStorage.getItem("token") !== null){
         await AsyncStorage.removeItem("token");
       }
+
+
       // save the token in async storage
       await AsyncStorage.setItem("token", token);
+
+
       // get the current user
       const user = await get_current_user();
+      // await AsyncStorage.setItem("Id", user.id);
       console.log("Here is the user : " , user);
       if(user.name === null || user.name === undefined || user.picture === null || user.picture === undefined){
         showAlert("success", "Login successful! Please complete your profile.")
       } else {
         navigation.navigate("MainScreen");
       }
+
+
       // navigation.navigate("MainScreen");
       // Save the token in AsyncStorage
     } else {
@@ -214,7 +219,7 @@ const handleLogin = async () => {
 
     setAlertVisible(false);
     if (alertType === "success") {
-      navigation.navigate("ProfileScreen1");
+      navigation.navigate("EditProfileScreen1");
     }
    
 

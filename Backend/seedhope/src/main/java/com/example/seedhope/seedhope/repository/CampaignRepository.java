@@ -33,4 +33,7 @@ public interface CampaignRepository extends JpaRepository<Campaign, Long> {
             "LOWER(c.description) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
     List<Campaign> searchCampaignsByCategoryAndKeyword(@Param("category") String category,
                                                        @Param("searchTerm") String searchTerm);
+
+
+    List<Campaign> findByOrganizerId(Long organizerId);
 }

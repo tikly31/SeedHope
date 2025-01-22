@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 
 
 import java.util.Optional;
-
+import  java.util.List;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<PaymentStatus, String> {
     Optional<PaymentStatus> findByTransactionId(String transactionId);
+
+    List<PaymentStatus> findByCustomerInfo(String customerInfo);
 }

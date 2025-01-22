@@ -4,6 +4,8 @@ import com.example.seedhope.seedhope.Factory.CampaignFactory;
 import com.example.seedhope.seedhope.dto.CampaignRequestDTO;
 import com.example.seedhope.seedhope.model.Campaign;
 import com.example.seedhope.seedhope.model.Payment;
+import com.example.seedhope.seedhope.model.Donation;
+import com.example.seedhope.seedhope.model.PaymentStatus;
 import com.example.seedhope.seedhope.observer.PaymentObserver;
 import com.example.seedhope.seedhope.repository.CampaignRepository;
 import com.example.seedhope.seedhope.service.strategy.sorting.CampaignSortStrategy;
@@ -25,6 +27,9 @@ public class CampaignService implements PaymentObserver {
 
     @Autowired
     private final CampaignRepository campaignRepository;
+
+//    @Autowired
+//    private PaymentService paymentService;
 
     @Autowired
     private CampaignSorter campaignSorter;
@@ -124,4 +129,26 @@ public class CampaignService implements PaymentObserver {
     public List<Campaign> searchCampaigns(String category, String searchTerm) {
         return campaignRepository.searchCampaignsByCategoryAndKeyword(category, searchTerm);
     }
+
+    public List<Campaign> getCampaignsByOrganizerId(Long organizerId) {
+
+        List<Campaign> campaigns = campaignRepository.findByOrganizerId(organizerId);
+        // sort by latest created
+        campaigns.sort((c1, c2) -> c2.getCreationDate().compareTo(c1.getCreationDate()));
+        return campaigns;
+    }
+
+//    public List<Donation> getDonationsOfAUser(String customerInfo) {
+//        List<Donation> donations = new ArrayList<>();
+//        List<PaymentStatus> paymentStatuses = paymentService.getPaymentStatusesByCustomerInfo(customerInfo);
+//        for (PaymentStatus paymentStatus : paymentStatuses) {
+//            Long campaignId = Long.parseLong(paymentStatus.getCampaignId());
+//            Campaign campaign = campaignRepository.findById(campaignId)
+//                    .orElseThrow(() -> new IllegalArgumentException("Campaign not found"));
+//            Donation donation = new Donation(campaign.getId(), campaign.getTitle(), paymentStatus.getAmount(), campaign.getPhotoUrl());
+//            donations.add(donation);
+//        }
+//        return donations;
+//    }
+
 }
