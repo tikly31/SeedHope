@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,16 @@ import {
   StyleSheet,
   ScrollView,
   Animated,
-  Platform,
+  Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import BottomNavBar from '../components/BottomNavBar';
+
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 interface DocumentFile {
   name: string;
@@ -19,53 +23,162 @@ interface DocumentFile {
   uri: string;
 }
 
-export default function DocumentUpload({ navigation }) {
+export default function DocumentUpload({ navigation, route }) {
   const [documents, setDocuments] = useState<DocumentFile[]>([]);
   const [uploadProgress] = useState(new Animated.Value(0));
   const [isUploading, setIsUploading] = useState(false);
+  const [organizerId, setOrganizerId] = useState<string | null>(null);
+
+  const { campaign } = route.params; // Campaign object passed from previous page
+
+  useEffect(() => {
+    const fetchCurrentUserId = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          console.error('No token found!');
+          return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/me`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          console.error('Failed to fetch current user:', response.statusText);
+          return;
+        }
+
+        const userData = await response.json();
+        setOrganizerId(userData.id);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    fetchCurrentUserId();
+  }, []);
+
+const uploadDocumentToServer = async (fileUri: string, fileName: string) => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      Alert.alert('Error', 'No authentication token found.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri: fileUri,
+      name: fileName,
+      type: 'image/jpeg',
+    });
+
+    const response = await fetch(`${API_BASE_URL}/upload/photo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      console.error('Failed to upload document:', response.statusText);
+      Alert.alert('Error', 'Failed to upload the document.');
+      return;
+    }
+
+    // Get the URL returned by the backend
+    const uploadedFileUrl = await response.text();
+    console.log('File uploaded successfully:', uploadedFileUrl);
+
+    // Store the correct URL instead of the local URI
+    setDocuments([{ name: fileName, size: 0, uri: uploadedFileUrl }]);
+
+    Alert.alert('Success', 'File uploaded successfully!');
+  } catch (error) {
+    console.error('Error uploading document:', error);
+    Alert.alert('Error', 'An error occurred while uploading the document.');
+  }
+};
+
 
   const handleDocumentPick = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: ['application/pdf', 'image/*'],
+        type: ['image/*'],
         copyToCacheDirectory: true,
-        multiple: true,
       });
 
-      if (result.assets && result.assets.length > 0) {
-        const newDocs = result.assets.map(asset => ({
-          name: asset.name,
-          size: asset.size || 0,
-          uri: asset.uri,
-        }));
-        
-        setDocuments([...documents, ...newDocs]);
-        simulateUpload();
+      if (result.type === 'success') {
+        const newDoc = {
+          name: result.name,
+          size: result.size || 0,
+          uri: result.uri,
+        };
+
+        setDocuments([...documents, newDoc]);
+
+        // Upload the file to the server
+        await uploadDocumentToServer(newDoc.uri, newDoc.name);
       }
     } catch (err) {
       console.error('Error picking document:', err);
     }
   };
 
-  const simulateUpload = () => {
-    setIsUploading(true);
-    uploadProgress.setValue(0);
-    
-    Animated.timing(uploadProgress, {
-      toValue: 100,
-      duration: 2000,
-      useNativeDriver: false,
-    }).start(() => {
-      setIsUploading(false);
-    });
-  };
+  const handleSubmit = async () => {
+    if (!organizerId) {
+      Alert.alert('Error', 'Organizer ID is not set yet. Please wait a moment and try again.');
+      return;
+    }
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        Alert.alert('Error', 'No authentication token found.');
+        return;
+      }
+
+      const campaignData = {
+        title: campaign.title,
+        description: campaign.details,
+        category: campaign.category,
+        goalAmount: campaign.amount,
+        dueDate: campaign.dueDate,
+        organizerId: organizerId, // Ensure organizer ID is properly set
+        photoUrl: documents.length > 0 ? documents[0].uri : null,
+        raisedAmount: 0.0,
+        status: 'PENDING'
+      };
+
+      const response = await fetch(`${API_BASE_URL}/campaign`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(campaignData),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to create campaign:', response.statusText);
+        Alert.alert('Error', 'Failed to create the campaign.');
+        return;
+      }
+
+      const createdCampaign = await response.json();
+      console.log('Campaign created successfully:', createdCampaign);
+
+      Alert.alert('Success', 'Campaign created successfully!');
+      navigation.navigate('FundraiserSuccess');
+    } catch (error) {
+      console.error('Error creating campaign:', error);
+      Alert.alert('Error', 'An error occurred while creating the campaign.');
+    }
   };
 
   return (
@@ -77,6 +190,8 @@ export default function DocumentUpload({ navigation }) {
             To boost authenticity, include your documents!
           </Text>
         </View>
+
+        {organizerId && <Text style={styles.organizerId}>Organizer ID: {organizerId}</Text>}
 
         <TouchableOpacity
           onPress={handleDocumentPick}
@@ -93,56 +208,14 @@ export default function DocumentUpload({ navigation }) {
             <Text style={styles.uploadButtonText}>Add File</Text>
           </LinearGradient>
         </TouchableOpacity>
-
-        {documents.length > 0 && (
-          <View style={styles.documentsContainer}>
-            {documents.map((doc, index) => (
-              <View key={index} style={styles.documentItem}>
-                <View style={styles.documentInfo}>
-                  <MaterialIcons name="description" size={24} color="#666" />
-                  <View style={styles.documentDetails}>
-                    <Text style={styles.documentName} numberOfLines={1}>
-                      {doc.name}
-                    </Text>
-                    <Text style={styles.documentSize}>
-                      {formatFileSize(doc.size)}
-                    </Text>
-                  </View>
-                </View>
-                {isUploading && (
-                  <Animated.View
-                    style={[
-                      styles.progressBar,
-                      {
-                        width: uploadProgress.interpolate({
-                          inputRange: [0, 100],
-                          outputRange: ['0%', '100%'],
-                        }),
-                      },
-                    ]}
-                  />
-                )}
-              </View>
-            ))}
-          </View>
-        )}
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.skipButton} activeOpacity={0.7}
-          onPress={() => navigation.navigate('FundraiserSuccess')}
-        >
-          <Text style={styles.skipButtonText}>Skip</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity
-          style={[
-            styles.continueButton,
-            isUploading && styles.continueButtonDisabled,
-          ]}
+          style={[styles.continueButton, isUploading && styles.continueButtonDisabled]}
           disabled={isUploading}
           activeOpacity={0.8}
-          onPress={() => navigation.navigate('FundraiserSuccess')}
+          onPress={handleSubmit}
         >
           <LinearGradient
             colors={isUploading ? ['#ccc', '#bbb'] : ['#007AFF', '#0055FF']}
@@ -151,11 +224,12 @@ export default function DocumentUpload({ navigation }) {
             end={{ x: 1, y: 0 }}
           >
             <Text style={styles.continueButtonText}>
-              {isUploading ? 'Uploading...' : 'Continue'}
+              {isUploading ? 'Uploading...' : 'Submit Campaign'}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
+
       <View style={styles.ButtonNavBar}>
         <BottomNavBar navigation={navigation} activeScreen="Create" />
       </View>
@@ -292,3 +366,5 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+
+

@@ -12,8 +12,11 @@ import BottomNavBar from '../components/BottomNavBar';
 
 type BeneficiaryOption = 'yourself' | 'someone' | 'charity' | null;
 
-export default function FundraiserBeneficiary({ navigation }) {
+export default function FundraiserBeneficiary({ navigation, route }) {
   const [selectedOption, setSelectedOption] = useState<BeneficiaryOption>(null);
+
+  // Retrieve data from the previous page
+  const { dueDate, category } = route.params;
 
   const options = [
     {
@@ -36,54 +39,63 @@ export default function FundraiserBeneficiary({ navigation }) {
     },
   ];
 
+  const handleContinue = () => {
+    if (selectedOption) {
+      console.log("dueDate : " , dueDate);
+      console.log("category :", category);
+      navigation.navigate('FundraiserAmount', {
+        dueDate,
+        category,
+      });
+    }
+  };
+
   return (
     <SafeAreaView style={styles.containers}>
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Tell us who you're raising funds for...</Text>
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Tell us who you're raising funds for...</Text>
 
-      <View style={styles.optionsContainer}>
-        {options.map((option) => (
-          <TouchableOpacity
-            key={option.id}
-            style={[
-              styles.optionButton,
-              selectedOption === option.id && styles.selectedOption,
-            ]}
-            onPress={() => setSelectedOption(option.id as BeneficiaryOption)}
-          >
-            <View style={styles.optionContent}>
-              <View style={styles.iconContainer}>
-                <MaterialCommunityIcons
-                  name={option.icon as any}
-                  size={24}
-                  color={selectedOption === option.id ? '#007AFF' : '#666'}
-                />
+        <View style={styles.optionsContainer}>
+          {options.map((option) => (
+            <TouchableOpacity
+              key={option.id}
+              style={[
+                styles.optionButton,
+                selectedOption === option.id && styles.selectedOption,
+              ]}
+              onPress={() => setSelectedOption(option.id as BeneficiaryOption)}
+            >
+              <View style={styles.optionContent}>
+                <View style={styles.iconContainer}>
+                  <MaterialCommunityIcons
+                    name={option.icon as any}
+                    size={24}
+                    color={selectedOption === option.id ? '#007AFF' : '#666'}
+                  />
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.optionTitle}>{option.title}</Text>
+                  <Text style={styles.optionDescription}>{option.description}</Text>
+                </View>
               </View>
-              <View style={styles.textContainer}>
-                <Text style={styles.optionTitle}>{option.title}</Text>
-                <Text style={styles.optionDescription}>{option.description}</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <TouchableOpacity
+          style={[
+            styles.continueButton,
+            !selectedOption && styles.continueButtonDisabled,
+          ]}
+          disabled={!selectedOption}
+          onPress={handleContinue}
+        >
+          <Text style={styles.continueButtonText}>Continue</Text>
+        </TouchableOpacity>
+      </ScrollView>
+      <View style={styles.bottomnavbar}>
+        <BottomNavBar navigation={navigation} activeScreen="Create" />
       </View>
-
-      <TouchableOpacity
-        style={[
-          styles.continueButton,
-          !selectedOption && styles.continueButtonDisabled,
-        ]}
-        disabled={!selectedOption}
-
-        // Navigate to FundraiserAmount for the "Continue" button
-        onPress={() => navigation.navigate('FundraiserAmount')}
-      >
-        <Text style={styles.continueButtonText}>Continue</Text>
-      </TouchableOpacity>
-    </ScrollView>
-    <View style={styles.bottomnavbar}>
-      <BottomNavBar navigation={navigation} activeScreen="Create" />
-    </View>
     </SafeAreaView>
   );
 }
