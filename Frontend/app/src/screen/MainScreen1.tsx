@@ -15,6 +15,12 @@ import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
 
+// import FundraiserSection from '../components/FundraiserSection';
+// import ContributorCircle from '../components/ContributorCircle';
+import logo from '../assets/image.png';
+import profile from '../assets/profile.jpg';
+import defaultContributorImage from '../assets/default_contributor.jpg';
+
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
 // const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
@@ -121,25 +127,21 @@ export default function MainScreen1() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Image
-          source={{ uri: 'https://placeholder.com/logo.png' }}
-          style={styles.logo}
-        />
-        <TouchableOpacity>
-          <Image
-            source={{ uri: 'https://placeholder.com/profile.png' }}
-            style={styles.profilePhoto}
-          />
-        </TouchableOpacity>
-      </View>
+          {/* Header */}
+          <View style={styles.header}>
+            <Image source={logo} style={styles.logo} />
+            <TouchableOpacity>
+              <Image source={profile} style={styles.profilePhoto} />
+            </TouchableOpacity>
+          </View>
 
       {/* Search Bar */}
+      {/*
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#666" />
         <Text style={styles.searchPlaceholder}>Search fundraisers...</Text>
       </View>
+      */}
 
       {/* Main Content */}
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -198,13 +200,14 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   logo: {
-    width: 32,
-    height: 32,
+    width: 120,
+    height: 25,
   },
   profilePhoto: {
-    width: 32,
-    height: 32,
+    width: 35,
+    height: 35,
     borderRadius: 16,
+    marginRight : 20
   },
   searchContainer: {
     flexDirection: 'row',
