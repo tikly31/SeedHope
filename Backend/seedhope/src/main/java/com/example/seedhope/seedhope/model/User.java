@@ -17,6 +17,10 @@ public class User {
     private String provider;
     private Double donatedAmount = 0.0;
 
+    private String bio;
+
+    private String gender;
+
     protected User() {
     }
     // Private constructor to enforce the use of the builder
@@ -30,6 +34,8 @@ public class User {
         this.picture = builder.picture;
         this.provider = builder.provider;
         this.donatedAmount = builder.donatedAmount;
+        this.bio = builder.bio;
+        this.gender = builder.gender;
     }
 
     // Getters
@@ -101,6 +107,22 @@ public class User {
 
     public void  setDonatedAmount(Double amount){ this.donatedAmount = amount;}
 
+    public String getBio() {
+        return bio;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     // toString() method to print the User object
 
 
@@ -120,6 +142,8 @@ public class User {
                 ", picture='" + picture + '\'' +
                 ", provider='" + provider + '\'' +
                 ",donatedAmount='" + donatedAmount + '\'' +
+                ", bio='" + bio + '\'' +
+                ", gender ='" + gender +'\'' +
                 '}';
     }
 
@@ -134,6 +158,10 @@ public class User {
         private String picture;
         private String provider;
         private Double donatedAmount;
+
+        private String bio;
+
+        private String gender;
 
         public UserBuilder setId(Long id) {
             this.id = id;
@@ -177,6 +205,16 @@ public class User {
 
         public UserBuilder setDonatedAmount(Double amount){
             this.donatedAmount = amount;
+            return this;
+        }
+
+        public UserBuilder setBio(String bio) {
+            this.bio = bio;
+            return this;
+        }
+
+        public UserBuilder setGender(String gender) {
+            this.gender = gender;
             return this;
         }
 

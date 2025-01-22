@@ -18,8 +18,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.List;
 
 // PaymentServiceImpl.java (Implementation)
 
@@ -156,4 +157,10 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findByTransactionId(transactionId)
                 .orElseThrow(() -> new PaymentException("Transaction not found"));
     }
+
+
+//    @Override
+//    public List<PaymentStatus> getPaymentStatusesByCustomerInfo(String email) {
+//        return paymentRepository.findByCustomerInfo(email);
+//    }
 }

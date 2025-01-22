@@ -35,10 +35,7 @@ public class UserController {
 
     @PostMapping("api/v1/register")
     public User register(@RequestBody User user) {
-        System.out.println("Registering user");
-        System.out.println(user.getEmail());
-        System.out.println(user.getPassword());
-        System.out.println(user.getContactno());
+
         return userservice.register(user);
 
     }
@@ -61,6 +58,21 @@ public class UserController {
         return ResponseEntity.ok(topContributors);
     }
 
+    @PutMapping("update/me")
+    public User updateUser(@RequestBody User user) {
+        return userservice.updateUser(user);
+    }
+
+    @PutMapping("update/password")
+    public User updatePassword(@RequestBody User user) {
+        return userservice.updatePassword(user);
+    }
+
+
+    @GetMapping("passwordChecker/{rawPassword}")
+    public String passwordChecker(@PathVariable String rawPassword) {
+        return userservice.verifyPassword(rawPassword);
+    }
 
 
 

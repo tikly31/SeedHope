@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, FlatList } from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import BottomNavBar from "../components/BottomNavBar";
 import FundraiserItem from "../components/FundraiserItem"; // Import the new FundraiserItem component
-import DonationItem from "../components/DonationItem"
+import DonationItem from "../components/DonationItem"; // Import the DonationItem component
 import profile from "../assets/profile.jpg";
 
 const { width } = Dimensions.get("window");
@@ -58,7 +58,7 @@ export default function ProfileScreen() {
         status={item.status}
         imageUrl={item.imageUrl}
       />
-    )
+    );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -78,7 +78,10 @@ export default function ProfileScreen() {
 
       <View style={styles.profileInfo}>
         <View style={styles.profileImageContainer}>
-          <Image source={profile} style={styles.profileImage} />
+          <Image
+            source={profile}
+            style={styles.profileImage}
+          />
         </View>
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
@@ -135,14 +138,12 @@ export default function ProfileScreen() {
           data={fundraisers}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          // Removed numColumns to display items in a single column
         />
       ) : (
         <FlatList
           data={donations}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          // Removed numColumns to display items in a single column
         />
       )}
 
@@ -256,3 +257,5 @@ const styles = StyleSheet.create({
     borderBottomColor: "#007AFF",
   },
 });
+
+export default ProfileScreen;

@@ -127,7 +127,7 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
 
           {/* Description and Urgent Tag */}
           <View style={styles.descriptionContainer}>
-            {isUrgent && (
+            {fundraiser.isUrgent && (
               <View style={styles.urgentTag}>
                 <Text style={styles.urgentText}>URGENT</Text>
               </View>

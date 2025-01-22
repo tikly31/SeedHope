@@ -1,6 +1,7 @@
 package com.example.seedhope.seedhope.controller;
 
 import com.example.seedhope.seedhope.model.Campaign;
+import com.example.seedhope.seedhope.model.Donation;
 import com.example.seedhope.seedhope.service.CampaignService;
 import com.example.seedhope.seedhope.service.strategy.sorting.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,4 +104,14 @@ public class CampaignController {
         List<Campaign> campaigns = campaignService.searchCampaigns(category, searchTerm);
         return ResponseEntity.ok(campaigns);
     }
+
+    @GetMapping("api/v1/campaigns/{organizerId}")
+    public ResponseEntity<List<Campaign>> getCampaignsByOrganizerId(@PathVariable Long organizerId) {
+        return ResponseEntity.ok(campaignService.getCampaignsByOrganizerId(organizerId));
+    }
+
+//    @GetMapping("api/v1/campaigns/{customerInfo}")
+//    public List<Donation> getDonationsOfAUser(@PathVariable String customerInfo) {
+//        return campaignService.getDonationsOfAUser(customerInfo);
+//    }
 }

@@ -18,6 +18,9 @@ import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
+
+import { get_current_user } from './apiUtils';
 
 import AlertModal from '../components/AlertModal';
 
@@ -64,12 +67,26 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
    const [alertType, setAlertType] = useState<'success' | 'failure'>('success');
    const [alertMessage, setAlertMessage] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
     }).start();
+
+    const fetchUserData = async () => {
+      try {
+        const userData = await get_current_user();
+        if (userData) {
+          setName(userData.name);
+          setEmail(userData.email);
+          setPhone(userData.phone);
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+    fetchUserData();
   }, []);
 
   const handlePresetAmount = (value) => {
@@ -118,13 +135,13 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
    
     
 
-    console.log('Amount:', amount);
-    console.log('Name:', name);
-    console.log('Email:', email);
-    console.log('Phone:', phone);
-    console.log('Notes:', notes);
-    console.log('Trancation Id:', trancationId);
-    console.log('Campaign Id:', campaignId);
+    // console.log('Amount:', amount);
+    // console.log('Name:', name);
+    // console.log('Email:', email);
+    // console.log('Phone:', phone);
+    // console.log('Notes:', notes);
+    // console.log('Trancation Id:', trancationId);
+    // console.log('Campaign Id:', campaignId);
     // make a obajct with all input 
     const donation = {
       amount,

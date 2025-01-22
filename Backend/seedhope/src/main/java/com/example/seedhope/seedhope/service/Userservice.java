@@ -85,34 +85,37 @@ public class Userservice implements PaymentObserver {
         return matcher.matches();
     }
 
-    public User updatePassword(User user, String newPassword) {
-        User updatedUser = new User.UserBuilder()
-                .setId(user.getId())
-                .setName(user.getName())
-                .setEmail(user.getEmail())
-                .setUsername(user.getUsername())
-                .setPassword(encoder.encode(newPassword))
-                .build();
-
-        return userRepository.save(updatedUser);
-    }
+//    public User updatePassword(User user, String newPassword) {
+//        User updatedUser = new User.UserBuilder()
+//                .setId(user.getId())
+//                .setName(user.getName())
+//                .setEmail(user.getEmail())
+//                .setUsername(user.getUsername())
+//                .setPassword(encoder.encode(newPassword))
+//                .build();
+//
+//        return userRepository.save(updatedUser);
+//    }
 
     public String verify(User user) {
+
         // Authenticate the user using the AuthenticationManager
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
 
 
-
+//        System.out.println("Authentication: " + authentication.isAuthenticated());
         // Check if authentication is successful
         if (authentication.isAuthenticated()) {
             String email = authentication.getName();
 
+            System.out.println("Email: " + email);
+
 
             // Retrieve the user from the database using the username
-
             User authenticatedUser = userRepository.findByEmail(email);
+
 
 
             // Check if the user exists in the database
@@ -161,4 +164,51 @@ public class Userservice implements PaymentObserver {
     public List<User> getTopContributors() {
         return userRepository.findAllByOrderByDonatedAmountDesc();
     }
+
+    public User updateUser(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User existingUser = userRepository.findByEmail(email);
+        if (existingUser == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        // update the existing user with the new details
+        existingUser.setName(user.getName());
+        existingUser.setUsername(user.getUsername());
+        existingUser.setContactno(user.getContactno());
+        existingUser.setPicture(user.getPicture());
+        existingUser.setProvider(user.getProvider());
+        existingUser.setBio(user.getBio());
+        existingUser.setGender(user.getGender());
+
+        return userRepository.save(existingUser);
+
+    }
+
+    public User updatePassword(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User existingUser = userRepository.findByEmail(email);
+        if (existingUser == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        // update the existing user with the new details
+        existingUser.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(existingUser);
+    }
+
+    public String verifyPassword(String rawPassword) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User existingUser = userRepository.findByEmail(email);
+        if (existingUser == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        String encodedPassword = existingUser.getPassword();
+        if(encoder.matches(rawPassword, encodedPassword))
+            return "ok";
+        else return "notOk";
+    }
+
+
 }
