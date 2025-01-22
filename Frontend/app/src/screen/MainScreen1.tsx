@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   Image,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  FlatList,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -70,6 +69,7 @@ const FundraiserSection = ({ title, data, onPressFundraiser }) => (
 
 export default function MainScreen1() {
   const navigation = useNavigation();
+  const [searchInput, setSearchInput] = useState('');
 
   const [emergencyFundraisers, setEmergencyFundraisers] = useState([]);
   const [recentFundraisers, setRecentFundraisers] = useState([]);
@@ -106,8 +106,12 @@ export default function MainScreen1() {
   }, []);
 
   const handlePressFundraiser = (fundId) => {
-    console.log('Navigating with fundId:', fundId);
     navigation.navigate('FundraiserDetailsScreen', { fundId });
+  };
+
+  const handleSearch = (text) => {
+    setSearchInput(text);
+    // Implement search logic if needed
   };
 
   if (loading) {
@@ -118,6 +122,21 @@ export default function MainScreen1() {
       </View>
     );
   }
+
+  const renderFundraiserSection = ({ item }) => (
+    <FundraiserSection
+      title={item.title}
+      data={item.data}
+      onPressFundraiser={handlePressFundraiser}
+    />
+  );
+
+  const sections = [
+    { title: "Trending Fundraisers", data: staticTrendingFundraisers },
+    { title: "Emergency Fundraisers", data: emergencyFundraisers },
+    { title: "Recent Fundraisers", data: recentFundraisers },
+    { title: "Successful Fundraisers", data: successfulFundraisers },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -142,6 +161,31 @@ export default function MainScreen1() {
       </View>
 
       {/* Main Content */}
+      <FlatList
+        data={sections}
+        renderItem={renderFundraiserSection}
+        keyExtractor={(item) => item.title}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.sectionContainer}
+        ListFooterComponent={
+          <View>
+            <Text style={styles.sectionTitle}>Top Contributors</Text>
+            <FlatList
+              data={topContributors}
+              renderItem={({ item }) => (
+                <ContributorCircle 
+                  image={item.picture ? `${API_BASE_URL}/user/${item.picture}` : defaultContributorImage} 
+                  name={item.name} 
+                />
+              )}
+              keyExtractor={(item) => item.id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.contributorList}
+            />
+          </View>
+        }
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         <FundraiserSection
           title="Trending Fundraisers"
@@ -218,35 +262,14 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     color: '#666',
   },
-  section: {
-    marginBottom: 24,
+  sectionContainer: {
+    paddingBottom: 100, // Ensure enough padding at the bottom
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 16,
     marginBottom: 12,
-  },
-  fundraiserList: {
-    paddingHorizontal: 12,
-  },
-  contributorList: {
-    paddingHorizontal: 12,
-  },
-  contributorContainer: {
-    alignItems: 'center',
-    marginHorizontal: 8,
-  },
-  contributorImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-  contributorName: {
-    fontSize: 12,
-    marginTop: 4,
-    maxWidth: 60,
-    textAlign: 'center',
   },
   loaderContainer: {
     flex: 1,

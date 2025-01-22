@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import FundraiserCard from './FundraiserCard'; // Adjust the path as necessary
+import FundraiserItem from './FundraiserItem'; // Adjust the path as necessary
 
 interface Fundraiser {
   id: string;
   title: string;
-  amount: string;
-  imageUri: string; // Add imageUri to the Fundraiser type
+  raisedAmount: number; // Assuming raisedAmount is a number
+  goalAmount: number; // Assuming goalAmount is a number
+  dueDate: string; // Assuming dueDate is a string
+  photoUrl: string; // Assuming photoUrl is a string
 }
 
 interface FundraiserSectionProps {
@@ -21,18 +23,13 @@ const FundraiserSection: React.FC<FundraiserSectionProps> = ({ title, data, onPr
     <FlatList
       data={data}
       renderItem={({ item }) => (
-        <FundraiserCard
-          key={item.id}
-          id={item.id}
-          title={item.title}
-          amount={item.amount}
-          imageUri={item.imageUri} // Pass the imageUri to FundraiserCard
-          onPress={onPressFundraiser}
+        <FundraiserItem
+          item={item}
+          onPress={() => onPressFundraiser(item.id)} // Pass the id to the onPress function
         />
       )}
       keyExtractor={item => item.id}
-      horizontal
-      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.fundraiserList}
     />
   </View>
@@ -50,7 +47,7 @@ const styles = StyleSheet.create({
   },
   fundraiserList: {
     paddingHorizontal: 12,
-    marginBottom: 12,
+    paddingBottom: 12,
   },
 });
 

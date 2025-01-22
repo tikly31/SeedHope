@@ -1,18 +1,20 @@
+// SearchScreen.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from "react-native";
+import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import FundraiserItem from "../components/FundraiserItem"; // Import the renamed component
 
 const dummyFundraisers = [
   {
-    id: "1",
+    fundId: "1",
     title: "Help John Recover from Surgery",
     raisedAmount: 5000,
     goalAmount: 10000,
     dueDate: "2023-12-31",
-    photoUrl: "https://via.placeholder.com/80", // Placeholder image URL
+    photoUrl: "https://via.placeholder.com/80",
   },
   {
-    id: "2",
+    fundId: "2",
     title: "Support Local Animal Shelter",
     raisedAmount: 3000,
     goalAmount: 8000,
@@ -20,7 +22,7 @@ const dummyFundraisers = [
     photoUrl: "https://via.placeholder.com/80",
   },
   {
-    id: "3",
+    fundId: "3",
     title: "Community Clean-Up Initiative",
     raisedAmount: 2000,
     goalAmount: 5000,
@@ -28,7 +30,7 @@ const dummyFundraisers = [
     photoUrl: "https://via.placeholder.com/80",
   },
   {
-    id: "4",
+    fundId: "4",
     title: "Education for Underprivileged Children",
     raisedAmount: 7000,
     goalAmount: 15000,
@@ -36,7 +38,7 @@ const dummyFundraisers = [
     photoUrl: "https://via.placeholder.com/80",
   },
   {
-    id: "5",
+    fundId: "5",
     title: "Help Build a School in Rural Area",
     raisedAmount: 1000,
     goalAmount: 20000,
@@ -71,30 +73,6 @@ export default function SearchScreen({ navigation }) {
     setLoading(false);
   };
 
-  const renderFundraiserItem = ({ item }) => {
-    const progress = (item.raisedAmount / item.goalAmount) * 100;
-    return (
-      <TouchableOpacity
-        style={styles.fundraiserItem}
-        onPress={() => navigation.navigate("FundraiserDetailsScreen", { fundId: item.id })}
-      >
-        <Image source={{ uri: item.photoUrl }} style={styles.fundraiserImage} />
-        <View style={styles.fundraiserInfo}>
-          <Text style={styles.fundraiserTitle} numberOfLines={2}>
-            {item.title}
-          </Text>
-          <Text style={styles.fundraiserDueDate}>Due: {new Date(item.dueDate).toLocaleDateString()}</Text>
-          <View style={styles.progressBarContainer}>
-            <View style={[styles.progressBar, { width: `${progress}%` }]} />
-          </View>
-          <Text style={styles.fundraiserAmount}>
-            ৳{item.raisedAmount.toLocaleString()} raised of ৳{item.goalAmount.toLocaleString()}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   const clearSearch = () => {
     setSearchQuery("");
     setSearchResults([]);
@@ -122,8 +100,13 @@ export default function SearchScreen({ navigation }) {
       ) : (
         <FlatList
           data={searchResults}
-          renderItem={renderFundraiserItem}
-          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <FundraiserItem
+              item={item}
+              onPress={() => navigation.navigate("FundraiserDetailsScreen", { fundId: item.fundId })} // Use fundId here
+            />
+          )}
+          keyExtractor={(item) => item.fundId} // Use fundId as the key
           ListEmptyComponent={
             <Text style={styles.emptyText}>
               {searchQuery ? "No results found" : "Start typing to search fundraisers"}
@@ -160,46 +143,6 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 20,
-  },
-  fundraiserItem: {
-    flexDirection: "row",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-  },
-  fundraiserImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    marginRight: 15,
-  },
-  fundraiserInfo: {
-    flex: 1,
-  },
-  fundraiserTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 5,
-  },
-  fundraiserDueDate: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 5,
-  },
-  progressBarContainer: {
-    height: 5,
-    backgroundColor: "#e0e0e0",
-    borderRadius: 5,
-    marginBottom: 5,
-  },
-  progressBar: {
-    height: "100%",
-    backgroundColor: "#4CAF50",
-    borderRadius: 5,
-  },
-  fundraiserAmount: {
-    fontSize: 14,
-    color: "#666",
   },
   emptyText: {
     textAlign: "center",
