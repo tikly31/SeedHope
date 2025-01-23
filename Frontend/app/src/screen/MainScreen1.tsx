@@ -180,7 +180,7 @@ export default function MainScreen1() {
               data={topContributors}
               renderItem={({ item }) => (
                 <ContributorCircle 
-                  image={item.picture ? `${API_BASE_URL}/user/${item.picture}` : defaultContributorImage} 
+                  image={item.picture ? item.picture : defaultContributorImage}
                   name={item.name} 
                 />
               )}

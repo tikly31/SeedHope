@@ -31,7 +31,7 @@ const FundraiserSection: React.FC<FundraiserSectionProps> = ({ title, data, onPr
             id={item.id}
             title={item.title}
             amount={item.goalAmount} // Format the amount string
-            imageUri={`${API_BASE_URL}/campaigns/${item.photoUrl}`} // Use photoUrl for the image
+            imageUri={item.photoUrl ? item.photoUrl : "https://via.placeholder.com/400x300.png?text=Loading..."} // Use photoUrl for the image
             onPress={onPressFundraiser} // Pass the onPress function
           />
         )}
