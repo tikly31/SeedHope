@@ -103,7 +103,10 @@ public class CampaignService implements PaymentObserver {
         }
 
         // Update the raised amount
-        campaign.setRaisedAmount(campaign.getRaisedAmount() + amount);
+        if(campaign.getRaisedAmount() + amount > campaign.getGoalAmount()){
+            campaign.setRaisedAmount(campaign.getGoalAmount());
+        }
+        else campaign.setRaisedAmount(campaign.getRaisedAmount() + amount);
 
         // Check if the goal amount is reached and update status to DONE
         if (campaign.getRaisedAmount() >= campaign.getGoalAmount()) {
