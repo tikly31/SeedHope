@@ -15,6 +15,7 @@ public interface CampaignRepository extends JpaRepository<Campaign, Long> {
 
     List<Campaign> findByCategoryAndStatus(String category, Campaign.Status status);
 
+
     // Find campaigns sorted by due date (ascending order)
     List<Campaign> findByOrderByDueDateAsc();
 
