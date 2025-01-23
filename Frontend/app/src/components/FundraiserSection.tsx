@@ -28,12 +28,13 @@ const FundraiserSection: React.FC<FundraiserSectionProps> = ({ title, data, onPr
         data={data}
         renderItem={({ item }) => (
           <FundraiserCard
-            id={item.id}
-            title={item.title}
-            amount={item.goalAmount} // Format the amount string
-            imageUri={item.photoUrl ? item.photoUrl : "https://via.placeholder.com/400x300.png?text=Loading..."} // Use photoUrl for the image
-            onPress={onPressFundraiser} // Pass the onPress function
-          />
+                      key={item.id}
+                      id={item.id}
+                      title={item.title}
+                      imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
+                      amount={item.goalAmount-item.raisedAmount}
+                      onPress={onPressFundraiser}
+                    />
         )}
         keyExtractor={item => item.id}
         horizontal // Enable horizontal scrolling

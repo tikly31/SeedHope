@@ -8,6 +8,8 @@ import DonationItem from "../components/DonationItem"; // Import the DonationIte
 import profile from "../assets/profile.jpg";
 import { get_current_user, getCampaignsByOrganizerId, getDonationsByUserId } from "./apiUtils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CONFIG from './config';
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 const { width } = Dimensions.get("window");
 const PROFILE_IMAGE_SIZE = 80;
@@ -36,7 +38,7 @@ export default function ProfileScreen() {
             setUsername(userData.username);
             setName(userData.name);
             setBio(userData.bio);
-            setPicture(userData.picture);
+            setPicture(`${API_BASE_URL}/user/${userData.picture}`);
             setDonateAmount(userData.donatedAmount);
             // console.log("pivture", userData.picture);
             const userFundraisers = await getCampaignsByOrganizerId(userData.id);
@@ -97,7 +99,7 @@ export default function ProfileScreen() {
         title={item.title}
         donatedAmount={item.amount}
         status={item.status}
-        imageUrl={item.imageUrl}
+        imageUrl={`${API_BASE_URL}/campaign/${item.imageUrl}`}
       />
     );
 

@@ -18,7 +18,6 @@ import { useNavigation } from '@react-navigation/native';
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
 // const API_BASE_URL = 'http://192.168.0.106:8080';
-const defaultContributorImage = 'https://placeholder.com/50';
 
 interface FundraiserDetailsProps {
   route: {
@@ -100,7 +99,7 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
         </TouchableOpacity>
 
         {/* Fundraiser Image */}
-        <Image source={{ uri: defaultContributorImage }} style={styles.image} />
+        <Image source={{ uri: `${API_BASE_URL}/campaigns/${fundraiser.photoUrl}` }} style={styles.image} />
 
         <View style={styles.content}>
           {/* Fundraiser Title and Due Date */}
