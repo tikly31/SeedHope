@@ -21,54 +21,12 @@ const API_BASE_URL = CONFIG.API_BASE_URL;
 
 const defaultContributorImage = 'https://placeholder.com/50';
 
-// const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
-//   <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
-//     <View style={styles.cardImageContainer}>
-//       <Image
-//         source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
-//         style={styles.cardImage}
-//         resizeMode="cover" // Ensure the image covers the entire area
-//       />
-//     </View>
-//     <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
-//     <Text style={styles.cardAmount}>{amount}</Text>
-//   </TouchableOpacity>
-// );
-
-
 const ContributorCircle = ({ image, name }) => (
   <View style={styles.contributorContainer}>
     <Image source={{ uri: image }} style={styles.contributorImage} />
     <Text style={styles.contributorName} numberOfLines={1}>{name}</Text>
   </View>
 );
-
-// const FundraiserSection = ({ title, data, onPressFundraiser }) => (
-//   <View style={styles.section}>
-//     <Text style={styles.sectionTitle}>{title}</Text>
-//     {data.length === 0 ? (
-//       <Text style={styles.noDataText}>No fundraisers available.</Text>
-//     ) : (
-//       <FlatList
-//         data={data}
-//         renderItem={({ item }) => (
-//           <FundraiserCard
-//             key={item.id}
-//             id={item.id}
-//             title={item.title}
-//             imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
-//             amount={item.goalAmount-item.raisedAmount}
-//             onPress={onPressFundraiser}
-//           />
-//         )}
-//         keyExtractor={(item) => item.id}
-//         horizontal
-//         showsHorizontalScrollIndicator={false}
-//         contentContainerStyle={styles.fundraiserList}
-//       />
-//     )}
-//   </View>
-// );
 
 export default function MainScreen1() {
   const navigation = useNavigation();
@@ -161,10 +119,10 @@ export default function MainScreen1() {
       </View>
 
       {/* Search Bar */}
-      <View style={styles.searchContainer}>
+      <TouchableOpacity style={styles.searchContainer} onPress={() => navigation.navigate('SearchScreen')}>
         <Ionicons name="search" size={20} color="#666" />
         <Text style={styles.searchPlaceholder}>Search fundraisers...</Text>
-      </View>
+      </TouchableOpacity>
 
       {/* Main Content */}
       <FlatList
@@ -192,43 +150,6 @@ export default function MainScreen1() {
           </View>
         }
       />
-      {/* <ScrollView showsVerticalScrollIndicator={true}> */}
-        {/* <FundraiserSection
-          title="Trending Fundraisers"
-          data={staticTrendingFundraisers}
-          onPressFundraiser={handlePressFundraiser}
-        />
-        <FundraiserSection
-          title="Emergency Fundraisers"
-          data={emergencyFundraisers}
-          onPressFundraiser={handlePressFundraiser}
-        />
-        <FundraiserSection
-          title="Recent Fundraisers"
-          data={recentFundraisers}
-          onPressFundraiser={handlePressFundraiser}
-        />
-        <FundraiserSection
-          title="Successful Fundraisers"
-          data={successfulFundraisers}
-          onPressFundraiser={handlePressFundraiser}
-        /> */}
-
-        {/* Top Contributors */}
-        {/* <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Top Contributors</Text>
-          <FlatList
-            data={topContributors}
-            renderItem={({ item }) => (
-              <ContributorCircle image={`${API_BASE_URL}/user/${item.picture}` || 'https://placeholder.com/50'} name={item.name} />
-            )}
-            keyExtractor={(item) => item.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.contributorList}
-          />
-        </View> */}
-      {/* </ScrollView> */}
 
       {/* Bottom Navigation */}
       <BottomNavBar navigation={navigation} activeScreen="Home" />

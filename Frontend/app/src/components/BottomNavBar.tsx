@@ -14,14 +14,14 @@ interface BottomNavBarProps {
   isAdmin ?: boolean;
 }
 
-export default function BottomNavBar({ navigation, activeScreen, isAdmin = false }: BottomNavBarProps) {
+export default function BottomNavBar({ navigation, activeScreen, isAdmin = true }: BottomNavBarProps) {
   const navItems = [
     { name: 'MainScreen', label: 'Home', icon: 'home-outline' },
     { name: 'ExploreScreen', label: 'Explore', icon: 'compass-outline' },
-    { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
-    // isAdmin 
-    //   ? { name: 'PostListScreen', label: 'Approve', icon: 'checkmark-circle-outline' }
-    //   : { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
+    // { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
+    isAdmin 
+      ? { name: 'PostListScreen', label: 'Approve', icon: 'checkmark-circle-outline' }
+      : { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
     { name: 'ProfileScreen1', label: 'Profile', icon: 'person-outline' },
   ];
 
