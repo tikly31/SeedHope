@@ -99,13 +99,16 @@ public class Userservice implements PaymentObserver {
 
     public String verify(User user) {
 
+
+        System.out.println("User: " + user.getEmail() + " " + user.getPassword());
         // Authenticate the user using the AuthenticationManager
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
 
 
-//        System.out.println("Authentication: " + authentication.isAuthenticated());
+        System.out.println("Authentication: " + authentication.isAuthenticated());
+
         // Check if authentication is successful
         if (authentication.isAuthenticated()) {
             String email = authentication.getName();

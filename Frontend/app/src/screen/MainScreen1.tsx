@@ -8,29 +8,32 @@ import {
   SafeAreaView,
   ActivityIndicator,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
-
+import FundraiserSection from '../components/FundraiserSection';
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
 // const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
 
-const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
-  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
-    <View style={styles.cardImageContainer}>
-      <Image
-        source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
-        style={styles.cardImage}
-        resizeMode="cover" // Ensure the image covers the entire area
-      />
-    </View>
-    <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
-    <Text style={styles.cardAmount}>{amount}</Text>
-  </TouchableOpacity>
-);
+const defaultContributorImage = 'https://placeholder.com/50';
+
+// const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
+//   <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
+//     <View style={styles.cardImageContainer}>
+//       <Image
+//         source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
+//         style={styles.cardImage}
+//         resizeMode="cover" // Ensure the image covers the entire area
+//       />
+//     </View>
+//     <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
+//     <Text style={styles.cardAmount}>{amount}</Text>
+//   </TouchableOpacity>
+// );
 
 
 const ContributorCircle = ({ image, name }) => (
@@ -40,32 +43,32 @@ const ContributorCircle = ({ image, name }) => (
   </View>
 );
 
-const FundraiserSection = ({ title, data, onPressFundraiser }) => (
-  <View style={styles.section}>
-    <Text style={styles.sectionTitle}>{title}</Text>
-    {data.length === 0 ? (
-      <Text style={styles.noDataText}>No fundraisers available.</Text>
-    ) : (
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <FundraiserCard
-            key={item.id}
-            id={item.id}
-            title={item.title}
-            imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
-            amount={item.goalAmount-item.raisedAmount}
-            onPress={onPressFundraiser}
-          />
-        )}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.fundraiserList}
-      />
-    )}
-  </View>
-);
+// const FundraiserSection = ({ title, data, onPressFundraiser }) => (
+//   <View style={styles.section}>
+//     <Text style={styles.sectionTitle}>{title}</Text>
+//     {data.length === 0 ? (
+//       <Text style={styles.noDataText}>No fundraisers available.</Text>
+//     ) : (
+//       <FlatList
+//         data={data}
+//         renderItem={({ item }) => (
+//           <FundraiserCard
+//             key={item.id}
+//             id={item.id}
+//             title={item.title}
+//             imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
+//             amount={item.goalAmount-item.raisedAmount}
+//             onPress={onPressFundraiser}
+//           />
+//         )}
+//         keyExtractor={(item) => item.id}
+//         horizontal
+//         showsHorizontalScrollIndicator={false}
+//         contentContainerStyle={styles.fundraiserList}
+//       />
+//     )}
+//   </View>
+// );
 
 export default function MainScreen1() {
   const navigation = useNavigation();
@@ -74,7 +77,10 @@ export default function MainScreen1() {
   const [emergencyFundraisers, setEmergencyFundraisers] = useState([]);
   const [recentFundraisers, setRecentFundraisers] = useState([]);
   const [successfulFundraisers, setSuccessfulFundraisers] = useState([]);
-  const [topContributors, setTopContributors] = useState([]);
+  
+
+
+  const [topContributors, setTopContributors] = useState<Contributor[]>([]);
   const [loading, setLoading] = useState(true);
    const staticTrendingFundraisers = [
       { id: '100', title: 'Save the Forest', photoUrl:'camp1.jpg', amount: '$5,000' },
@@ -186,8 +192,8 @@ export default function MainScreen1() {
           </View>
         }
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <FundraiserSection
+      {/* <ScrollView showsVerticalScrollIndicator={true}> */}
+        {/* <FundraiserSection
           title="Trending Fundraisers"
           data={staticTrendingFundraisers}
           onPressFundraiser={handlePressFundraiser}
@@ -206,10 +212,10 @@ export default function MainScreen1() {
           title="Successful Fundraisers"
           data={successfulFundraisers}
           onPressFundraiser={handlePressFundraiser}
-        />
+        /> */}
 
         {/* Top Contributors */}
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Contributors</Text>
           <FlatList
             data={topContributors}
@@ -221,8 +227,8 @@ export default function MainScreen1() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.contributorList}
           />
-        </View>
-      </ScrollView>
+        </View> */}
+      {/* </ScrollView> */}
 
       {/* Bottom Navigation */}
       <BottomNavBar navigation={navigation} activeScreen="Home" />

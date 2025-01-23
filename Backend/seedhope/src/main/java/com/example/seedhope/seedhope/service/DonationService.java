@@ -31,7 +31,10 @@ public class DonationService {
         return donationRepository.findById(donationId).orElse(null);
     }
 
-    public List<Donation> getDonationsByUserId(Long userId) {
-        return donationRepository.findByUserId(userId);
+    public List<Donation> getDonationsByUserId(String userId) {
+        // convert userId to Long
+//        System.out.println("DonationService.getDonationsByUserId");
+//        System.out.println("userId: " + userId);
+        return donationRepository.findByUserId(Long.parseLong(userId));
     }
 }

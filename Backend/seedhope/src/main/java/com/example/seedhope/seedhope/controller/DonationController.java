@@ -4,6 +4,7 @@ import com.example.seedhope.seedhope.model.Donation;
 import com.example.seedhope.seedhope.service.DonationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,8 +28,9 @@ public class DonationController {
         return donationService.getAllDonations();
     }
 
+
     @GetMapping("/me/{userId}")
-    public List<Donation> getDonationsByUserId(Long userId) {
+    public List<Donation> getDonationsByUserId(@PathVariable String userId) {
         return donationService.getDonationsByUserId(userId);
     }
 }

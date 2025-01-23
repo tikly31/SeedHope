@@ -87,23 +87,25 @@ export const getCampaignsByOrganizerId = async (organizerId) => {
 
 
 
-// export const getDonationsOfAUser = async (customerInfo) => {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/api/v1/campaigns/${encodeURIComponent(customerInfo)}`, {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     });
 
-//     if (!response.ok) {
-//       throw new Error('Failed to fetch donations');
-//     }
 
-//     const donations = await response.json(); // Assuming the response is a JSON array
-//     return donations;
-//   } catch (error) {
-//     console.error('Error fetching donations:', error);
-//     throw error;
-//   }
-// };
+export const getDonationsByUserId = async (userId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/donation/me/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch donations');
+    }
+
+    const donations = await response.json(); // Assuming the response is a JSON array of donations
+    return donations;
+  } catch (error) {
+    console.error('Error fetching donations:', error);
+    throw error;
+  }
+};

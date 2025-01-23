@@ -182,7 +182,7 @@ const handleLogin = async () => {
       await AsyncStorage.setItem("token", token);
 
 
-      // get the current user
+      // // get the current user
       const user = await get_current_user();
       // await AsyncStorage.setItem("Id", user.id);
       console.log("Here is the user : " , user);

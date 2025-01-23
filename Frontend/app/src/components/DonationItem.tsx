@@ -4,7 +4,7 @@ import { View, Text, Image, StyleSheet } from "react-native"
 interface DonationItemProps {
   title: string
   donatedAmount: number
-  status: "success" | "failure"
+  status: "SUCCESS" | "FAIL"
   imageUrl: string
 }
 
@@ -15,8 +15,8 @@ const DonationItem: React.FC<DonationItemProps> = ({ title, donatedAmount, statu
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.amount}>Donated: ৳{donatedAmount.toLocaleString()}</Text>
-        <Text style={[styles.status, status === "success" ? styles.successStatus : styles.failureStatus]}>
-          {status === "success" ? "Success" : "Failure"}
+        <Text style={[styles.status, status === "SUCCESS" ? styles.successStatus : styles.failureStatus]}>
+          {status === "SUCCESS" ? "Success" : "Failure"}
         </Text>
       </View>
     </View>

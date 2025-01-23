@@ -17,7 +17,7 @@ public class Donation {
     private double amount;
 
     private String status;
-
+    private String imageUrl;
 
 
     public Donation() {
