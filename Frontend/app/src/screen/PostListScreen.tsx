@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-
+import BottomNavBar from '../components/BottomNavBar';
 interface Post {
   id: string;
   title: string;
@@ -77,6 +77,7 @@ export default function PostListScreen({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
+      <BottomNavBar navigation={navigation} activeScreen="Home"/>
     </SafeAreaView>
   );
 }

@@ -190,7 +190,7 @@ export default function ProfileScreen() {
         />
       )}
 
-      <BottomNavBar navigation={navigation} activeScreen="Home" isAdmin={true} />
+      <BottomNavBar navigation={navigation} activeScreen="Home"/>
     </SafeAreaView>
   );
 }
