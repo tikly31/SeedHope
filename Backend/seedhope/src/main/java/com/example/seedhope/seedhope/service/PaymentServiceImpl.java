@@ -2,6 +2,7 @@
 package com.example.seedhope.seedhope.service;
 
 import com.example.seedhope.seedhope.exception.PaymentException;
+import com.example.seedhope.seedhope.model.Donation;
 import com.example.seedhope.seedhope.model.PaymentRequest;
 import com.example.seedhope.seedhope.model.PaymentStatus;
 import com.example.seedhope.seedhope.repository.PaymentRepository;
@@ -18,8 +19,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.List;
 
 // PaymentServiceImpl.java (Implementation)
 
@@ -45,6 +47,12 @@ public class PaymentServiceImpl implements PaymentService {
     private final RestTemplate restTemplate;
     @Autowired
     private CampaignService campaignService;
+
+    @Autowired
+    private DonationService donationService;
+
+    @Autowired
+    private Userservice userservice;
 
     @Autowired
     public PaymentServiceImpl(PaymentRepository paymentRepository, RestTemplate restTemplate) {
@@ -119,7 +127,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentStatus.setStatus("INITIATED");
         paymentStatus.setCreatedAt(LocalDateTime.now());
         paymentStatus.setUpdatedAt(LocalDateTime.now());
-        paymentStatus.setCustomerInfo(paymentRequest.getName());
+        paymentStatus.setCustomerInfo(paymentRequest.getEmail());
         paymentStatus.setCampaignId(paymentRequest.getCampaignId());
         paymentRepository.save(paymentStatus);
     }
@@ -148,6 +156,38 @@ public class PaymentServiceImpl implements PaymentService {
         paymentStatus.setUpdatedAt(LocalDateTime.now());
         if(status.equals("SUCCESS"))
                 campaignService.updateRaisedAmount(Long.parseLong(paymentStatus.getCampaignId()), paymentStatus.getAmount());
+        if(status.equals("SUCCESS")) {
+
+//            System.out.println(paymentStatus);
+            Donation donation = new Donation();
+            donation.setAmount(paymentStatus.getAmount());
+            donation.setCampaignId(Long.parseLong(paymentStatus.getCampaignId()));
+            donation.setUserId(userservice.getUserIdByEmail(paymentStatus.getCustomerInfo()));
+            donation.setStatus("SUCCESS");
+            donation.setTitle(campaignService.getCampaignTitleById(Long.parseLong(paymentStatus.getCampaignId())));
+            System.out.println(donation);
+            donationService.addDonation(donation);
+        }
+
+        if(status.equals("FAIL")) {
+            Donation donation = new Donation();
+            donation.setAmount(paymentStatus.getAmount());
+            donation.setCampaignId(Long.parseLong(paymentStatus.getCampaignId()));
+            donation.setUserId(userservice.getUserIdByEmail(paymentStatus.getCustomerInfo()));
+            donation.setStatus("FAIL");
+            donation.setTitle(campaignService.getCampaignTitleById(Long.parseLong(paymentStatus.getCampaignId())));
+            donationService.addDonation(donation);
+        }
+        if(status.equals("CANCEL")) {
+            Donation donation = new Donation();
+            donation.setAmount(paymentStatus.getAmount());
+            donation.setCampaignId(Long.parseLong(paymentStatus.getCampaignId()));
+            donation.setUserId(userservice.getUserIdByEmail(paymentStatus.getCustomerInfo()));
+            donation.setStatus("CANCEL");
+            donation.setTitle(campaignService.getCampaignTitleById(Long.parseLong(paymentStatus.getCampaignId())));
+            donationService.addDonation(donation);
+        }
+
         return paymentRepository.save(paymentStatus);
     }
 
@@ -156,4 +196,10 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findByTransactionId(transactionId)
                 .orElseThrow(() -> new PaymentException("Transaction not found"));
     }
+
+
+//    @Override
+//    public List<PaymentStatus> getPaymentStatusesByCustomerInfo(String email) {
+//        return paymentRepository.findByCustomerInfo(email);
+//    }
 }

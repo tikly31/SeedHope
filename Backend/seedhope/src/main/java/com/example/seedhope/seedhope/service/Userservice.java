@@ -98,21 +98,27 @@ public class Userservice implements PaymentObserver {
 //    }
 
     public String verify(User user) {
+
+
+        System.out.println("User: " + user.getEmail() + " " + user.getPassword());
         // Authenticate the user using the AuthenticationManager
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
 
 
+        System.out.println("Authentication: " + authentication.isAuthenticated());
 
         // Check if authentication is successful
         if (authentication.isAuthenticated()) {
             String email = authentication.getName();
 
+            System.out.println("Email: " + email);
+
 
             // Retrieve the user from the database using the username
-
             User authenticatedUser = userRepository.findByEmail(email);
+
 
 
             // Check if the user exists in the database
@@ -207,5 +213,12 @@ public class Userservice implements PaymentObserver {
         else return "notOk";
     }
 
+    public Long getUserIdByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        return user.getId();
+    }
 
 }

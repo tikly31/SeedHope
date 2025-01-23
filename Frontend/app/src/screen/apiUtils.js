@@ -62,3 +62,50 @@ export const passwordChecker = async (rawPassword) => {
     throw error;
   }
 };
+
+
+export const getCampaignsByOrganizerId = async (organizerId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/campaigns/${organizerId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch campaigns');
+    }
+
+    const campaigns = await response.json(); // Assuming the response is a JSON array
+    return campaigns;
+  } catch (error) {
+    console.error('Error fetching campaigns:', error);
+    throw error;
+  }
+};
+
+
+
+
+
+export const getDonationsByUserId = async (userId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/donation/me/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch donations');
+    }
+
+    const donations = await response.json(); // Assuming the response is a JSON array of donations
+    return donations;
+  } catch (error) {
+    console.error('Error fetching donations:', error);
+    throw error;
+  }
+};

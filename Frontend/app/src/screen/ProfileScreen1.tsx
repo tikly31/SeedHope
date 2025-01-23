@@ -1,62 +1,105 @@
-import React, { useState } from "react"
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, FlatList } from "react-native"
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons"
-import { useNavigation } from "@react-navigation/native"
-import BottomNavBar from "../components/BottomNavBar"
-import ProfileFundraiserCard from "../components/ProfileFundraiserCard"
-import profile from "../assets/profile.jpg"
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, FlatList } from "react-native";
+import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import BottomNavBar from "../components/BottomNavBar";
+import FundraiserItem from "../components/FundraiserItem"; // Import the new FundraiserItem component
+import DonationItem from "../components/DonationItem"; // Import the DonationItem component
+import profile from "../assets/profile.jpg";
+import { get_current_user, getCampaignsByOrganizerId, getDonationsByUserId } from "./apiUtils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width } = Dimensions.get("window")
-const PROFILE_IMAGE_SIZE = 80
+const { width } = Dimensions.get("window");
+const PROFILE_IMAGE_SIZE = 80;
 
 export default function ProfileScreen() {
-  const [activeTab, setActiveTab] = useState("fundraisers")
-  const [username, setUsername] = useState("rahman_ajij")
-  const [name, setName] = useState("Ajij Rahman")
-  const [bio, setBio] = useState("Helping others through fundraising")
-  const navigation = useNavigation()
+  const [activeTab, setActiveTab] = useState("fundraisers");
+  const [username, setUsername] = useState("rahman_ajij");
+  const [name, setName] = useState("Ajij Rahman");
+  const [bio, setBio] = useState("Helping others through fundraising");
+  const [donateAmount, setDonateAmount] = useState(0);
+  const [fundraisers, setFundraisers] = useState([]);
+  const [donations, setDonations] = useState([]);
 
-  const fundraisers = [
-    { id: "1", title: "Medical Fund", amount: "৳50,000", imageUri: "https://example.com/image1.jpg" },
-    { id: "2", title: "Education Support", amount: "৳30,000", imageUri: "https://example.com/image2.jpg" },
-    { id: "3", title: "Emergency Aid", amount: "৳25,000", imageUri: "https://example.com/image3.jpg" },
-    { id: "4", title: "Community Project", amount: "৳40,000", imageUri: "https://example.com/image4.jpg" },
-    { id: "5", title: "Environmental Cause", amount: "৳35,000", imageUri: "https://example.com/image5.jpg" },
-    { id: "6", title: "Animal Welfare", amount: "৳20,000", imageUri: "https://example.com/image6.jpg" },
-  ]
+  const [picture, setPicture] = useState(null);
+  const navigation = useNavigation();
 
-  const donations = [
-    { id: '7', title: 'Local Food Bank', amount: '৳15,000', imageUri: 'https://example.com/image7.jpg' },
-    { id: '8', title: 'Children\'s Hospital', amount: '৳250', imageUri: 'https://example.com/image8.jpg' },
-    { id: '9', title: 'Disaster Relief', amount: '৳30,000', imageUri: 'https://example.com/image9.jpg' },
-  ];
+
+  useEffect(() => {
+
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          const userData = await get_current_user();
+          if (userData) {
+            setUsername(userData.username);
+            setName(userData.name);
+            setBio(userData.bio);
+            setPicture(userData.picture);
+            setDonateAmount(userData.donatedAmount);
+            // console.log("pivture", userData.picture);
+            const userFundraisers = await getCampaignsByOrganizerId(userData.id);
+            if (userFundraisers) {
+              setFundraisers(userFundraisers);
+            }
+            const userDonations = await getDonationsByUserId(userData.id);
+            // console.log("userDonations", userData.id);
+            if (userDonations) {
+              setDonations(userDonations);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+    fetchUserData();
+
+    }, []);
+
+  // const fundraisers = [
+  //   { id: "1", title: "Medical Fund", raisedAmount: 50000, goalAmount: 100000, dueDate: "2023-12-31", photoUrl: "https://example.com/image1.jpg" },
+  //   { id: "2", title: "Education Support", raisedAmount: 30000, goalAmount: 50000, dueDate: "2023-11-15", photoUrl: "https://example.com/image2.jpg" },
+  //   { id: "3", title: "Emergency Aid", raisedAmount: 25000, goalAmount: 40000, dueDate: "2023-10-20", photoUrl: "https://example.com/image3.jpg" },
+  //   { id: "4", title: "Community Project", raisedAmount: 40000, goalAmount: 60000, dueDate: "2024-01-10", photoUrl: "https://example.com/image4.jpg" },
+  //   { id: "5", title: "Environmental Cause", raisedAmount: 35000, goalAmount: 50000, dueDate: "2024-05-30", photoUrl: "https://example.com/image5.jpg" },
+  //   { id: "6", title: "Animal Welfare", raisedAmount: 20000, goalAmount: 30000, dueDate: "2024-03-15", photoUrl: "https://example.com/image6.jpg" },
+  // ];
+
+  // const donations = [
+  //   { id: '7', title: 'Local Food Bank', donatedAmount: 15000, status: 'success', imageUrl: 'https://example.com/image7.jpg' },
+  //   { id: '8', title: 'Children\'s Hospital', donatedAmount: 250, status: 'failure', imageUrl: 'https://example.com/image8.jpg' },
+  //   { id: '9', title: 'Disaster Relief', donatedAmount: 30000, status: 'success', imageUrl: 'https://example.com/image9.jpg' },
+  // ];
 
   const handleEditProfile = () => {
-    navigation.navigate("EditProfileScreen1")
-  }
+    navigation.navigate("EditProfileScreen1");
+  };
 
   const handleMenu = () => {
-    navigation.navigate("LogoutScreen")
-  }
+    navigation.navigate("LogoutScreen");
+  };
 
   const handlePlus = () => {
-    navigation.navigate("CreateFundraiser")
-  }
+    navigation.navigate("CreateFundraiser");
+  };
 
   const handlePressFundraiser = (fundId) => {
-    // console.log('Navigating with fundId:', fundId);
     navigation.navigate('FundraiserDetailsScreen', { fundId });
-  }
+  };
 
-  const renderItem = ({ item }) => (
-    <ProfileFundraiserCard
-      id={item.id}
-      title={item.title}
-      amount={item.amount}
-      imageUri={item.imageUri}
-      onPress={handlePressFundraiser}
-    />
-  )
+  const renderItem = ({ item }) =>
+    activeTab === "fundraisers" ? (
+      <FundraiserItem item={item} onPress={handlePressFundraiser} />
+    ) : (
+      <DonationItem
+        title={item.title}
+        donatedAmount={item.amount}
+        status={item.status}
+        imageUrl={item.imageUrl}
+      />
+    );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -76,7 +119,10 @@ export default function ProfileScreen() {
 
       <View style={styles.profileInfo}>
         <View style={styles.profileImageContainer}>
-          <Image source={profile} style={styles.profileImage} />
+        <Image
+          source={picture ? { uri: picture } : require('../assets/profile.jpg')}
+          style={styles.profileImage}
+        />
         </View>
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
@@ -84,8 +130,8 @@ export default function ProfileScreen() {
             <Text style={styles.statLabel}>Fundraisers</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>৳150K</Text>
-            <Text style={styles.statLabel}>Raised</Text>
+            <Text style={styles.statNumber}>{donateAmount}</Text>
+            <Text style={styles.statLabel}>Donated</Text>
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statNumber}>24</Text>
@@ -133,22 +179,18 @@ export default function ProfileScreen() {
           data={fundraisers}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          numColumns={3}
-          columnWrapperStyle={styles.row}
         />
       ) : (
         <FlatList
           data={donations}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          numColumns={3}
-          columnWrapperStyle={styles.row}
         />
       )}
 
       <BottomNavBar navigation={navigation} activeScreen="Home" isAdmin={true} />
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -255,10 +297,6 @@ const styles = StyleSheet.create({
   activeTab: {
     borderBottomColor: "#007AFF",
   },
-  row: {
-    flex: 1,
-    justifyContent: "space-around",
-    marginBottom: 10,
-  },
-})
+});
 
+export default ProfileScreen;
