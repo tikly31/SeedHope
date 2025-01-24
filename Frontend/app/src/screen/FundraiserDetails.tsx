@@ -16,12 +16,12 @@ import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import BottomNavBar from "../components/BottomNavBar";
 
-import {uploadCampaignImage} from "../utils/apiUtils"; // Assuming the upload utility can be used for campaigns too
+import uploadCampaignImage from "../utils/apiUtils"; // Assuming the upload utility can be used for campaigns too
 import CONFIG from "./config";
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
-import { pickImage } from "../utils/imagePickerUtils";
+import { pickImage } from "../utils/imagePickerUtils"
 
 export default function FundraiserDetails({ navigation, route }) {
   const [title, setTitle] = useState("");
@@ -92,9 +92,7 @@ export default function FundraiserDetails({ navigation, route }) {
           >
             {/* Title Section */}
             <View style={styles.inputSection}>
-              <Text style={styles.sectionTitle}>
-                Give your fundraiser a title
-              </Text>
+              <Text style={styles.sectionTitle}>Give your fundraiser a title</Text>
               <TextInput
                 style={styles.input}
                 value={title}
@@ -132,10 +130,7 @@ export default function FundraiserDetails({ navigation, route }) {
                 onPress={handlePickImage}
               >
                 {image ? (
-                  <Image
-                    source={{ uri: `${API_BASE_URL}/campaigns/${image}` }}
-                    style={styles.uploadedImage}
-                  />
+                  <Image source={{ uri: `${API_BASE_URL}/campaigns/${image}` }} style={styles.uploadedImage} />
                 ) : (
                   <View style={styles.uploadPlaceholder}>
                     <MaterialIcons
