@@ -39,6 +39,11 @@ public class CampaignController {
         return ResponseEntity.ok(campaignService.getAllApprovedCampaigns());
     }
 
+    @GetMapping("/campaign/all")
+    public ResponseEntity<List<Campaign>> getAllCampaigns() {
+        return ResponseEntity.ok(campaignService.getAllCampaigns());
+    }
+
     @GetMapping("/campaign/{id}")
     public ResponseEntity<Campaign> getCampaignById(@PathVariable Long id) {
         return campaignService.getCampaignById(id)

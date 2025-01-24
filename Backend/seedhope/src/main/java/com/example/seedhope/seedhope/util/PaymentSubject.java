@@ -5,10 +5,14 @@ import com.example.seedhope.seedhope.model.Payment;
 import com.example.seedhope.seedhope.model.User;
 import com.example.seedhope.seedhope.service.CampaignService;
 import com.example.seedhope.seedhope.service.Userservice;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class PaymentSubject {
 
     private List<CampaignService> observers = new ArrayList<>();

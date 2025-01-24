@@ -16,9 +16,10 @@ export const pickImage = async () => {
   });
 
   console.log(result);
-
-  if (!result.canceled) {
+  if(!result.canceled) {
     return result.assets[0].uri; // Return the URI of the selected image or video
   }
+
+  
   return null; // Return null if the selection was canceled
 };

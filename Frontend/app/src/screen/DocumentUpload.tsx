@@ -151,7 +151,7 @@ const uploadDocumentToServer = async (fileUri: string, fileName: string) => {
         goalAmount: campaign.amount,
         dueDate: campaign.dueDate,
         organizerId: organizerId, // Ensure organizer ID is properly set
-        photoUrl: documents.length > 0 ? documents[0].uri : null,
+        photoUrl: campaign.image ? campaign.image : "http/placehold.it/300",
         raisedAmount: 0.0,
         status: 'PENDING'
       };

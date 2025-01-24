@@ -85,7 +85,8 @@ public class CampaignService implements PaymentObserver {
     }
 
     public List<Campaign> getSortedCampaigns(CampaignSortStrategy strategy) {
-        List<Campaign> campaigns = campaignRepository.findAll();
+        // Fetch campaigns with status APPROVED
+        List<Campaign> campaigns = campaignRepository.findByStatus(Campaign.Status.APPROVED);
 
         // Set the sorting strategy dynamically
         campaignSorter.setSortStrategy(strategy);
@@ -93,6 +94,7 @@ public class CampaignService implements PaymentObserver {
         // Return the sorted campaigns
         return campaignSorter.sortCampaigns(campaigns);
     }
+
 
     public List<Campaign> getSuccessfulCampaigns() {
         return campaignRepository.findByStatus(Campaign.Status.DONE);
@@ -108,7 +110,10 @@ public class CampaignService implements PaymentObserver {
         }
 
         // Update the raised amount
-        campaign.setRaisedAmount(campaign.getRaisedAmount() + amount);
+        if(campaign.getRaisedAmount() + amount > campaign.getGoalAmount()){
+            campaign.setRaisedAmount(campaign.getGoalAmount());
+        }
+        else campaign.setRaisedAmount(campaign.getRaisedAmount() + amount);
 
         // Check if the goal amount is reached and update status to DONE
         if (campaign.getRaisedAmount() >= campaign.getGoalAmount()) {
@@ -145,5 +150,7 @@ public class CampaignService implements PaymentObserver {
     }
 
 
-
+    public List<Campaign> getAllCampaigns() {
+        return campaignRepository.findAll();
+    }
 }

@@ -1,6 +1,8 @@
 package com.example.seedhope.seedhope.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +23,9 @@ public class User {
 
     private String gender;
 
+
+
+
     protected User() {
     }
     // Private constructor to enforce the use of the builder
@@ -36,6 +41,7 @@ public class User {
         this.donatedAmount = builder.donatedAmount;
         this.bio = builder.bio;
         this.gender = builder.gender;
+
     }
 
     // Getters
@@ -123,6 +129,8 @@ public class User {
         this.gender = gender;
     }
 
+
+
     // toString() method to print the User object
 
 
@@ -149,6 +157,7 @@ public class User {
 
     // Static inner Builder class
     public static class UserBuilder {
+        public byte[] image;
         private Long id;
         private String name;
         private String email;
@@ -217,6 +226,9 @@ public class User {
             this.gender = gender;
             return this;
         }
+
+
+
 
         public User build() {
             return new User(this);

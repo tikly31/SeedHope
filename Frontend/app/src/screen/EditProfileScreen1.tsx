@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get_current_user, passwordChecker } from './apiUtils';
 import { pickImage } from './imagePickerUtils';
 import AlertModal from '../components/AlertModal';
+import uploadUserImage from './uploadUserImage';
 
 import CONFIG from './config';
 
@@ -105,13 +106,42 @@ export default function EditProfileScreen() {
     setAlertVisible(true)
   }
 
-  const handlePickImage  = async () => {
-    const result = await pickImage();
+const handlePickImage = async () => {
+  const uri = await pickImage();
 
-    if (result) {
-      setProfileData(prev => ({ ...prev, picture: result}));
+  // Check if uri is valid
+  if (!uri) {
+    console.warn("Image picking was canceled or returned no URI.");
+    return;
+  }
+
+  try {
+    // Format the image object for upload
+    const formattedImage = {
+      uri, // Directly use the returned URI
+      type: "image/jpeg", // Assuming it's a JPEG; update based on expected formats
+      name: uri.split("/").pop(), // Extract file name from the URI
+    };
+
+    // Upload the image
+    const uploadedFileName = await uploadUserImage(formattedImage);
+
+    if (uploadedFileName) {
+      setProfileData((prev) => ({
+        ...prev,
+        picture: uploadedFileName,
+      }));
+//       showAlert("success", "Image uploaded successfully!");
+    } else {
+      showAlert("failure", "Failed to upload image. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("Error uploading user image:", error);
+    showAlert("failure", "An error occurred while uploading the image.");
+  }
+};
+
+
 
   const updateField = (field: keyof ProfileData, value: string) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
@@ -282,7 +312,7 @@ export default function EditProfileScreen() {
         <View style={styles.profilePictureContainer}>
           <TouchableOpacity onPress={handlePickImage}>
             <Image
-              source={{ uri: profileData.picture }}
+              source={{ uri: `${API_BASE_URL}/user/${profileData.picture}` }}
               style={styles.profilePicture}
             />
             <Text style={styles.editPictureText}>Edit picture or avatar</Text>
