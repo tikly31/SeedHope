@@ -71,7 +71,7 @@ export default function PostDetailsScreen({ route, navigation }) {
               />
               <View style={styles.authorDetails}>
                 <Text style={styles.authorName}>{post.author}</Text>
-                <Text style={styles.authorId}>ID: {post.authorId}</Text>{" "}
+                <Text style={styles.authorId}>ID: {post.authorId}</Text>
                 {/* Displaying author ID */}
               </View>
             </View>
