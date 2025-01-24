@@ -2,38 +2,36 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
+  ScrollView,
   Image,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  ActivityIndicator,
   FlatList,
-  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
-import FundraiserSection from '../components/FundraiserSection';
+
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
 // const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
 
-const defaultContributorImage = 'https://placeholder.com/50';
-
-// const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
-//   <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
-//     <View style={styles.cardImageContainer}>
-//       <Image
-//         source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
-//         style={styles.cardImage}
-//         resizeMode="cover" // Ensure the image covers the entire area
-//       />
-//     </View>
-//     <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
-//     <Text style={styles.cardAmount}>{amount}</Text>
-//   </TouchableOpacity>
-// );
+const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
+  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
+    <View style={styles.cardImageContainer}>
+      <Image
+        source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
+        style={styles.cardImage}
+        resizeMode="cover" // Ensure the image covers the entire area
+      />
+    </View>
+    <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
+    <Text style={styles.cardAmount}>{amount}</Text>
+  </TouchableOpacity>
+);
 
 
 const ContributorCircle = ({ image, name }) => (
@@ -43,44 +41,40 @@ const ContributorCircle = ({ image, name }) => (
   </View>
 );
 
-// const FundraiserSection = ({ title, data, onPressFundraiser }) => (
-//   <View style={styles.section}>
-//     <Text style={styles.sectionTitle}>{title}</Text>
-//     {data.length === 0 ? (
-//       <Text style={styles.noDataText}>No fundraisers available.</Text>
-//     ) : (
-//       <FlatList
-//         data={data}
-//         renderItem={({ item }) => (
-//           <FundraiserCard
-//             key={item.id}
-//             id={item.id}
-//             title={item.title}
-//             imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
-//             amount={item.goalAmount-item.raisedAmount}
-//             onPress={onPressFundraiser}
-//           />
-//         )}
-//         keyExtractor={(item) => item.id}
-//         horizontal
-//         showsHorizontalScrollIndicator={false}
-//         contentContainerStyle={styles.fundraiserList}
-//       />
-//     )}
-//   </View>
-// );
+const FundraiserSection = ({ title, data, onPressFundraiser }) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>{title}</Text>
+    {data.length === 0 ? (
+      <Text style={styles.noDataText}>No fundraisers available.</Text>
+    ) : (
+      <FlatList
+        data={data}
+        renderItem={({ item }) => (
+          <FundraiserCard
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
+            amount={item.goalAmount-item.raisedAmount}
+            onPress={onPressFundraiser}
+          />
+        )}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.fundraiserList}
+      />
+    )}
+  </View>
+);
 
 export default function MainScreen1() {
   const navigation = useNavigation();
-  const [searchInput, setSearchInput] = useState('');
 
   const [emergencyFundraisers, setEmergencyFundraisers] = useState([]);
   const [recentFundraisers, setRecentFundraisers] = useState([]);
   const [successfulFundraisers, setSuccessfulFundraisers] = useState([]);
-  
-
-
-  const [topContributors, setTopContributors] = useState<Contributor[]>([]);
+  const [topContributors, setTopContributors] = useState([]);
   const [loading, setLoading] = useState(true);
    const staticTrendingFundraisers = [
       { id: '100', title: 'Save the Forest', photoUrl:'camp1.jpg', amount: '$5,000' },
@@ -112,12 +106,8 @@ export default function MainScreen1() {
   }, []);
 
   const handlePressFundraiser = (fundId) => {
+    console.log('Navigating with fundId:', fundId);
     navigation.navigate('FundraiserDetailsScreen', { fundId });
-  };
-
-  const handleSearch = (text) => {
-    setSearchInput(text);
-    // Implement search logic if needed
   };
 
   if (loading) {
@@ -128,21 +118,6 @@ export default function MainScreen1() {
       </View>
     );
   }
-
-  const renderFundraiserSection = ({ item }) => (
-    <FundraiserSection
-      title={item.title}
-      data={item.data}
-      onPressFundraiser={handlePressFundraiser}
-    />
-  );
-
-  const sections = [
-    { title: "Trending Fundraisers", data: staticTrendingFundraisers },
-    { title: "Emergency Fundraisers", data: emergencyFundraisers },
-    { title: "Recent Fundraisers", data: recentFundraisers },
-    { title: "Successful Fundraisers", data: successfulFundraisers },
-  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -167,33 +142,8 @@ export default function MainScreen1() {
       </View>
 
       {/* Main Content */}
-      <FlatList
-        data={sections}
-        renderItem={renderFundraiserSection}
-        keyExtractor={(item) => item.title}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.sectionContainer}
-        ListFooterComponent={
-          <View>
-            <Text style={styles.sectionTitle}>Top Contributors</Text>
-            <FlatList
-              data={topContributors}
-              renderItem={({ item }) => (
-                <ContributorCircle 
-                  image={item.picture ? `${API_BASE_URL}/user/${item.picture}` : defaultContributorImage} 
-                  name={item.name} 
-                />
-              )}
-              keyExtractor={(item) => item.id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.contributorList}
-            />
-          </View>
-        }
-      />
-      {/* <ScrollView showsVerticalScrollIndicator={true}> */}
-        {/* <FundraiserSection
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <FundraiserSection
           title="Trending Fundraisers"
           data={staticTrendingFundraisers}
           onPressFundraiser={handlePressFundraiser}
@@ -212,10 +162,10 @@ export default function MainScreen1() {
           title="Successful Fundraisers"
           data={successfulFundraisers}
           onPressFundraiser={handlePressFundraiser}
-        /> */}
+        />
 
         {/* Top Contributors */}
-        {/* <View style={styles.section}>
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Contributors</Text>
           <FlatList
             data={topContributors}
@@ -227,8 +177,8 @@ export default function MainScreen1() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.contributorList}
           />
-        </View> */}
-      {/* </ScrollView> */}
+        </View>
+      </ScrollView>
 
       {/* Bottom Navigation */}
       <BottomNavBar navigation={navigation} activeScreen="Home" />
@@ -268,14 +218,35 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     color: '#666',
   },
-  sectionContainer: {
-    paddingBottom: 100, // Ensure enough padding at the bottom
+  section: {
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 16,
     marginBottom: 12,
+  },
+  fundraiserList: {
+    paddingHorizontal: 12,
+  },
+  contributorList: {
+    paddingHorizontal: 12,
+  },
+  contributorContainer: {
+    alignItems: 'center',
+    marginHorizontal: 8,
+  },
+  contributorImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  contributorName: {
+    fontSize: 12,
+    marginTop: 4,
+    maxWidth: 60,
+    textAlign: 'center',
   },
   loaderContainer: {
     flex: 1,

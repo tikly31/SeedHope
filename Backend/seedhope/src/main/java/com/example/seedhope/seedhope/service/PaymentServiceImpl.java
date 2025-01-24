@@ -1,16 +1,17 @@
-
 package com.example.seedhope.seedhope.service;
 
 import com.example.seedhope.seedhope.exception.PaymentException;
 import com.example.seedhope.seedhope.model.Donation;
+import com.example.seedhope.seedhope.model.Payment;
 import com.example.seedhope.seedhope.model.PaymentRequest;
 import com.example.seedhope.seedhope.model.PaymentStatus;
+import com.example.seedhope.seedhope.util.PaymentSubject;
 import com.example.seedhope.seedhope.repository.PaymentRepository;
 import com.example.seedhope.seedhope.response.PaymentResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
-import java.util.List;
-
-// PaymentServiceImpl.java (Implementation)
-
-
 
 @Service
 @Slf4j
@@ -45,6 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final RestTemplate restTemplate;
+
     @Autowired
     private CampaignService campaignService;
 
@@ -55,6 +51,9 @@ public class PaymentServiceImpl implements PaymentService {
     private Userservice userservice;
 
     @Autowired
+    private PaymentSubject paymentSubject;
+
+    @Autowired
     public PaymentServiceImpl(PaymentRepository paymentRepository, RestTemplate restTemplate) {
         this.paymentRepository = paymentRepository;
         this.restTemplate = restTemplate;
@@ -63,9 +62,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponse initiatePayment(PaymentRequest paymentRequest) {
         try {
-            // push into the database
-            System.out.println(paymentRequest);
-
             // Prepare the request payload
             MultiValueMap<String, String> postData = new LinkedMultiValueMap<>();
             postData.add("store_id", storeId);
@@ -73,9 +69,9 @@ public class PaymentServiceImpl implements PaymentService {
             postData.add("total_amount", String.valueOf(paymentRequest.getAmount()));
             postData.add("currency", "BDT");
             postData.add("tran_id", paymentRequest.getTrancationId());
-            postData.add("success_url", api_base_url_android+"/api/payment/success/" + paymentRequest.getTrancationId());
-            postData.add("fail_url", api_base_url_android +"/api/payment/fail/" + paymentRequest.getTrancationId());
-            postData.add("cancel_url",  api_base_url_android +"/api/payment/cancel/" + paymentRequest.getTrancationId());
+            postData.add("success_url", api_base_url_android + "/api/payment/success/" + paymentRequest.getTrancationId());
+            postData.add("fail_url", api_base_url_android + "/api/payment/fail/" + paymentRequest.getTrancationId());
+            postData.add("cancel_url", api_base_url_android + "/api/payment/cancel/" + paymentRequest.getTrancationId());
             postData.add("cus_name", paymentRequest.getName());
             postData.add("cus_email", paymentRequest.getEmail());
             postData.add("cus_phone", paymentRequest.getPhone());
@@ -134,7 +130,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentStatus validatePayment(Map<String, String> sslCommerzResponse) {
-
         String transactionId = sslCommerzResponse.get("tran_id");
         String status = sslCommerzResponse.get("status");
 
@@ -152,38 +147,49 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentStatus updateStatus(String transactionId, String status) {
         PaymentStatus paymentStatus = paymentRepository.findByTransactionId(transactionId)
                 .orElseThrow(() -> new PaymentException("Transaction not found"));
+
         paymentStatus.setStatus(status);
         paymentStatus.setUpdatedAt(LocalDateTime.now());
-        if(status.equals("SUCCESS"))
-                campaignService.updateRaisedAmount(Long.parseLong(paymentStatus.getCampaignId()), paymentStatus.getAmount());
-        if(status.equals("SUCCESS")) {
 
-//            System.out.println(paymentStatus);
+        if ("SUCCESS".equals(status)) {
+            // Update the raised amount in the campaign
+//            campaignService.updateRaisedAmount(
+//                    Long.parseLong(paymentStatus.getCampaignId()), paymentStatus.getAmount()
+//            );
+
+            // Create a new donation record
             Donation donation = new Donation();
             donation.setAmount(paymentStatus.getAmount());
             donation.setCampaignId(Long.parseLong(paymentStatus.getCampaignId()));
             donation.setUserId(userservice.getUserIdByEmail(paymentStatus.getCustomerInfo()));
             donation.setStatus("SUCCESS");
             donation.setTitle(campaignService.getCampaignTitleById(Long.parseLong(paymentStatus.getCampaignId())));
-            System.out.println(donation);
             donationService.addDonation(donation);
-        }
 
-        if(status.equals("FAIL")) {
+            // Attach observers
+            paymentSubject.attach_campaign(campaignService);
+            paymentSubject.attach_user(userservice);
+
+            // Notify observers
+            Payment payment = new Payment.Builder()
+                    .setUser(userservice.getUserById(donation.getUserId()))
+                    .setAmount(paymentStatus.getAmount())
+                    .setPaymentMethod(paymentStatus.getPaymentMethod())
+                    .setPaymentDate(LocalDateTime.now())
+                    .setCampaign(
+                            campaignService.getCampaignById(Long.parseLong(paymentStatus.getCampaignId()))
+                                    .orElseThrow(() -> new RuntimeException("Campaign not found"))
+                    )
+                    .build();
+
+
+            paymentSubject.notifyObservers(payment);
+        } else if ("FAIL".equals(status) || "CANCEL".equals(status)) {
             Donation donation = new Donation();
             donation.setAmount(paymentStatus.getAmount());
             donation.setCampaignId(Long.parseLong(paymentStatus.getCampaignId()));
             donation.setUserId(userservice.getUserIdByEmail(paymentStatus.getCustomerInfo()));
-            donation.setStatus("FAIL");
-            donation.setTitle(campaignService.getCampaignTitleById(Long.parseLong(paymentStatus.getCampaignId())));
-            donationService.addDonation(donation);
-        }
-        if(status.equals("CANCEL")) {
-            Donation donation = new Donation();
-            donation.setAmount(paymentStatus.getAmount());
-            donation.setCampaignId(Long.parseLong(paymentStatus.getCampaignId()));
-            donation.setUserId(userservice.getUserIdByEmail(paymentStatus.getCustomerInfo()));
-            donation.setStatus("CANCEL");
+            donation.setStatus(status);
             donation.setTitle(campaignService.getCampaignTitleById(Long.parseLong(paymentStatus.getCampaignId())));
             donationService.addDonation(donation);
         }
@@ -196,10 +202,4 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findByTransactionId(transactionId)
                 .orElseThrow(() -> new PaymentException("Transaction not found"));
     }
-
-
-//    @Override
-//    public List<PaymentStatus> getPaymentStatusesByCustomerInfo(String email) {
-//        return paymentRepository.findByCustomerInfo(email);
-//    }
 }

@@ -58,9 +58,13 @@ public class Userservice implements PaymentObserver {
 
         // Step 4: Create a new User instance using the builder, encoding the password
         User newUser = new User.UserBuilder()
+                .setUsername(user.getUsername())
                 .setEmail(user.getEmail())
                 .setPassword(encoder.encode(user.getPassword()))
                 .setContactno(user.getContactno())
+                .setDonatedAmount(user.getDonatedAmount())
+                .setPicture(user.getPicture())
+                .setName(user.getName())
                 .build();
 
         // Step 5: Save the user to the database
