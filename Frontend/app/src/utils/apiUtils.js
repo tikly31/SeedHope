@@ -173,6 +173,30 @@ export const updateCampaign = async (campaign) => {
     console.error("Error updating campaign:", error);
     throw error;
   }
+
+};
+
+// get all pending campaigns
+
+export const getPendingCampaigns = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/campaign/pending`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch campaigns");
+    }
+
+    const campaigns = await response.json(); // Assuming the response is a JSON array
+    return campaigns;
+  } catch (error) {
+    console.error("Error fetching campaigns:", error);
+    throw error;
+  }
 };
 
 export const createComment = async (commentData) => {

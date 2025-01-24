@@ -65,6 +65,10 @@ public class Userservice implements PaymentObserver {
                 .setDonatedAmount(user.getDonatedAmount())
                 .setPicture(user.getPicture())
                 .setName(user.getName())
+                .setBio(user.getBio())
+                .setRole(user.getRole())
+                .setGender(user.getGender())
+                .setProvider(user.getProvider())
                 .build();
 
         // Step 5: Save the user to the database
