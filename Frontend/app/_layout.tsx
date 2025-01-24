@@ -36,8 +36,8 @@ const AppNavigator = () => {
             headerShown: false,
           }}
         >
-          <Stack.Screen name={"MainScreen"} component={MainScreen} />
           <Stack.Screen name={"CommentScreen"} component={CommentScreen} />
+          <Stack.Screen name={"MainScreen"} component={MainScreen} />
           <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
           <Stack.Screen name={"ProfileScreen1"} component={ProfileScreen1} />
           <Stack.Screen name={"EditProfileScreen1"} component={EditProfileScreen1} />
