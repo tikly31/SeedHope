@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, FlatList } from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -6,9 +6,10 @@ import BottomNavBar from "../components/BottomNavBar";
 import FundraiserItem from "../components/FundraiserItem"; // Import the new FundraiserItem component
 import DonationItem from "../components/DonationItem"; // Import the DonationItem component
 import profile from "../assets/profile.jpg";
-import { get_current_user, getCampaignsByOrganizerId, getDonationsByUserId } from "./apiUtils";
+import { get_current_user, getCampaignsByOrganizerId, getDonationsByUserId } from "../utils/apiUtils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CONFIG from './config';
+import { useFocusEffect } from "expo-router";
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
 const { width } = Dimensions.get("window");
@@ -27,38 +28,47 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
 
 
-  useEffect(() => {
-
-    const fetchUserData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        if (token) {
-          const userData = await get_current_user();
-          if (userData) {
-            setUsername(userData.username);
-            setName(userData.name);
-            setBio(userData.bio);
-            setPicture(`${API_BASE_URL}/user/${userData.picture}`);
-            setDonateAmount(userData.donatedAmount);
-            // console.log("pivture", userData.picture);
-            const userFundraisers = await getCampaignsByOrganizerId(userData.id);
-            if (userFundraisers) {
-              setFundraisers(userFundraisers);
-            }
-            const userDonations = await getDonationsByUserId(userData.id);
-            // console.log("userDonations", userData.id);
-            if (userDonations) {
-              setDonations(userDonations);
-            }
+  const fetchUserData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        const userData = await get_current_user();
+        if (userData) {
+          setUsername(userData.username);
+          setName(userData.name);
+          setBio(userData.bio);
+          setPicture(`${API_BASE_URL}/user/${userData.picture}`);
+          setDonateAmount(userData.donatedAmount);
+          // console.log("pivture", userData.picture);
+          const userFundraisers = await getCampaignsByOrganizerId(userData.id);
+          if (userFundraisers) {
+            setFundraisers(userFundraisers);
+          }
+          const userDonations = await getDonationsByUserId(userData.id);
+          // console.log("userDonations", userData.id);
+          if (userDonations) {
+            setDonations(userDonations);
           }
         }
-      } catch (error) {
-        console.error('Error loading user data:', error);
       }
-    };
-    fetchUserData();
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
 
+  useEffect(() => {
+    fetchUserData();
     }, []);
+
+
+
+  useFocusEffect(
+      useCallback(() => {
+          fetchUserData();
+        }, [])
+    );
+
+    
 
   // const fundraisers = [
   //   { id: "1", title: "Medical Fund", raisedAmount: 50000, goalAmount: 100000, dueDate: "2023-12-31", photoUrl: "https://example.com/image1.jpg" },

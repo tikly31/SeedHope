@@ -15,7 +15,7 @@ import axios from "axios";
 import { colors } from "../utils/colors";
 import MainScreen from "./MainScreen";
 import { jwtDecode } from 'jwt-decode';
-import {get_current_user} from './apiUtils';
+import {get_current_user} from '../utils/apiUtils';
 
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;

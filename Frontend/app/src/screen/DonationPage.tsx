@@ -20,7 +20,7 @@ import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
 
-import { get_current_user } from './apiUtils';
+import { get_current_user } from '../utils/apiUtils';
 
 import AlertModal from '../components/AlertModal';
 
@@ -233,11 +233,13 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
 
   const handleAlertClose = () => {
     setAlertVisible(false);
+  
     if (alertType === 'success') {
-      navigation.navigate('FundraiserDetailsScreen', {fundId});
-    }
-    if(alertType === 'failure'){
-      navigation.navigate('DonationPage', {fundId});
+      // Replace the current route with FundraiserDetailsScreen
+      navigation.goBack();
+    } else if (alertType === 'failure') {
+      // Navigate back to DonationPage
+      navigation.navigate('DonationPage', { fundId });
     }
   };
 

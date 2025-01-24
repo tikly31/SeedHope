@@ -26,6 +26,13 @@ public class CampaignController {
     public Campaign addCampaign(@RequestBody Campaign campaign){
         return campaignService.addCampaign(campaign);
     }
+
+    @PutMapping("/campaign/update")
+    public Campaign updateCampaign(@RequestBody Campaign campaign){
+        return campaignService.updateCampaign(campaign);
+    }
+
+
     @PostMapping("/campaign/all")
     public List<Campaign> addAllCampaigns(@RequestBody List<Campaign> campaigns){
         for(Campaign campaign : campaigns){
