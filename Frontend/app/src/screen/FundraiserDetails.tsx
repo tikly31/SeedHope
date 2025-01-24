@@ -16,7 +16,7 @@ import * as ImagePicker from "expo-image-picker"
 import { MaterialIcons } from "@expo/vector-icons"
 import BottomNavBar from "../components/BottomNavBar"
 
-import {pickImage} from "./imagePickerUtils"
+import {pickImage} from "../utils/imagePickerUtils"
 
 export default function FundraiserDetails({ navigation, route }) {
   const [title, setTitle] = useState("")

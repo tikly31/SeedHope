@@ -153,4 +153,8 @@ public class CampaignService implements PaymentObserver {
     public List<Campaign> getAllCampaigns() {
         return campaignRepository.findAll();
     }
+
+    public Campaign updateCampaign(Campaign campaign) {
+        return campaignRepository.save(campaign);
+    }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { get_current_user } from '../utils/apiUtils';
 
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
@@ -37,28 +38,40 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [currentUser, setCurrentUser] = useState(null);
+
+    const fetchFundraiserDetails = async () => {
+      try {
+        console.log('Making API call with fundId:', fundId);
+        const response = await axios.get(`${API_BASE_URL}/campaign/${fundId}`);
+        console.log('API Response:', response.data);
+        setFundraiser(response.data);
+        const user = await get_current_user();
+        setCurrentUser(user);
+      } catch (err) {
+        console.error('Error fetching fundraiser details:', err);
+        setError('Failed to load fundraiser details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     useEffect(() => {
       if (!fundId) {
         console.log('Invalid fundId:', fundId);
         return; // Exit early if fundId is not valid
       }
 
-      const fetchFundraiserDetails = async () => {
-        try {
-          console.log('Making API call with fundId:', fundId);
-          const response = await axios.get(`${API_BASE_URL}/campaign/${fundId}`);
-          console.log('API Response:', response.data);
-          setFundraiser(response.data);
-        } catch (err) {
-          console.error('Error fetching fundraiser details:', err);
-          setError('Failed to load fundraiser details.');
-        } finally {
-          setLoading(false);
-        }
-      };
+  
 
       fetchFundraiserDetails();
     }, [fundId]);
+
+    useFocusEffect(
+      useCallback(() => {
+        fetchFundraiserDetails();
+      }, [fundId])
+    );
 
      // Handle loading state and error
       if (loading) {
@@ -134,12 +147,28 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
             )}
             <Text style={styles.description}>{fundraiser.description}</Text>
           </View>
+          {
 
+          currentUser.id === fundraiser.organizerId ?  
+        (
+          // Edit Event Button
           <TouchableOpacity style={styles.donateButton}
+            onPress={() => navigation.navigate('EditFundraiserScreen', {fundraiser})}
+          >
+            <Text style={styles.donateButtonText}>Edit Fundraiser</Text>
+          </TouchableOpacity>
+        )
+
+        : 
+        
+        ( <TouchableOpacity style={styles.donateButton}
             onPress={() => navigation.navigate('DonationPage', {fundId})}
           >
             <Text style={styles.donateButtonText}>Donate</Text>
           </TouchableOpacity>
+         ) 
+         
+  }
         </View>
       </ScrollView>
     </SafeAreaView>

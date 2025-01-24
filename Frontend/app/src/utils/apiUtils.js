@@ -1,7 +1,8 @@
 // apiUtils.js
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CONFIG from './config';
+import CONFIG from '../screen/config';
+import axios from 'axios';
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
@@ -86,6 +87,30 @@ export const getCampaignsByOrganizerId = async (organizerId) => {
 };
 
 
+export const uploadCampaignImage = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/uploads/campaign`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload campaign image.");
+    }
+
+    const fileName = await response.text();
+    return fileName; // This is the uploaded file's name
+  } catch (error) {
+    console.error("Error uploading campaign image:", error);
+    return null;
+  }
+};
+
+
+
 
 
 
@@ -106,6 +131,48 @@ export const getDonationsByUserId = async (userId) => {
     return donations;
   } catch (error) {
     console.error('Error fetching donations:', error);
+    throw error;
+  }
+};
+
+
+export const uploadUserImage = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/uploads/user`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload user image.");
+    }
+
+    const fileName = await response.text();
+    return fileName; // This is the uploaded file's name
+  } catch (error) {
+    console.error("Error uploading user image:", error);
+    return null;
+  }
+};
+
+
+
+
+export const updateCampaign = async (campaign) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/campaign/update` , {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(campaign),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating campaign:', error);
     throw error;
   }
 };

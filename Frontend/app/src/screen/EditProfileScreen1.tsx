@@ -12,13 +12,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { get_current_user, passwordChecker } from './apiUtils';
-import { pickImage } from './imagePickerUtils';
+import { get_current_user, passwordChecker , uploadUserImage} from '../utils/apiUtils';
+import { pickImage } from '../utils/imagePickerUtils';
 import AlertModal from '../components/AlertModal';
-import uploadUserImage from './uploadUserImage';
-
 import CONFIG from './config';
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
