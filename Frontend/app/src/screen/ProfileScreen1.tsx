@@ -1,14 +1,27 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  FlatList,
+} from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import BottomNavBar from "../components/BottomNavBar";
 import FundraiserItem from "../components/FundraiserItem"; // Import the new FundraiserItem component
 import DonationItem from "../components/DonationItem"; // Import the DonationItem component
 import profile from "../assets/profile.jpg";
-import { get_current_user, getCampaignsByOrganizerId, getDonationsByUserId } from "../utils/apiUtils";
+import {
+  get_current_user,
+  getCampaignsByOrganizerId,
+  getDonationsByUserId,
+} from "../utils/apiUtils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CONFIG from './config';
+import CONFIG from "./config";
 import { useFocusEffect } from "expo-router";
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
@@ -27,10 +40,9 @@ export default function ProfileScreen() {
   const [picture, setPicture] = useState(null);
   const navigation = useNavigation();
 
-
   const fetchUserData = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
+      const token = await AsyncStorage.getItem("token");
       if (token) {
         const userData = await get_current_user();
         if (userData) {
@@ -52,23 +64,19 @@ export default function ProfileScreen() {
         }
       }
     } catch (error) {
-      console.error('Error loading user data:', error);
+      console.error("Error loading user data:", error);
     }
   };
 
   useEffect(() => {
     fetchUserData();
-    }, []);
-
-
+  }, []);
 
   useFocusEffect(
-      useCallback(() => {
-          fetchUserData();
-        }, [])
-    );
-
-    
+    useCallback(() => {
+      fetchUserData();
+    }, [])
+  );
 
   // const fundraisers = [
   //   { id: "1", title: "Medical Fund", raisedAmount: 50000, goalAmount: 100000, dueDate: "2023-12-31", photoUrl: "https://example.com/image1.jpg" },
@@ -98,7 +106,7 @@ export default function ProfileScreen() {
   };
 
   const handlePressFundraiser = (fundId) => {
-    navigation.navigate('FundraiserDetailsScreen', { fundId });
+    navigation.navigate("FundraiserDetailsScreen", { fundId });
   };
 
   const renderItem = ({ item }) =>
@@ -131,10 +139,12 @@ export default function ProfileScreen() {
 
       <View style={styles.profileInfo}>
         <View style={styles.profileImageContainer}>
-        <Image
-          source={picture ? { uri: picture } : require('../assets/profile.jpg')}
-          style={styles.profileImage}
-        />
+          <Image
+            source={
+              picture ? { uri: picture } : require("../assets/profile.jpg")
+            }
+            style={styles.profileImage}
+          />
         </View>
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
@@ -200,7 +210,7 @@ export default function ProfileScreen() {
         />
       )}
 
-      <BottomNavBar navigation={navigation} activeScreen="Home"/>
+      <BottomNavBar navigation={navigation} activeScreen="Home" />
     </SafeAreaView>
   );
 }

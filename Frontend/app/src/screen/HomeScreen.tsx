@@ -1,12 +1,12 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image, Dimensions } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
+import React from "react";
+import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { colors } from '../utils/colors';
+import { colors } from "../utils/colors";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -23,12 +23,15 @@ const HomeScreen = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Image source={require("../assets/logo.png")} style={styles.logo} />
-        <Image source={require("../assets/man.png")} style={styles.bannerImage} />
+        <Image
+          source={require("../assets/man.png")}
+          style={styles.bannerImage}
+        />
         <View style={styles.textContainer}>
           <Text style={styles.title}>Lorem ipsum dolor.</Text>
           <Text style={styles.subTitle}>
             Lorem ipsum dolor sit amet, constur adipiscing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore 
+            tempor incididunt ut labore et dolore
           </Text>
         </View>
         <View style={styles.buttonContainer}>
@@ -48,111 +51,107 @@ const HomeScreen = () => {
       </View>
     </GestureHandlerRootView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background || '#F5F5F5',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    backgroundColor: colors.background || "#F5F5F5",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: height * 0.05,
   },
   logo: {
     width: width * 0.4,
     height: width * 0.4,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   bannerImage: {
     width: width * 0.8,
     height: height * 0.3,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   textContainer: {
-    width: '80%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.text || '#333',
+    fontWeight: "bold",
+    color: colors.text || "#333",
     marginBottom: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
   subTitle: {
     fontSize: 16,
-    color: colors.subText || '#666',
-    textAlign: 'center',
+    color: colors.subText || "#666",
+    textAlign: "center",
     lineHeight: 22,
   },
 
-buttonContainer: {
-              marginTop: 20,
-              flexDirection: "column",
-              alignItems: "center",
-              width: "80%",
-              height: 60,
-            },
-            loginButtonWrapper: {            
-                width: "80%",
-                borderRadius: 100,
-              }, 
-              loginButtonText: {
-                  color: colors.primary || '#007AFF',
-                  fontSize: 18,
-                },
-                signupButtonText: {
-                    fontSize: 18,
-              }
-
+  buttonContainer: {
+    marginTop: 20,
+    flexDirection: "column",
+    alignItems: "center",
+    width: "80%",
+    height: 60,
+  },
+  loginButtonWrapper: {
+    width: "80%",
+    borderRadius: 100,
+  },
+  loginButtonText: {
+    color: colors.primary || "#007AFF",
+    fontSize: 18,
+  },
+  signupButtonText: {
+    fontSize: 18,
+  },
 });
-
-
-
 
 // const styles = StyleSheet.create({
 //     container: {
 //         flex: 1,
 //         backgroundColor: colors.white,
 //         alignItems: "center",
-//   }, 
+//   },
 //   logo: {
 //       height: 40,
 //       width: 140,
 //       marginVertical: 30,
 //     },
-    // bannerImage: { 
-    //     marginVertical: 20,
-    //     height: 250,
-    //     width: 231,
-    //   }, 
-    //   title:{
-    //       fontSize: 40,
-    //       // fontFamily: fonts.SemiBold,
-    //       paddingHorizontal: 20,
-    //       textAlign: "center",
-    //       color: colors.primary,
-        //   marginTop: 40,
-        // },
-        // subTitle:{
-        //     fontSize: 18,
-        //     paddingHorizontal: 20,
-        //     textAlign: "center",
-        //     color: colors.secondary,
-        //     // fontFamily: fonts.Medium,
-        //     marginVertical: 20,
-        //   }, 
-          // buttonContainer: {
-          //     marginTop: 20,
-          //     flexDirection: "column",
-          //     alignItems: "center",
-          //     width: "80%",
-          //     height: 60,
-          //   },
-          //   loginButtonWrapper: {
-          //       width: "80%",
-          //       borderRadius: 100,
-              // }, 
+// bannerImage: {
+//     marginVertical: 20,
+//     height: 250,
+//     width: 231,
+//   },
+//   title:{
+//       fontSize: 40,
+//       // fontFamily: fonts.SemiBold,
+//       paddingHorizontal: 20,
+//       textAlign: "center",
+//       color: colors.primary,
+//   marginTop: 40,
+// },
+// subTitle:{
+//     fontSize: 18,
+//     paddingHorizontal: 20,
+//     textAlign: "center",
+//     color: colors.secondary,
+//     // fontFamily: fonts.Medium,
+//     marginVertical: 20,
+//   },
+// buttonContainer: {
+//     marginTop: 20,
+//     flexDirection: "column",
+//     alignItems: "center",
+//     width: "80%",
+//     height: 60,
+//   },
+//   loginButtonWrapper: {
+//       width: "80%",
+//       borderRadius: 100,
+// },
 //               loginButtonText: {
 //                   color: colors.white,
 //                   fontSize: 18,

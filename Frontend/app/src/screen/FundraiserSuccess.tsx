@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -7,10 +7,10 @@ import {
   Animated,
   Easing,
   SafeAreaView,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons';
-import BottomNavBar from '../components/BottomNavBar';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialIcons } from "@expo/vector-icons";
+import BottomNavBar from "../components/BottomNavBar";
 
 export default function FundraiserSuccess({ navigation }) {
   const scaleAnim = new Animated.Value(0);
@@ -52,70 +52,66 @@ export default function FundraiserSuccess({ navigation }) {
 
   const spin = rotateAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
+    outputRange: ["0deg", "360deg"],
   });
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-    <LinearGradient
-      colors={['#ffffff', '#f0f8ff']}
-      style={styles.container}
-    >
-      <View style={styles.content}>
-        <Animated.View
-          style={[
-            styles.iconContainer,
-            {
-              transform: [
-                { scale: scaleAnim },
-                { rotate: spin },
-              ],
-            },
-          ]}
-        >
-          <LinearGradient
-            colors={['#4CAF50', '#45a049']}
-            style={styles.iconGradient}
+      <LinearGradient colors={["#ffffff", "#f0f8ff"]} style={styles.container}>
+        <View style={styles.content}>
+          <Animated.View
+            style={[
+              styles.iconContainer,
+              {
+                transform: [{ scale: scaleAnim }, { rotate: spin }],
+              },
+            ]}
           >
-            <MaterialIcons name="check-circle" size={64} color="#fff" />
-          </LinearGradient>
-        </Animated.View>
+            <LinearGradient
+              colors={["#4CAF50", "#45a049"]}
+              style={styles.iconGradient}
+            >
+              <MaterialIcons name="check-circle" size={64} color="#fff" />
+            </LinearGradient>
+          </Animated.View>
 
-        <Animated.View
-          style={[
-            styles.textContainer,
-            { opacity: fadeAnim },
-          ]}
-        >
-          <Text style={styles.title}>Well Done!</Text>
-          <Text style={styles.message}>
-            You've successfully completed all of the steps required for creating a fundraiser.
-          </Text>
-          <Text style={styles.submessage}>
-            Please wait till our team verifies it. Once verified, it will be added to your profile and available on our platform.
-          </Text>
-        </Animated.View>
+          <Animated.View style={[styles.textContainer, { opacity: fadeAnim }]}>
+            <Text style={styles.title}>Well Done!</Text>
+            <Text style={styles.message}>
+              You've successfully completed all of the steps required for
+              creating a fundraiser.
+            </Text>
+            <Text style={styles.submessage}>
+              Please wait till our team verifies it. Once verified, it will be
+              added to your profile and available on our platform.
+            </Text>
+          </Animated.View>
 
-        <TouchableOpacity
-          style={styles.button}
-          activeOpacity={0.8}
-          onPress={() => navigation.navigate('MainScreen')}
-        >
-          <LinearGradient
-            colors={['#007AFF', '#0055FF']}
-            style={styles.buttonGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+          <TouchableOpacity
+            style={styles.button}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate("MainScreen")}
           >
-            <MaterialIcons name="home" size={24} color="#fff" style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>Go back to home</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            <LinearGradient
+              colors={["#007AFF", "#0055FF"]}
+              style={styles.buttonGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            >
+              <MaterialIcons
+                name="home"
+                size={24}
+                color="#fff"
+                style={styles.buttonIcon}
+              />
+              <Text style={styles.buttonText}>Go back to home</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+      <View style={styles.bottomNav}>
+        <BottomNavBar navigation={navigation} activeScreen="Create" />
       </View>
-    </LinearGradient>
-    <View style={styles.bottomNav}>
-      <BottomNavBar navigation={navigation} activeScreen="Create" />
-    </View>
     </SafeAreaView>
   );
 }
@@ -126,15 +122,15 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 24,
   },
   iconContainer: {
     marginBottom: 32,
     borderRadius: 50,
     elevation: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 5,
@@ -146,40 +142,40 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   textContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 40,
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
+    fontWeight: "bold",
+    color: "#1a1a1a",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   message: {
     fontSize: 18,
-    color: '#333',
-    textAlign: 'center',
+    color: "#333",
+    textAlign: "center",
     marginBottom: 12,
     lineHeight: 26,
   },
   submessage: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     lineHeight: 24,
     paddingHorizontal: 20,
   },
   button: {
-    width: '100%',
+    width: "100%",
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -188,22 +184,22 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   buttonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 16,
   },
   buttonIcon: {
     marginRight: 8,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   bottomNav: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    width: '100%',
+    width: "100%",
   },
 });

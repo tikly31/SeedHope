@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,12 +7,12 @@ import {
   Animated,
   Dimensions,
   ActivityIndicator,
-} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export default function LogoutScreen() {
   const navigation = useNavigation();
@@ -33,17 +33,17 @@ export default function LogoutScreen() {
     try {
       // Clear all stored data
       await AsyncStorage.clear();
-      
+
       // Add any additional logout logic here (e.g., API calls)
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+
       // Navigate to Login screen
       navigation.reset({
         index: 0,
-        routes: [{ name: 'LoginScreen' }],
+        routes: [{ name: "LoginScreen" }],
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
       setIsLoggingOut(false);
     }
   };
@@ -54,11 +54,8 @@ export default function LogoutScreen() {
 
   return (
     <View style={styles.container}>
-      <Animated.View 
-        style={[
-          styles.card,
-          { transform: [{ scale: scaleAnim }] }
-        ]}
+      <Animated.View
+        style={[styles.card, { transform: [{ scale: scaleAnim }] }]}
       >
         <View style={styles.iconContainer}>
           <MaterialIcons name="logout" size={40} color="#FF3B30" />
@@ -66,7 +63,8 @@ export default function LogoutScreen() {
 
         <Text style={styles.title}>Logout</Text>
         <Text style={styles.message}>
-          Are you sure you want to logout? You'll need to login again to access your account.
+          Are you sure you want to logout? You'll need to login again to access
+          your account.
         </Text>
 
         <View style={styles.buttonContainer}>
@@ -91,9 +89,9 @@ export default function LogoutScreen() {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.helpLink}
-          onPress={() => navigation.navigate('Support')}
+          onPress={() => navigation.navigate("Support")}
         >
           <MaterialIcons name="help-outline" size={16} color="#007AFF" />
           <Text style={styles.helpText}>Need help?</Text>
@@ -106,18 +104,18 @@ export default function LogoutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
     padding: 20,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 24,
     width: width - 48,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -130,61 +128,61 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#FFE5E5',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#FFE5E5",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 24,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1c1c1e',
+    fontWeight: "bold",
+    color: "#1c1c1e",
     marginBottom: 12,
   },
   message: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginBottom: 24,
     lineHeight: 22,
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
-    width: '100%',
+    width: "100%",
     marginBottom: 16,
   },
   button: {
     flex: 1,
     height: 48,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
   },
   logoutButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: "#FF3B30",
   },
   cancelButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1c1c1e',
+    fontWeight: "600",
+    color: "#1c1c1e",
   },
   logoutButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
+    fontWeight: "600",
+    color: "#fff",
   },
   helpLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   helpText: {
-    color: '#007AFF',
+    color: "#007AFF",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });

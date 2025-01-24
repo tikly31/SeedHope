@@ -23,6 +23,8 @@ public class User {
 
     private String gender;
 
+    private String role;
+
 
 
 
@@ -41,6 +43,7 @@ public class User {
         this.donatedAmount = builder.donatedAmount;
         this.bio = builder.bio;
         this.gender = builder.gender;
+        this.role = builder.role;
 
     }
 
@@ -129,6 +132,14 @@ public class User {
         this.gender = gender;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
 
 
     // toString() method to print the User object
@@ -171,6 +182,8 @@ public class User {
         private String bio;
 
         private String gender;
+
+        private String role;
 
         public UserBuilder setId(Long id) {
             this.id = id;
@@ -227,7 +240,10 @@ public class User {
             return this;
         }
 
-
+        public UserBuilder setRole(String role) {
+            this.role = role;
+            return this;
+        }
 
 
         public User build() {

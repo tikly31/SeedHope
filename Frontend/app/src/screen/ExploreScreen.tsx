@@ -1,7 +1,14 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import BottomNavBar from '../components/BottomNavBar';
+import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import BottomNavBar from "../components/BottomNavBar";
 
 interface CategoryButtonProps {
   icon: React.ReactNode;
@@ -11,20 +18,33 @@ interface CategoryButtonProps {
 
 const CategoryButton = ({ icon, label, onPress }: CategoryButtonProps) => (
   <TouchableOpacity style={styles.categoryButton} onPress={onPress}>
-    <View style={styles.iconContainer}>
-      {icon}
-    </View>
+    <View style={styles.iconContainer}>{icon}</View>
     <Text style={styles.categoryLabel}>{label}</Text>
   </TouchableOpacity>
 );
 
 export default function ExploreScreen({ navigation }) {
   const categories = [
-    { icon: <Ionicons name="book-outline" size={32} color="#4A5568" />, label: 'Education' },
-    { icon: <Ionicons name="medkit-outline" size={32} color="#4A5568" />, label: 'Medical' },
-    { icon: <Ionicons name="cloud-outline" size={32} color="#4A5568" />, label: 'Disaster' },
-    { icon: <Ionicons name="leaf-outline" size={32} color="#4A5568" />, label: 'Environment' },
-    { icon: <Ionicons name="alarm-outline" size={32} color="#4A5568" />, label: 'Emergency' },
+    {
+      icon: <Ionicons name="book-outline" size={32} color="#4A5568" />,
+      label: "Education",
+    },
+    {
+      icon: <Ionicons name="medkit-outline" size={32} color="#4A5568" />,
+      label: "Medical",
+    },
+    {
+      icon: <Ionicons name="cloud-outline" size={32} color="#4A5568" />,
+      label: "Disaster",
+    },
+    {
+      icon: <Ionicons name="leaf-outline" size={32} color="#4A5568" />,
+      label: "Environment",
+    },
+    {
+      icon: <Ionicons name="alarm-outline" size={32} color="#4A5568" />,
+      label: "Emergency",
+    },
   ];
 
   // Helper function to group categories into rows of two
@@ -45,7 +65,11 @@ export default function ExploreScreen({ navigation }) {
                 key={colIndex}
                 icon={category.icon}
                 label={category.label}
-                onPress={() => navigation.navigate('CategoryScreen', { category: category.label.toLowerCase()})}
+                onPress={() =>
+                  navigation.navigate("CategoryScreen", {
+                    category: category.label.toLowerCase(),
+                  })
+                }
               />
             ))}
           </View>
@@ -59,12 +83,12 @@ export default function ExploreScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7FAFC',
+    backgroundColor: "#F7FAFC",
   },
   header: {
     fontSize: 28,
-    fontWeight: '700',
-    color: '#2D3748',
+    fontWeight: "700",
+    color: "#2D3748",
     padding: 20,
     paddingBottom: 10,
   },
@@ -73,23 +97,23 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 24,
   },
   categoryButton: {
-    width: '48%',
+    width: "48%",
     aspectRatio: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   iconContainer: {
-    width: '100%',
+    width: "100%",
     aspectRatio: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -101,8 +125,8 @@ const styles = StyleSheet.create({
   categoryLabel: {
     marginTop: 8,
     fontSize: 14,
-    fontWeight: '500',
-    color: '#4A5568',
-    textAlign: 'center',
+    fontWeight: "500",
+    color: "#4A5568",
+    textAlign: "center",
   },
 });

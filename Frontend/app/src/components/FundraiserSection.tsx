@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import FundraiserCard from './FundraiserCard'; // Adjust the path as necessary
-import CONFIG from '../screen/config';
+import React from "react";
+import { View, Text, FlatList, StyleSheet } from "react-native";
+import FundraiserCard from "./FundraiserCard"; // Adjust the path as necessary
+import CONFIG from "../screen/config";
 const API_BASE_URL = CONFIG.API_BASE_URL; // Import the API_BASE_URL from the config file
 interface Fundraiser {
   id: string;
@@ -18,7 +18,11 @@ interface FundraiserSectionProps {
   onPressFundraiser: (id: string) => void;
 }
 
-const FundraiserSection: React.FC<FundraiserSectionProps> = ({ title, data, onPressFundraiser }) => (
+const FundraiserSection: React.FC<FundraiserSectionProps> = ({
+  title,
+  data,
+  onPressFundraiser,
+}) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>{title}</Text>
     {data.length === 0 ? (
@@ -28,15 +32,15 @@ const FundraiserSection: React.FC<FundraiserSectionProps> = ({ title, data, onPr
         data={data}
         renderItem={({ item }) => (
           <FundraiserCard
-                      key={item.id}
-                      id={item.id}
-                      title={item.title}
-                      imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
-                      amount={item.goalAmount-item.raisedAmount}
-                      onPress={onPressFundraiser}
-                    />
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
+            amount={item.goalAmount - item.raisedAmount}
+            onPress={onPressFundraiser}
+          />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         horizontal // Enable horizontal scrolling
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.fundraiserList}
@@ -51,7 +55,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 16,
     marginBottom: 12,
   },
@@ -62,7 +66,7 @@ const styles = StyleSheet.create({
   noDataText: {
     marginLeft: 16,
     fontSize: 14,
-    color: '#999',
+    color: "#999",
   },
 });
 

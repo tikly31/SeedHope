@@ -1,14 +1,14 @@
 // apiUtils.js
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import CONFIG from '../screen/config';
-import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import CONFIG from "../screen/config";
+import axios from "axios";
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
 export const get_current_user = async () => {
   try {
-    const token = await AsyncStorage.getItem('token');
+    const token = await AsyncStorage.getItem("token");
     if (!token) {
       return null;
     }
@@ -17,41 +17,47 @@ export const get_current_user = async () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
     if (!response.ok) {
-      console.error('Failed to fetch user:', response.status, response.statusText);
+      console.error(
+        "Failed to fetch user:",
+        response.status,
+        response.statusText
+      );
       return null;
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching user:', error.message);
+    console.error("Error fetching user:", error.message);
     return null;
   }
 };
 
-
 export const passwordChecker = async (rawPassword) => {
   try {
-    const token = await AsyncStorage.getItem('token'); // Retrieve the token from AsyncStorage
+    const token = await AsyncStorage.getItem("token"); // Retrieve the token from AsyncStorage
     if (!token) {
-      throw new Error('User not authenticated');
+      throw new Error("User not authenticated");
     }
 
-    const response = await fetch(`${API_BASE_URL}/passwordChecker/${encodeURIComponent(rawPassword)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`, // Include the token in the request headers
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/passwordChecker/${encodeURIComponent(rawPassword)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include the token in the request headers
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Failed to check password');
+      throw new Error("Failed to check password");
     }
     // console.log("response + pass" , response);
 
@@ -59,33 +65,34 @@ export const passwordChecker = async (rawPassword) => {
     // console.log("isPass", isPasswordCorrect);
     return isPasswordCorrect;
   } catch (error) {
-    console.error('Error checking password:', error);
+    console.error("Error checking password:", error);
     throw error;
   }
 };
 
-
 export const getCampaignsByOrganizerId = async (organizerId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/campaigns/${organizerId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/campaigns/${organizerId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch campaigns');
+      throw new Error("Failed to fetch campaigns");
     }
 
     const campaigns = await response.json(); // Assuming the response is a JSON array
     return campaigns;
   } catch (error) {
-    console.error('Error fetching campaigns:', error);
+    console.error("Error fetching campaigns:", error);
     throw error;
   }
 };
-
 
 export const uploadCampaignImage = async (file) => {
   const formData = new FormData();
@@ -109,32 +116,26 @@ export const uploadCampaignImage = async (file) => {
   }
 };
 
-
-
-
-
-
 export const getDonationsByUserId = async (userId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/donation/me/${userId}`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch donations');
+      throw new Error("Failed to fetch donations");
     }
 
     const donations = await response.json(); // Assuming the response is a JSON array of donations
     return donations;
   } catch (error) {
-    console.error('Error fetching donations:', error);
+    console.error("Error fetching donations:", error);
     throw error;
   }
 };
-
 
 export const uploadUserImage = async (file) => {
   const formData = new FormData();
@@ -158,21 +159,86 @@ export const uploadUserImage = async (file) => {
   }
 };
 
-
-
-
 export const updateCampaign = async (campaign) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/campaign/update` , {
-      method: 'PUT',
+    const response = await fetch(`${API_BASE_URL}/campaign/update`, {
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(campaign),
     });
     return response.data;
   } catch (error) {
-    console.error('Error updating campaign:', error);
+    console.error("Error updating campaign:", error);
+    throw error;
+  }
+};
+
+export const createComment = async (commentData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/comments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(commentData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create comment");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error creating comment:", error);
+    throw error;
+  }
+};
+
+export const addReplyToComment = async (parentCommentId, replyData) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/comments/add/${parentCommentId}/replies`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(replyData),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to add reply");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error adding reply:", error);
+    throw error;
+  }
+};
+
+export const getCommentsByCampaignId = async (campaignId) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/comments/campaign/${campaignId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch comments");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching comments:", error);
     throw error;
   }
 };

@@ -1,27 +1,39 @@
-import type React from "react"
-import { View, Text, Image, StyleSheet } from "react-native"
+import type React from "react";
+import { View, Text, Image, StyleSheet } from "react-native";
 
 interface DonationItemProps {
-  title: string
-  donatedAmount: number
-  status: "SUCCESS" | "FAIL"
-  imageUrl: string
+  title: string;
+  donatedAmount: number;
+  status: "SUCCESS" | "FAIL";
+  imageUrl: string;
 }
 
-const DonationItem: React.FC<DonationItemProps> = ({ title, donatedAmount, status, imageUrl }) => {
+const DonationItem: React.FC<DonationItemProps> = ({
+  title,
+  donatedAmount,
+  status,
+  imageUrl,
+}) => {
   return (
     <View style={styles.container}>
       <Image source={{ uri: imageUrl }} style={styles.image} />
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.amount}>Donated: ৳{donatedAmount.toLocaleString()}</Text>
-        <Text style={[styles.status, status === "SUCCESS" ? styles.successStatus : styles.failureStatus]}>
+        <Text style={styles.amount}>
+          Donated: ৳{donatedAmount.toLocaleString()}
+        </Text>
+        <Text
+          style={[
+            styles.status,
+            status === "SUCCESS" ? styles.successStatus : styles.failureStatus,
+          ]}
+        >
           {status === "SUCCESS" ? "Success" : "Failure"}
         </Text>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -60,7 +72,6 @@ const styles = StyleSheet.create({
   failureStatus: {
     color: "#F44336",
   },
-})
+});
 
-export default DonationItem
-
+export default DonationItem;

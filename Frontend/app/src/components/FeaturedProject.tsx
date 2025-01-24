@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import React from "react";
+import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 interface FeaturedProjectProps {
   title: string;
@@ -10,12 +10,14 @@ interface FeaturedProjectProps {
   imageUrl: string;
 }
 
-const FeaturedProject: React.FC<FeaturedProjectProps> = ({ title, description, progress, imageUrl }) => (
+const FeaturedProject: React.FC<FeaturedProjectProps> = ({
+  title,
+  description,
+  progress,
+  imageUrl,
+}) => (
   <View style={styles.featuredProject}>
-    <Image
-      source={{ uri: imageUrl }}
-      style={styles.featuredImage}
-    />
+    <Image source={{ uri: imageUrl }} style={styles.featuredImage} />
     <View style={styles.featuredContent}>
       <Text style={styles.featuredTitle}>{title}</Text>
       <Text style={styles.featuredDescription}>{description}</Text>
@@ -30,13 +32,13 @@ const FeaturedProject: React.FC<FeaturedProjectProps> = ({ title, description, p
 const styles = StyleSheet.create({
   featuredProject: {
     width: width - 32,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 8,
     marginRight: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   featuredImage: {
-    width: '100%',
+    width: "100%",
     height: 200,
   },
   featuredContent: {
@@ -44,30 +46,29 @@ const styles = StyleSheet.create({
   },
   featuredTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   featuredDescription: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginBottom: 8,
   },
   progressBar: {
     height: 8,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: "#e0e0e0",
     borderRadius: 4,
     marginVertical: 8,
   },
   progress: {
-    height: '100%',
-    backgroundColor: '#4caf50',
+    height: "100%",
+    backgroundColor: "#4caf50",
     borderRadius: 4,
   },
   progressText: {
     fontSize: 12,
-    color: '#666',
+    color: "#666",
   },
 });
 
 export default FeaturedProject;
-

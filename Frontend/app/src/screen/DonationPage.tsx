@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,24 +12,23 @@ import {
   SafeAreaView,
   Modal,
   Alert,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons';
-import axios from 'axios';
-import { WebView } from 'react-native-webview';
-import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialIcons } from "@expo/vector-icons";
+import axios from "axios";
+import { WebView } from "react-native-webview";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
 
-import { get_current_user } from '../utils/apiUtils';
+import { get_current_user } from "../utils/apiUtils";
 
-import AlertModal from '../components/AlertModal';
+import AlertModal from "../components/AlertModal";
 
-import CONFIG from './config';
+import CONFIG from "./config";
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
 const presetAmounts = [100, 500, 1000, 5000];
 const fadeAnim = new Animated.Value(1);
-
 
 interface FundraiserDetailsProps {
   route: {
@@ -39,7 +38,6 @@ interface FundraiserDetailsProps {
   };
 }
 
-
 export default function DonationPage({ route }: FundraiserDetailsProps) {
   // console.log('DonationPage:', route.params);
 
@@ -47,25 +45,25 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
   const navigation = useNavigation();
 
   // console.log('Here with fundId:', fundId);
- 
-  const [amount, setAmount] = useState('');
-  const [selectedPreset, setSelectedPreset] = useState(null);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [notes, setNotes] = useState('');
 
-  const [trancationId, setTrancationId] = useState('');
+  const [amount, setAmount] = useState("");
+  const [selectedPreset, setSelectedPreset] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const [trancationId, setTrancationId] = useState("");
 
   const [campaignId, setCampaignId] = useState(fundId);
 
-   // New state for payment gateway modal
-   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
-   const [paymentGatewayUrl, setPaymentGatewayUrl] = useState('');
+  // New state for payment gateway modal
+  const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
+  const [paymentGatewayUrl, setPaymentGatewayUrl] = useState("");
 
-   const [alertVisible, setAlertVisible] = useState(false);
-   const [alertType, setAlertType] = useState<'success' | 'failure'>('success');
-   const [alertMessage, setAlertMessage] = useState('');
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState<"success" | "failure">("success");
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -83,7 +81,7 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
           setPhone(userData.contactno);
         }
       } catch (error) {
-        console.error('Error loading user data:', error);
+        console.error("Error loading user data:", error);
       }
     };
     fetchUserData();
@@ -95,12 +93,10 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
   };
 
   const handleCustomAmount = (text) => {
-    const numericValue = text.replace(/[^0-9]/g, '');
+    const numericValue = text.replace(/[^0-9]/g, "");
     setAmount(numericValue);
     setSelectedPreset(null);
   };
-
-  
 
   const generateTransactionId = () => {
     const timestamp = Date.now().toString(36); // Convert current time to base-36
@@ -114,26 +110,21 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
         `${API_BASE_URL}/api/payment/initiate`,
         donation,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         }
       );
       // console.log('Payment Initiated Successfully:', response);
       // console.log('Payment Initiated Successfully:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Error Initiating Payment:', error.message);
+      console.error("Error Initiating Payment:", error.message);
     }
   };
-  
 
   const handleProceed = async () => {
-
-
     const trancationId = generateTransactionId();
 
     setTrancationId(trancationId);
-   
-    
 
     // console.log('Amount:', amount);
     // console.log('Name:', name);
@@ -142,7 +133,7 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
     // console.log('Notes:', notes);
     // console.log('Trancation Id:', trancationId);
     // console.log('Campaign Id:', campaignId);
-    // make a obajct with all input 
+    // make a obajct with all input
     const donation = {
       amount,
       name,
@@ -150,11 +141,8 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
       phone,
       notes,
       trancationId,
-      campaignId
+      campaignId,
     };
-
-    
-
 
     try {
       const response = await postApicall(donation);
@@ -164,30 +152,27 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
         setPaymentGatewayUrl(response.gatewayPageURL);
         setPaymentModalVisible(true);
       } else {
-        Alert.alert('Error', 'Unable to process payment. Please try again.');
+        Alert.alert("Error", "Unable to process payment. Please try again.");
       }
     } catch (error) {
-      Alert.alert('Error', 'Payment initiation failed. Please try again.');
+      Alert.alert("Error", "Payment initiation failed. Please try again.");
     }
   };
-  
-  const updateSuccessPayment = async (trancationId) => {
 
+  const updateSuccessPayment = async (trancationId) => {
     try {
       const response = await axios.post(
         `${API_BASE_URL}/api/payment/success/${trancationId}`
       );
-      console.log('Payment Updated Successfully:', response);
-      console.log('Payment Updated Successfully:', response.data);
+      console.log("Payment Updated Successfully:", response);
+      console.log("Payment Updated Successfully:", response.data);
       return response.data;
     } catch (error) {
-      console.error('Error Updating Payment:', error.message);
+      console.error("Error Updating Payment:", error.message);
     }
-
   };
 
   const updateFailurePayment = async (trancationId) => {
-
     try {
       const response = await axios.post(
         `${API_BASE_URL}/api/payment/fail/${trancationId}`
@@ -196,9 +181,8 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
       // console.log('Payment Updated Successfully:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Error Updating Payment:', error.message);
+      console.error("Error Updating Payment:", error.message);
     }
-
   };
 
   const handleWebViewNavigationStateChange = (newNavState) => {
@@ -207,23 +191,20 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
     // console.log('WebView URL:', url);
 
     // Customize these conditions based on your payment gateway's response URLs
-    if (url.includes('/success')) {
+    if (url.includes("/success")) {
       setPaymentModalVisible(false);
-      setAlertType('success');
+      setAlertType("success");
 
-      
-      setAlertMessage('Payment completed successfully');
+      setAlertMessage("Payment completed successfully");
       setAlertVisible(true);
-      
-      
+
       // Add your success handling logic
 
       updateSuccessPayment(trancationId);
-
-    } else if (url.includes('/fail')) {
+    } else if (url.includes("/fail")) {
       setPaymentModalVisible(false);
-      setAlertType('failure');
-      setAlertMessage('Payment was unsuccessful. Please try again.');
+      setAlertType("failure");
+      setAlertMessage("Payment was unsuccessful. Please try again.");
       setAlertVisible(true);
 
       // Add your failure handling logic
@@ -233,13 +214,13 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
 
   const handleAlertClose = () => {
     setAlertVisible(false);
-  
-    if (alertType === 'success') {
+
+    if (alertType === "success") {
       // Replace the current route with FundraiserDetailsScreen
       navigation.goBack();
-    } else if (alertType === 'failure') {
+    } else if (alertType === "failure") {
       // Navigate back to DonationPage
-      navigation.navigate('DonationPage', { fundId });
+      navigation.navigate("DonationPage", { fundId });
     }
   };
 
@@ -247,19 +228,18 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
 
   return (
     <SafeAreaView style={styles.container}>
-
       <AlertModal
         visible={alertVisible}
         type={alertType}
         message={alertMessage}
         onClose={handleAlertClose}
-        onAction={alertType === 'success' ? handleAlertClose : undefined}
+        onAction={alertType === "success" ? handleAlertClose : undefined}
       />
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
           style={styles.scrollView}
@@ -270,7 +250,9 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
           <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
             <View style={styles.header}>
               <Text style={styles.title}>Make a Donation</Text>
-              <Text style={styles.subtitle}>Your generosity makes a difference</Text>
+              <Text style={styles.subtitle}>
+                Your generosity makes a difference
+              </Text>
             </View>
 
             {/* Amount Section */}
@@ -343,7 +325,9 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
 
             {/* Notes Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Additional Notes (Optional)</Text>
+              <Text style={styles.sectionTitle}>
+                Additional Notes (Optional)
+              </Text>
               <TextInput
                 style={styles.notesInput}
                 value={notes}
@@ -377,7 +361,7 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
         <View style={styles.footer}>
           <View style={styles.summaryContainer}>
             <Text style={styles.summaryText}>Total Amount:</Text>
-            <Text style={styles.summaryAmount}>৳{amount || '0'}</Text>
+            <Text style={styles.summaryAmount}>৳{amount || "0"}</Text>
           </View>
 
           <TouchableOpacity
@@ -386,12 +370,11 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
               !isValidForm && styles.paymentButtonDisabled,
             ]}
             disabled={!isValidForm}
-
             // call a function that print all input in log
             onPress={handleProceed}
           >
             <LinearGradient
-              colors={isValidForm ? ['#4CAF50', '#45a049'] : ['#ccc', '#bbb']}
+              colors={isValidForm ? ["#4CAF50", "#45a049"] : ["#ccc", "#bbb"]}
               style={styles.buttonGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -410,7 +393,7 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
         </View>
       </KeyboardAvoidingView>
 
-        {/* Payment Gateway Modal */}
+      {/* Payment Gateway Modal */}
       <Modal
         visible={isPaymentModalVisible}
         onRequestClose={() => setPaymentModalVisible(false)}
@@ -419,7 +402,7 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
       >
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setPaymentModalVisible(false)}
               style={styles.modalCloseButton}
             >
@@ -427,7 +410,7 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
               <Text style={styles.modalCloseText}>Close</Text>
             </TouchableOpacity>
           </View>
-          
+
           <WebView
             source={{ uri: paymentGatewayUrl }}
             style={styles.webview}
@@ -437,29 +420,26 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
             startInLoadingState={true}
           />
         </SafeAreaView>
-      </Modal>      
-
-
+      </Modal>
     </SafeAreaView>
   );
 }
-
 
 // Add these to your existing styles
 const additionalStyles = {
   modalContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   modalHeader: {
     padding: 15,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     borderBottomWidth: 1,
-    borderBottomColor: '#e1e1e1',
+    borderBottomColor: "#e1e1e1",
   },
   modalCloseButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   modalCloseText: {
     marginLeft: 5,
@@ -470,14 +450,10 @@ const additionalStyles = {
   },
 };
 
-
 const styles = StyleSheet.create({
-
-
-
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -496,26 +472,26 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
+    fontWeight: "bold",
+    color: "#1a1a1a",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   section: {
     marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 16,
   },
   presetContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
     marginBottom: 16,
   },
@@ -524,38 +500,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e1e1e1',
-    backgroundColor: '#fff',
+    borderColor: "#e1e1e1",
+    backgroundColor: "#fff",
   },
   selectedPreset: {
-    borderColor: '#4CAF50',
-    backgroundColor: '#E8F5E9',
+    borderColor: "#4CAF50",
+    backgroundColor: "#E8F5E9",
   },
   presetText: {
     fontSize: 16,
-    color: '#666',
-    fontWeight: '500',
+    color: "#666",
+    fontWeight: "500",
   },
   selectedPresetText: {
-    color: '#4CAF50',
+    color: "#4CAF50",
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: '#e1e1e1',
+    borderColor: "#e1e1e1",
     borderRadius: 8,
     paddingHorizontal: 16,
   },
   currencyPrefix: {
     fontSize: 20,
-    color: '#666',
+    color: "#666",
     marginRight: 8,
   },
   amountInput: {
     flex: 1,
     fontSize: 20,
-    color: '#333',
+    color: "#333",
     paddingVertical: 12,
   },
   formGroup: {
@@ -563,27 +539,27 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#e1e1e1',
+    borderColor: "#e1e1e1",
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   notesInput: {
     borderWidth: 1,
-    borderColor: '#e1e1e1',
+    borderColor: "#e1e1e1",
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
     height: 120,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   trustSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
     padding: 16,
     borderRadius: 8,
     marginBottom: 16,
@@ -591,76 +567,76 @@ const styles = StyleSheet.create({
   trustText: {
     marginLeft: 8,
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   supportLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 16,
   },
   supportText: {
     marginLeft: 8,
     fontSize: 14,
-    color: '#666',
-    textDecorationLine: 'underline',
+    color: "#666",
+    textDecorationLine: "underline",
   },
   footer: {
     padding: 24,
     borderTopWidth: 1,
-    borderTopColor: '#e1e1e1',
-    backgroundColor: '#fff',
+    borderTopColor: "#e1e1e1",
+    backgroundColor: "#fff",
   },
   summaryContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
   },
   summaryText: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   summaryAmount: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   paymentButton: {
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   paymentButtonDisabled: {
     opacity: 0.7,
   },
   buttonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 16,
   },
   buttonIcon: {
     marginRight: 8,
   },
   paymentButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   modalContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   modalHeader: {
     padding: 15,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     borderBottomWidth: 1,
-    borderBottomColor: '#e1e1e1',
+    borderBottomColor: "#e1e1e1",
   },
   modalCloseButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   modalCloseText: {
     marginLeft: 5,

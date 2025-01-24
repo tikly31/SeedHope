@@ -1,47 +1,53 @@
+import React, { useState } from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import { colors } from "../utils/colors";
+import CONFIG from "./config";
+import AlertModal from "../components/AlertModal";
 
-import React, { useState } from "react"
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
-import { useNavigation } from "@react-navigation/native"
-import Ionicons from "react-native-vector-icons/Ionicons"
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
-import { colors } from "../utils/colors"
-import CONFIG from "./config"
-import AlertModal from "../components/AlertModal"
-
-const API_BASE_URL = CONFIG.API_BASE_URL
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 const SignupScreen = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [phone, setPhone] = useState("")
-  const [secureEntry, setSecureEntry] = useState(true)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [secureEntry, setSecureEntry] = useState(true);
 
   // New state for AlertModal
-  const [alertVisible, setAlertVisible] = useState(false)
-  const [alertType, setAlertType] = useState<"success" | "failure">("success")
-  const [alertMessage, setAlertMessage] = useState("")
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState<"success" | "failure">("success");
+  const [alertMessage, setAlertMessage] = useState("");
 
   const handleGoBack = () => {
-    navigation.goBack()
-  }
+    navigation.goBack();
+  };
 
   const handleLogin = () => {
-    navigation.navigate("LoginScreen")
-  }
+    navigation.navigate("LoginScreen");
+  };
 
   const showAlert = (type: "success" | "failure", message: string) => {
-    setAlertType(type)
-    setAlertMessage(message)
-    setAlertVisible(true)
-  }
+    setAlertType(type);
+    setAlertMessage(message);
+    setAlertVisible(true);
+  };
 
   const handleSignup = async () => {
     console.log(email, password, phone);
     if (!email || !password || !phone) {
-      showAlert("failure", "Please fill all the fields!")
-      return
+      showAlert("failure", "Please fill all the fields!");
+      return;
     }
 
     try {
@@ -55,30 +61,34 @@ const SignupScreen = () => {
           password,
           contactno: phone,
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
       if (response.ok) {
-        showAlert("success", "Signup successful!")
+        showAlert("success", "Signup successful!");
       } else {
-        showAlert("failure", data.message || "Signup failed!")
+        showAlert("failure", data.message || "Signup failed!");
       }
     } catch (error) {
-      showAlert("failure", "An error occurred. Please try again.")
+      showAlert("failure", "An error occurred. Please try again.");
     }
-  }
+  };
 
   const handleAlertClose = () => {
-    setAlertVisible(false)
+    setAlertVisible(false);
     if (alertType === "success") {
-      navigation.navigate("LoginScreen")
+      navigation.navigate("LoginScreen");
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
-        <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />
+        <Ionicons
+          name={"arrow-back-outline"}
+          color={colors.primary}
+          size={25}
+        />
       </TouchableOpacity>
       <View style={styles.textContainer}>
         <Text style={styles.headingText}>Let's get</Text>
@@ -109,14 +119,18 @@ const SignupScreen = () => {
           />
           <TouchableOpacity
             onPress={() => {
-              setSecureEntry((prev) => !prev)
+              setSecureEntry((prev) => !prev);
             }}
           >
             <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
           </TouchableOpacity>
         </View>
         <View style={styles.inputContainer}>
-          <SimpleLineIcons name={"screen-smartphone"} size={30} color={colors.secondary} />
+          <SimpleLineIcons
+            name={"screen-smartphone"}
+            size={30}
+            color={colors.secondary}
+          />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your phone no"
@@ -127,12 +141,18 @@ const SignupScreen = () => {
           />
         </View>
 
-        <TouchableOpacity style={styles.loginButtonWrapper} onPress={handleSignup}>
+        <TouchableOpacity
+          style={styles.loginButtonWrapper}
+          onPress={handleSignup}
+        >
           <Text style={styles.loginText}>Sign up</Text>
         </TouchableOpacity>
         <Text style={styles.continueText}>or continue with</Text>
         <TouchableOpacity style={styles.googleButtonContainer}>
-          <Image source={require("../assets/google.png")} style={styles.googleImage} />
+          <Image
+            source={require("../assets/google.png")}
+            style={styles.googleImage}
+          />
           <Text style={styles.googleText}>Google</Text>
         </TouchableOpacity>
         <View style={styles.footerContainer}>
@@ -143,17 +163,17 @@ const SignupScreen = () => {
         </View>
       </View>
 
-      <AlertModal visible={alertVisible} type={alertType} message={alertMessage} onClose={handleAlertClose} />
+      <AlertModal
+        visible={alertVisible}
+        type={alertType}
+        message={alertMessage}
+        onClose={handleAlertClose}
+      />
     </View>
-  )
-}
+  );
+};
 
-export default SignupScreen
-
-
-
-
-
+export default SignupScreen;
 
 const styles = StyleSheet.create({
   container: {

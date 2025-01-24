@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -40,6 +39,7 @@ public class CommentController {
         Page<CommentDTO> commentPage = commentService.getTopLevelCommentsByCampaignId(campaignId, page, size);
         return ResponseEntity.ok(commentPage);
     }
+
     @PostMapping("/add/{parentCommentId}/replies")
     public ResponseEntity<CommentDTO> addReplyToComment(
             @PathVariable Long parentCommentId,

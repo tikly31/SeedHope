@@ -138,6 +138,9 @@ public class Userservice implements PaymentObserver {
 
 
     public User addUser(@RequestBody User user) {
+        if(user.getRole() == null) {
+            user.setRole("USER");
+        }
         return userRepository.save(user);
     }
 

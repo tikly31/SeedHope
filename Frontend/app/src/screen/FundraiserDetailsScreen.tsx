@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,18 +7,34 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  FlatList,
+  Alert,
   ActivityIndicator,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
-import BottomNavBar from '../components/BottomNavBar';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { get_current_user } from '../utils/apiUtils';
+  Platform,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { get_current_user } from "../utils/apiUtils";
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
+import { Share } from "react-native";
 
-import CONFIG from './config';
+import CONFIG from "./config";
 const API_BASE_URL = CONFIG.API_BASE_URL;
-// const API_BASE_URL = 'http://192.168.0.106:8080';
+
+const PLACEHOLDER_IMAGE = "https://picsum.photos/200/300";
+
+interface Fundraiser {
+  id: number;
+  title: string;
+  description: string;
+  photoUrl?: string;
+  goalAmount: number;
+  raisedAmount: number;
+  dueDate: string;
+  isUrgent: boolean;
+  organizerId: number;
+}
 
 interface FundraiserDetailsProps {
   route: {
@@ -28,117 +44,181 @@ interface FundraiserDetailsProps {
   };
 }
 
-export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProps) {
+export default function FundraiserDetailsScreen({
+  route,
+}: FundraiserDetailsProps) {
   const { fundId } = route.params;
   const navigation = useNavigation();
 
-  // console.log('Here with fundId:', fundId);
+  const [fundraiser, setFundraiser] = useState<Fundraiser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
-  const [fundraiser, setFundraiser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const isValidUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
-    const [currentUser, setCurrentUser] = useState(null);
+  const fetchFundraiserDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_BASE_URL}/campaign/${fundId}`);
+      setFundraiser(response.data);
 
-    const fetchFundraiserDetails = async () => {
-      try {
-        console.log('Making API call with fundId:', fundId);
-        const response = await axios.get(`${API_BASE_URL}/campaign/${fundId}`);
-        console.log('API Response:', response.data);
-        setFundraiser(response.data);
-        const user = await get_current_user();
-        setCurrentUser(user);
-      } catch (err) {
-        console.error('Error fetching fundraiser details:', err);
-        setError('Failed to load fundraiser details.');
-      } finally {
-        setLoading(false);
+      const user = await get_current_user();
+      setCurrentUser(user);
+    } catch (err) {
+      console.error("Error fetching fundraiser details:", err);
+      setError("Failed to load fundraiser details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const shareFundraiser = async () => {
+    if (!fundraiser) return;
+
+    try {
+      const shareMessage =
+        `Check out this fundraiser: ${fundraiser.title}\n\n` +
+        `Goal: $${fundraiser.goalAmount.toLocaleString()}\n` +
+        `Description: ${fundraiser.description}\n\n` +
+        `Donate now at SeedHope!`;
+
+      const result = await Share.share({
+        message: shareMessage,
+        url:
+          fundraiser.photoUrl && isValidUrl(fundraiser.photoUrl)
+            ? fundraiser.photoUrl
+            : undefined,
+        title: `Support ${fundraiser.title}!`,
+      });
+
+      if (result.action === Share.sharedAction) {
+        console.log("Fundraiser shared successfully.");
+      } else if (result.action === Share.dismissedAction) {
+        console.log("User dismissed the sharing dialog.");
       }
-    };
+    } catch (error) {
+      console.error("Error sharing fundraiser:", error);
+      Alert.alert(
+        "Sharing Error",
+        "Unable to share fundraiser. Please try again later."
+      );
+    }
+  };
 
-    useEffect(() => {
-      if (!fundId) {
-        console.log('Invalid fundId:', fundId);
-        return; // Exit early if fundId is not valid
-      }
+  useEffect(() => {
+    if (!fundId) {
+      console.log("Invalid fundId:", fundId);
+      return;
+    }
 
-  
+    fetchFundraiserDetails();
+  }, [fundId]);
 
+  useFocusEffect(
+    useCallback(() => {
       fetchFundraiserDetails();
-    }, [fundId]);
+    }, [fundId])
+  );
 
-    useFocusEffect(
-      useCallback(() => {
-        fetchFundraiserDetails();
-      }, [fundId])
+  // Loading State
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#2196F3" />
+        <Text>Loading fundraiser details...</Text>
+      </View>
     );
+  }
 
-     // Handle loading state and error
-      if (loading) {
-        return (
-          <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color="#2196F3" />
-            <Text>Loading fundraiser details...</Text>
-          </View>
-        );
-      }
+  // Error State
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={fetchFundraiserDetails}
+        >
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
-      if (error) {
-        return (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        );
-      }
+  // No Fundraiser State
+  if (!fundraiser) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Fundraiser not found.</Text>
+      </View>
+    );
+  }
 
-      if (!fundraiser) {
-        return (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Fundraiser not found.</Text>
-          </View>
-        );
-      }
+  // Image source selection
+  const getImageSource = () => {
+    if (fundraiser.photoUrl && isValidUrl(fundraiser.photoUrl)) {
+      return { uri: fundraiser.photoUrl };
+    }
+    return { uri: PLACEHOLDER_IMAGE };
+  };
 
-
-
-  const progress = (fundraiser.raisedAmount / fundraiser.goalAmount) * 100;
+  // Progress calculation
+  const progress = Math.min(
+    (fundraiser.raisedAmount / fundraiser.goalAmount) * 100,
+    100
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {/* Back Button */}
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
 
-        {/* Fundraiser Image */}
-        <Image source={fundraiser.photoUrl ? {uri : fundraiser.photoUrl} :{ uri: 'https://picsum.photos/200/300' }} style={styles.image} />
+        <Image
+          source={getImageSource()}
+          style={styles.image}
+          onError={(e) => {
+            console.warn("Image load error", e.nativeEvent.error);
+          }}
+        />
 
         <View style={styles.content}>
-          {/* Fundraiser Title and Due Date */}
           <View style={styles.header}>
             <Text style={styles.title}>{fundraiser.title}</Text>
             <Text style={styles.dueDate}>Due: {fundraiser.dueDate}</Text>
           </View>
 
-          {/* Raised Amount and Required Amount */}
           <View style={styles.amountsContainer}>
             <View style={styles.amountBox}>
               <Text style={styles.amountLabel}>Raised Amount</Text>
-              <Text style={styles.amount}>${fundraiser.raisedAmount.toLocaleString()}</Text>
+              <Text style={styles.amount}>
+                ${fundraiser.raisedAmount.toLocaleString()}
+              </Text>
             </View>
             <View style={styles.amountBox}>
               <Text style={styles.amountLabel}>Goal Amount</Text>
-              <Text style={styles.amount}>${fundraiser.goalAmount.toLocaleString()}</Text>
+              <Text style={styles.amount}>
+                ${fundraiser.goalAmount.toLocaleString()}
+              </Text>
             </View>
           </View>
 
-          {/* Progress Bar */}
           <View style={styles.progressContainer}>
             <View style={[styles.progressBar, { width: `${progress}%` }]} />
           </View>
 
-          {/* Description and Urgent Tag */}
           <View style={styles.descriptionContainer}>
             {fundraiser.isUrgent && (
               <View style={styles.urgentTag}>
@@ -147,34 +227,40 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
             )}
             <Text style={styles.description}>{fundraiser.description}</Text>
           </View>
-          {
 
-          currentUser.id === fundraiser.organizerId ?  
-        (
-          // Edit Event Button
-          <TouchableOpacity style={styles.donateButton}
-            onPress={() => navigation.navigate('EditFundraiserScreen', {fundraiser})}
-          >
-            <Text style={styles.donateButtonText}>Edit Fundraiser</Text>
-          </TouchableOpacity>
-        )
-
-        : 
-        
-        ( 
-          <>
-              <TouchableOpacity style={styles.donateButton}
-                  onPress={() => navigation.navigate('DonationPage', {fundId})}
-                >
+          {currentUser.id === fundraiser.organizerId ? (
+            <TouchableOpacity
+              style={styles.donateButton}
+              onPress={() =>
+                navigation.navigate("EditFundraiserScreen", { fundraiser })
+              }
+            >
+              <Text style={styles.donateButtonText}>Edit Fundraiser</Text>
+            </TouchableOpacity>
+          ) : (
+            <>
+              <TouchableOpacity
+                style={styles.donateButton}
+                onPress={() => navigation.navigate("DonationPage", { fundId })}
+              >
                 <Text style={styles.donateButtonText}>Donate</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.commentButton} onPress={() => navigation.navigate("CommentScreen", { fundId })}>
-                  <Ionicons name="chatbubble-outline" size={24} color="#fff" /> 
-                  <Text style={styles.commentButtonText}>Comments</Text> 
-               </TouchableOpacity> 
+              <TouchableOpacity
+                style={styles.commentButton}
+                onPress={() => navigation.navigate("CommentScreen", { fundId })}
+              >
+                <Ionicons name="chatbubble-outline" size={24} color="#fff" />
+                <Text style={styles.commentButtonText}>Comments</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.shareButton}
+                onPress={shareFundraiser}
+              >
+                <Ionicons name="share-social-outline" size={24} color="#fff" />
+                <Text style={styles.shareButtonText}>Share</Text>
+              </TouchableOpacity>
             </>
-        )
-        }
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -185,6 +271,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    textAlign: "center",
   },
   backButton: {
     position: "absolute",
@@ -302,5 +404,39 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginLeft: 8,
+  },
+  shareButton: {
+    backgroundColor: "#FF9800",
+    padding: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  shareButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginLeft: 8,
+  },
+
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  retryButton: {
+    marginTop: 20,
+    backgroundColor: "#2196F3",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

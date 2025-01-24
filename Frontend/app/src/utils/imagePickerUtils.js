@@ -1,6 +1,6 @@
 // imagePickerUtils.js
 
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 
 /**
  * Launches the image library and allows the user to pick an image or video.
@@ -9,17 +9,16 @@ import * as ImagePicker from 'expo-image-picker';
 export const pickImage = async () => {
   // Launch image library
   let result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ['images', 'videos'], // Specify media types
+    mediaTypes: ["images", "videos"], // Specify media types
     allowsEditing: true,
     aspect: [4, 3],
     quality: 1,
   });
 
   console.log(result);
-  if(!result.canceled) {
+  if (!result.canceled) {
     return result.assets[0].uri; // Return the URI of the selected image or video
   }
 
-  
   return null; // Return null if the selection was canceled
 };
