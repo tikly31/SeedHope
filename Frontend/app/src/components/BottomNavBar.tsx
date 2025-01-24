@@ -14,7 +14,7 @@ interface BottomNavBarProps {
   isAdmin ?: boolean;
 }
 
-export default function BottomNavBar({ navigation, activeScreen, isAdmin = true }: BottomNavBarProps) {
+export default function BottomNavBar({ navigation, activeScreen, isAdmin = false }: BottomNavBarProps) {
   const navItems = [
     { name: 'MainScreen', label: 'Home', icon: 'home-outline' },
     { name: 'ExploreScreen', label: 'Explore', icon: 'compass-outline' },

@@ -23,7 +23,11 @@ import ProfileScreen1 from "./src/screen/ProfileScreen1";
 import EditProfileScreen1 from "./src/screen/EditProfileScreen1";
 import SearchScreen from "./src/screen/SearchScreen";
 import LogoutScreen from "./src/screen/LogoutScreen";
+<<<<<<< HEAD
 import EditFundraiserScreen from "./src/screen/EditFundraiserScreen";
+=======
+import CommentScreen from "./src/screen/CommentScreen";
+>>>>>>> bfe44dadfb2ea794e29e9cac073f7504da3bb813
 
 const Stack = createNativeStackNavigator();
 
