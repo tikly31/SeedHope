@@ -183,6 +183,7 @@ public class Userservice implements PaymentObserver {
         existingUser.setProvider(user.getProvider());
         existingUser.setBio(user.getBio());
         existingUser.setGender(user.getGender());
+        existingUser.setEmail(user.getEmail());
 
         return userRepository.save(existingUser);
 

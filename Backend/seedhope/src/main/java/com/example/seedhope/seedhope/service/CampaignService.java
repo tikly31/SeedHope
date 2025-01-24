@@ -145,5 +145,7 @@ public class CampaignService implements PaymentObserver {
     }
 
 
-
+    public List<Campaign> getAllCampaigns() {
+        return campaignRepository.findAll();
+    }
 }

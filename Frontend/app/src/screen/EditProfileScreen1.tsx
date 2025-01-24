@@ -107,6 +107,7 @@ export default function EditProfileScreen() {
 
   const handlePickImage  = async () => {
     const result = await pickImage();
+    // console.log("result", result);
 
     if (result) {
       setProfileData(prev => ({ ...prev, picture: result}));

@@ -1,8 +1,16 @@
-import React from 'react';
+import { useNavigation } from 'expo-router';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 const FundraiserItem = ({ item, onPress }) => {
   const progress = (item.raisedAmount / item.goalAmount) * 100;
+  const [id, setid] = useState(item.id);
+  const navigation = useNavigation();
+
+  onPress = () => {
+    console.log('id', id);
+    navigation.navigate('FundraiserDetailsScreen', { fundId: id });
+  };
 
   return (
     <TouchableOpacity style={styles.fundraiserItem} onPress={onPress}>
