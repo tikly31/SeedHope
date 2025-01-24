@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface BottomNavBarProps {
   navigation: any;
   activeScreen:
-    | "MainScreen1"
+    | "MainScreen"
     | "ExploreScreen"
-    | "Create"
-    | "Profile"
+    | "CreateScreen"
+    | "ProfileScreen"
     | "PostList";
   isAdmin?: boolean;
 }
@@ -16,12 +17,28 @@ interface BottomNavBarProps {
 export default function BottomNavBar({
   navigation,
   activeScreen,
-  isAdmin = false,
+  isAdmin: initialAdmin = false,
 }: BottomNavBarProps) {
+  const [isAdmin, setIsAdmin] = useState(initialAdmin);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const role = await AsyncStorage.getItem("role");
+        if (role === "ADMIN") {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        console.error("Error fetching role from AsyncStorage:", error);
+      }
+    };
+
+    fetchRole();
+  }, []);
+
   const navItems = [
     { name: "MainScreen", label: "Home", icon: "home-outline" },
     { name: "ExploreScreen", label: "Explore", icon: "compass-outline" },
-    // { name: 'CreateFundraiser', label: 'Create', icon: 'add-circle-outline' },
     isAdmin
       ? {
           name: "PostListScreen",

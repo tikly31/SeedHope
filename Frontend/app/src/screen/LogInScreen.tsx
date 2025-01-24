@@ -168,8 +168,11 @@ const LoginScreen = () => {
         // // get the current user
         const user = await get_current_user();
         // await AsyncStorage.setItem("Id", user.id);
-        await AsyncStorage.setItem("role", user.role);
-        console.log("Here is the user : ", user);
+        let role = user.role || "USER";
+        if (!role) role = "USER";
+        await AsyncStorage.setItem("role", role);
+
+        console.log("Here is the user : ", user.name);
         if (
           user.name === null ||
           user.name === undefined ||
