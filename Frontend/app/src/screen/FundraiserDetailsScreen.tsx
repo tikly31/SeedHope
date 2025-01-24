@@ -140,6 +140,10 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
           >
             <Text style={styles.donateButtonText}>Donate</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.commentButton} onPress={() => navigation.navigate("CommentScreen", { fundId })}>
+            <Ionicons name="chatbubble-outline" size={24} color="#fff" />
+            <Text style={styles.commentButtonText}>Comments</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -252,5 +256,20 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  commentButton: {
+    backgroundColor: "#4CAF50",
+    padding: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  commentButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginLeft: 8,
   },
 });
