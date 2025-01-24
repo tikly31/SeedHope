@@ -12,30 +12,110 @@ import {
 import profile from "../assets/profile.jpg"; // Import the profile image
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the profile icon
 
+import { getUserById, updateCampaign } from "../utils/apiUtils";
+
+
+
+interface Fundraiser {
+  id: number;
+  title: string;
+  description: string;
+  photoUrl?: string;
+  goalAmount: number;
+  raisedAmount: number;
+  dueDate: string;
+  isUrgent: boolean;
+  organizerId: number;
+  category: string;
+  status: string;
+}
+
+
+
 export default function PostDetailsScreen({ route, navigation }) {
-  const { postId } = route.params;
+  const { fund } = route.params;
+  const [postOwner, setPostOwner] = useState(null);
+
+  // const [fundraiser, setFundraiser] = useState<Fundraiser>({} as Fundraiser);
+
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await getUserById(fund.organizerId);
+        setPostOwner(user);
+        // console.log("User:", user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+    // setFundraiser(fund);
+
+    fetchUser();
+  }, []);
+  
 
   // Dummy values for the post details
   const [post, setPost] = useState({
-    title: "Sample Post Title",
-    dueDate: "2024-01-15",
-    author: "John Doe",
-    authorId: "12345", // Added authorId
-    goalAmount: "10,000",
-    description:
-      "This is a detailed description of the post. It contains all the necessary information that an admin would need to make a decision about approving or rejecting this post. The description can be quite long and will be scrollable within the screen.",
-    imageUrl: "https://via.placeholder.com/400x300",
+    title: fund.title,
+    dueDate: fund.dueDate,
+    author: postOwner ? postOwner.name : "Unknown", // Display author name
+    authorId: fund.organizerId, // Added authorId
+    goalAmount: fund.goalAmount,
+    description: fund.description,
+    imageUrl: fund.imageUrl ? fund.imageUrl : "https://via.placeholder.com/300",
   });
 
-  const handleApprove = () => {
+
+
+  const handleApprove = async () => {
     // Handle approve logic
-    console.log("Approved post:", postId);
+    console.log("Approved post:", fund.id);
+
+    // set fund status to approved
+    const updatedFund = {
+      ...fund,
+      status: "APPROVED",
+    };
+
+
+
+    console.log("Fundraiser:", updatedFund);
+
+    try{
+    const response = await updateCampaign(updatedFund);
+    console.log("Fundraiser updated:", response);
+    } catch (error) {
+      console.error("Error updating fundraiser:", error);
+    }
+
+
+
+
     navigation.goBack();
   };
 
-  const handleReject = () => {
+  const handleReject = async() => {
     // Handle reject logic
-    console.log("Rejected post:", postId);
+    console.log("Rejected post:", fund.id);
+
+    // set fund status to rejected
+    const updatedFund = {
+      ...fund,
+      status: "REJECTED",
+    };
+
+    console.log("Fundraiser:", updatedFund);
+
+    try{
+    const response = await updateCampaign(updatedFund);
+    console.log("Fundraiser updated:", response);
+    }
+    catch (error) {
+      console.error("Error updating fundraiser:", error);
+    }
+    
+
     navigation.goBack();
   };
 
@@ -70,7 +150,7 @@ export default function PostDetailsScreen({ route, navigation }) {
                 style={styles.profileImage}
               />
               <View style={styles.authorDetails}>
-                <Text style={styles.authorName}>{post.author}</Text>
+                <Text style={styles.authorName}>{postOwner ? postOwner.name : "Unknown"}</Text>
                 <Text style={styles.authorId}>ID: {post.authorId}</Text>
                 {/* Displaying author ID */}
               </View>

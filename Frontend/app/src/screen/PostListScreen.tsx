@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,62 +8,140 @@ import {
   SafeAreaView,
 } from "react-native";
 import BottomNavBar from "../components/BottomNavBar";
-interface Post {
-  id: string;
+import { getPendingCampaigns, updateCampaign} from "../utils/apiUtils";
+import { useFocusEffect } from "expo-router";
+
+
+interface Fundraiser {
+  id: number;
   title: string;
-  summary: string;
+  description: string;
+  photoUrl?: string;
+  goalAmount: number;
+  raisedAmount: number;
+  dueDate: string;
+  isUrgent: boolean;
+  organizerId: number;
+  category: string;
+  status: string;
 }
 
-const DUMMY_POSTS: Post[] = [
-  {
-    id: "1",
-    title: "First Post",
-    summary: "This is a summary of the first post...",
-  },
-  {
-    id: "2",
-    title: "Second Post",
-    summary: "This is a summary of the second post...",
-  },
-];
+// const DUMMY_POSTS: Post[] = [
+//   {
+//     id: "1",
+//     title: "First Post",
+//     summary: "This is a summary of the first post...",
+//   },
+//   {
+//     id: "2",
+//     title: "Second Post",
+//     summary: "This is a summary of the second post...",
+//   },
+// ];
 
 export default function PostListScreen({ navigation }) {
-  const handleApprove = (id: string) => {
+
+  const [posts, setPosts] = useState<Fundraiser[]>([]);
+  const fetchPosts = async () => {
+    try {
+      const funraised = await getPendingCampaigns();
+      setPosts(funraised);
+
+      console.log("Fetched posts:", posts);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  }
+  useEffect(() => {
+
+
+
+    fetchPosts();
+
+
+
+  }, []);
+
+
+  useFocusEffect(
+      useCallback(() => {
+        fetchPosts();
+      }, [])
+    );
+
+  const handleApprove = async(fund: Fundraiser) => {
+
+    // set fund status to approved
+        const updatedFund = {
+          ...fund,
+          status: "APPROVED",
+        };
+    
+    
+    
+        console.log("Fundraiser:", updatedFund);
+    
+        try{
+        const response = await updateCampaign(updatedFund);
+        console.log("Fundraiser updated:", response);
+        } catch (error) {
+          console.error("Error updating fundraiser:", error);
+        }
+        fetchPosts();
+
     // Handle approve logic
-    console.log("Approved post:", id);
+    console.log("Approved post:", updatedFund);
   };
 
-  const handleReject = (id: string) => {
+  const handleReject = async(fund: Fundraiser) => {
     // Handle reject logic
-    console.log("Rejected post:", id);
+
+
+    // set fund status to rejected
+        const updatedFund = {
+          ...fund,
+          status: "REJECTED",
+        };
+    
+        console.log("Fundraiser:", updatedFund);
+    
+        try{
+        const response = await updateCampaign(updatedFund);
+        console.log("Fundraiser updated:", response);
+        }
+        catch (error) {
+          console.error("Error updating fundraiser:", error);
+        }
+        fetchPosts();
+        console.log("Rejected post:", updatedFund);
   };
 
-  const renderItem = ({ item }: { item: Post }) => (
+  const renderItem = ({ item }: { item: Fundraiser }) => (
     <View style={styles.postCard}>
       <View style={styles.postContent}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.summary} numberOfLines={2}>
-          {item.summary}
+          {item.category}
         </Text>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, styles.detailsButton]}
           onPress={() =>
-            navigation.navigate("PostDetails", { postId: item.id })
+            navigation.navigate("PostDetails", { fund: item })
           }
         >
           <Text style={styles.buttonText}>Details</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.approveButton]}
-          onPress={() => handleApprove(item.id)}
+          onPress={() => handleApprove(item)}
         >
           <Text style={styles.buttonText}>Approve</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.rejectButton]}
-          onPress={() => handleReject(item.id)}
+          onPress={() => handleReject(item)}
         >
           <Text style={styles.buttonText}>Reject</Text>
         </TouchableOpacity>
@@ -74,7 +152,7 @@ export default function PostListScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={DUMMY_POSTS}
+        data={posts}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
