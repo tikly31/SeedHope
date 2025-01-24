@@ -115,6 +115,7 @@ export default function CategoryScreen({ route, navigation }) {
       </View>
 
       <FlatList
+      contentContainerStyle={{ paddingBottom: 30 }}
         data={filteredDonations}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
@@ -160,11 +161,11 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingBottom: 18,
   },
   cardWrapper: {
     width: CARD_WIDTH,
-    marginBottom: 16,
+    marginBottom: 20,
   },
   card: {
     backgroundColor: "#fff",
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardImageContainer: {
-    height: 120,
+    height: 100,
     backgroundColor: "#E2E8F0",
   },
   cardImage: {
@@ -186,13 +187,15 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     padding: 12,
+    paddingBottom: 16,
   },
   cardTitle: {
+    padding : 5,
     fontSize: 14,
     fontWeight: "600",
     color: "#2D3748",
-    marginBottom: 4,
     lineHeight: 20,
+    minHeight : 40,
   },
   cardAmount: {
     fontSize: 14,
