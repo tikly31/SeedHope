@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, Image, Text, StyleSheet } from "react-native";
 import CONFIG from "../screen/config"; // Ensure CONFIG has the API base URL
 const default_contributor = require("../assets/default_contributor.jpg");
- // Import default image
+// Import default image
 
 const API_BASE_URL = CONFIG.API_BASE_URL; // Assuming API_BASE_URL is correctly set
 
@@ -11,7 +11,10 @@ interface ContributorCircleProps {
   name: string;
 }
 
-const ContributorCircle: React.FC<ContributorCircleProps> = ({ image, name }) => {
+const ContributorCircle: React.FC<ContributorCircleProps> = ({
+  image,
+  name,
+}) => {
   // Construct the full image URL for uploaded images
   const imageUrl = `${API_BASE_URL}/user/${image}`;
 
@@ -29,9 +32,7 @@ const ContributorCircle: React.FC<ContributorCircleProps> = ({ image, name }) =>
     <TouchableOpacity style={styles.contributorContainer}>
       <Image
         source={
-          isValidUrl(imageUrl)
-            ? { uri: imageUrl }
-            : default_contributor // Fallback to default image
+          isValidUrl(imageUrl) ? { uri: imageUrl } : default_contributor // Fallback to default image
         }
         style={styles.contributorImage}
       />
@@ -44,7 +45,7 @@ const ContributorCircle: React.FC<ContributorCircleProps> = ({ image, name }) =>
 
 const styles = StyleSheet.create({
   contributorContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginHorizontal: 8,
   },
   contributorImage: {
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     maxWidth: 60,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 

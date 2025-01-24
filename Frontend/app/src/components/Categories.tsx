@@ -1,7 +1,20 @@
-import React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 
-const categories = ['Education', 'Health', 'Animals', 'Emergencies', 'Environment', 'Others'];
+const categories = [
+  "Education",
+  "Health",
+  "Animals",
+  "Emergencies",
+  "Environment",
+  "Others",
+];
 
 const Categories = () => {
   return (
@@ -21,15 +34,15 @@ const Categories = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   category: {
-    backgroundColor: '#e9ecef',
+    backgroundColor: "#e9ecef",
     borderRadius: 8,
     padding: 8,
     marginRight: 8,

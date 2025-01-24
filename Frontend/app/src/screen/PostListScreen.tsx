@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -6,8 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-} from 'react-native';
-import BottomNavBar from '../components/BottomNavBar';
+} from "react-native";
+import BottomNavBar from "../components/BottomNavBar";
 interface Post {
   id: string;
   title: string;
@@ -16,26 +16,26 @@ interface Post {
 
 const DUMMY_POSTS: Post[] = [
   {
-    id: '1',
-    title: 'First Post',
-    summary: 'This is a summary of the first post...',
+    id: "1",
+    title: "First Post",
+    summary: "This is a summary of the first post...",
   },
   {
-    id: '2',
-    title: 'Second Post',
-    summary: 'This is a summary of the second post...',
+    id: "2",
+    title: "Second Post",
+    summary: "This is a summary of the second post...",
   },
 ];
 
 export default function PostListScreen({ navigation }) {
   const handleApprove = (id: string) => {
     // Handle approve logic
-    console.log('Approved post:', id);
+    console.log("Approved post:", id);
   };
 
   const handleReject = (id: string) => {
     // Handle reject logic
-    console.log('Rejected post:', id);
+    console.log("Rejected post:", id);
   };
 
   const renderItem = ({ item }: { item: Post }) => (
@@ -49,7 +49,9 @@ export default function PostListScreen({ navigation }) {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, styles.detailsButton]}
-          onPress={() => navigation.navigate('PostDetails', { postId: item.id })}
+          onPress={() =>
+            navigation.navigate("PostDetails", { postId: item.id })
+          }
         >
           <Text style={styles.buttonText}>Details</Text>
         </TouchableOpacity>
@@ -77,7 +79,7 @@ export default function PostListScreen({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
-      <BottomNavBar navigation={navigation} activeScreen="Home"/>
+      <BottomNavBar navigation={navigation} activeScreen="Home" />
     </SafeAreaView>
   );
 }
@@ -85,17 +87,17 @@ export default function PostListScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   listContainer: {
     padding: 16,
   },
   postCard: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -109,16 +111,16 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   summary: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   button: {
     paddingVertical: 8,
@@ -128,19 +130,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   buttonText: {
-    color: 'white',
-    textAlign: 'center',
+    color: "white",
+    textAlign: "center",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   detailsButton: {
-    backgroundColor: '#4a90e2',
+    backgroundColor: "#4a90e2",
   },
   approveButton: {
-    backgroundColor: '#2ecc71',
+    backgroundColor: "#2ecc71",
   },
   rejectButton: {
-    backgroundColor: '#e74c3c',
+    backgroundColor: "#e74c3c",
   },
 });
-

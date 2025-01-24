@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,16 +7,20 @@ import {
   Image,
   StyleSheet,
   ScrollView,
-} from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { Ionicons, Feather } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { Picker } from '@react-native-picker/picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { get_current_user, passwordChecker , uploadUserImage} from '../utils/apiUtils';
-import { pickImage } from '../utils/imagePickerUtils';
-import AlertModal from '../components/AlertModal';
-import CONFIG from './config';
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { Ionicons, Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  get_current_user,
+  passwordChecker,
+  uploadUserImage,
+} from "../utils/apiUtils";
+import { pickImage } from "../utils/imagePickerUtils";
+import AlertModal from "../components/AlertModal";
+import CONFIG from "./config";
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
@@ -38,18 +42,18 @@ interface ProfileData {
 export default function EditProfileScreen() {
   const navigation = useNavigation();
   const [profileData, setProfileData] = useState<ProfileData>({
-    name: '',
-    email: '',
-    username: '',
-    password: '123', // Simulated stored password
-    contactno: '',
-    picture: '',
-    provider: '',
-    bio: '',
-    gender: '',
-    currentPassword: '',
-    newPassword: '',
-    confirmNewPassword: '',
+    name: "",
+    email: "",
+    username: "",
+    password: "123", // Simulated stored password
+    contactno: "",
+    picture: "",
+    provider: "",
+    bio: "",
+    gender: "",
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
   });
 
   const [error, setError] = useState({
@@ -58,35 +62,34 @@ export default function EditProfileScreen() {
     confirmNewPassword: false,
   });
 
-    // New state for AlertModal
-    const [alertVisible, setAlertVisible] = useState(false)
-    const [alertType, setAlertType] = useState<"success" | "failure">("success")
-    const [alertMessage, setAlertMessage] = useState("")
-
+  // New state for AlertModal
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState<"success" | "failure">("success");
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
+        const token = await AsyncStorage.getItem("token");
         if (token) {
           const userData = await get_current_user();
           if (userData) {
-            setProfileData(prev => ({
+            setProfileData((prev) => ({
               ...prev,
-              name: userData.name || '',
-              email: userData.email || '',
-              username: userData.username || '',
-              contactno: userData.contactno || '',
-              picture: userData.picture || '',
-              provider: userData.provider || '',
-              bio: userData.bio || '',
-              gender: userData.gender || '',
-              password: userData.password || '',
+              name: userData.name || "",
+              email: userData.email || "",
+              username: userData.username || "",
+              contactno: userData.contactno || "",
+              picture: userData.picture || "",
+              provider: userData.provider || "",
+              bio: userData.bio || "",
+              gender: userData.gender || "",
+              password: userData.password || "",
             }));
           }
         }
       } catch (error) {
-        console.error('Error loading user data:', error);
+        console.error("Error loading user data:", error);
       }
     };
 
@@ -98,71 +101,68 @@ export default function EditProfileScreen() {
   };
 
   const showAlert = (type: "success" | "failure", message: string) => {
-    setAlertType(type)
-    setAlertMessage(message)
-    setAlertVisible(true)
-  }
+    setAlertType(type);
+    setAlertMessage(message);
+    setAlertVisible(true);
+  };
 
-const handlePickImage = async () => {
-  const uri = await pickImage();
+  const handlePickImage = async () => {
+    const uri = await pickImage();
 
-  // Check if uri is valid
-  if (!uri) {
-    console.warn("Image picking was canceled or returned no URI.");
-    return;
-  }
-
-  try {
-    // Format the image object for upload
-    const formattedImage = {
-      uri, // Directly use the returned URI
-      type: "image/jpeg", // Assuming it's a JPEG; update based on expected formats
-      name: uri.split("/").pop(), // Extract file name from the URI
-    };
-
-    // Upload the image
-    const uploadedFileName = await uploadUserImage(formattedImage);
-
-    if (uploadedFileName) {
-      setProfileData((prev) => ({
-        ...prev,
-        picture: uploadedFileName,
-      }));
-//       showAlert("success", "Image uploaded successfully!");
-    } else {
-      showAlert("failure", "Failed to upload image. Please try again.");
+    // Check if uri is valid
+    if (!uri) {
+      console.warn("Image picking was canceled or returned no URI.");
+      return;
     }
-  } catch (error) {
-    console.error("Error uploading user image:", error);
-    showAlert("failure", "An error occurred while uploading the image.");
-  }
-};
 
+    try {
+      // Format the image object for upload
+      const formattedImage = {
+        uri, // Directly use the returned URI
+        type: "image/jpeg", // Assuming it's a JPEG; update based on expected formats
+        name: uri.split("/").pop(), // Extract file name from the URI
+      };
 
+      // Upload the image
+      const uploadedFileName = await uploadUserImage(formattedImage);
 
-  const updateField = (field: keyof ProfileData, value: string) => {
-    setProfileData(prev => ({ ...prev, [field]: value }));
-
-    // Clear the error for the specific field if the user starts typing
-    if (error[field]) {
-      setError(prev => ({ ...prev, [field]: false }));
+      if (uploadedFileName) {
+        setProfileData((prev) => ({
+          ...prev,
+          picture: uploadedFileName,
+        }));
+        //       showAlert("success", "Image uploaded successfully!");
+      } else {
+        showAlert("failure", "Failed to upload image. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error uploading user image:", error);
+      showAlert("failure", "An error occurred while uploading the image.");
     }
   };
 
+  const updateField = (field: keyof ProfileData, value: string) => {
+    setProfileData((prev) => ({ ...prev, [field]: value }));
+
+    // Clear the error for the specific field if the user starts typing
+    if (error[field]) {
+      setError((prev) => ({ ...prev, [field]: false }));
+    }
+  };
 
   const handleSave = async () => {
     try {
-      const token = await AsyncStorage.getItem('token'); // Retrieve the token from AsyncStorage
+      const token = await AsyncStorage.getItem("token"); // Retrieve the token from AsyncStorage
       if (!token) {
         alert("User not authenticated");
         return;
       }
-  
+
       const response = await fetch(`${API_BASE_URL}/update/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, // Include the token in the request headers
+          Authorization: `Bearer ${token}`, // Include the token in the request headers
         },
         body: JSON.stringify({
           name: profileData.name,
@@ -176,7 +176,7 @@ const handlePickImage = async () => {
           gender: profileData.gender,
         }),
       });
-  
+
       if (response.ok) {
         const updatedUser = await response.json();
         showAlert("success", "Profile updated successfully!");
@@ -193,19 +193,10 @@ const handlePickImage = async () => {
     }
   };
 
-
   const handleChangePassword = async () => {
     const storedPassword = profileData.password; // Simulated stored password
     console.log("storedPassword", storedPassword);
     // decode the password for encodeing i used bycrypt, now decode it
-
-    
-
-    
-
-
-    
-
 
     // Clear previous errors
     setError({
@@ -216,79 +207,74 @@ const handlePickImage = async () => {
 
     const res = await passwordChecker(profileData.currentPassword);
 
-    
-
     // Check if the current password is valid
     if (res !== "ok") {
-      setError(prev => ({ ...prev, currentPassword: true }));
+      setError((prev) => ({ ...prev, currentPassword: true }));
       // alert("Current password is invalid!");
       showAlert("failure", "Current password is invalid!");
-      updateField('currentPassword', '');
-      updateField('newPassword', '');
-      updateField('confirmNewPassword', '');
+      updateField("currentPassword", "");
+      updateField("newPassword", "");
+      updateField("confirmNewPassword", "");
       return;
     }
 
     // Check if new password and confirm password match
     if (profileData.newPassword !== profileData.confirmNewPassword) {
-      setError(prev => ({ ...prev, confirmNewPassword: true }));
+      setError((prev) => ({ ...prev, confirmNewPassword: true }));
       // alert("New passwords do not match!");
       showAlert("failure", "New passwords do not match!");
-      updateField('currentPassword', '');
-      updateField('newPassword', '');
-      updateField('confirmNewPassword', '');
+      updateField("currentPassword", "");
+      updateField("newPassword", "");
+      updateField("confirmNewPassword", "");
       return;
     }
 
     // Here you would typically send the new password to your backend to update it
-    
-  try {
-    const token = await AsyncStorage.getItem('token');
-    if (!token) {
-      showAlert("failure", "User not authenticated");
-      return;
-    }
 
-    const response = await fetch(`${API_BASE_URL}/update/password`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        // currentPassword: profileData.currentPassword,
-        password: profileData.newPassword,
-      }),
-    });
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        showAlert("failure", "User not authenticated");
+        return;
+      }
 
-    if (response.ok) {
-      showAlert("success", "Password changed successfully!");
-      // Optionally, reset the password fields
-      updateField('currentPassword', '');
-      updateField('newPassword', '');
-      updateField('confirmNewPassword', '');
-    } else {
-      showAlert("failure", "Failed to change password");
+      const response = await fetch(`${API_BASE_URL}/update/password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          // currentPassword: profileData.currentPassword,
+          password: profileData.newPassword,
+        }),
+      });
+
+      if (response.ok) {
+        showAlert("success", "Password changed successfully!");
+        // Optionally, reset the password fields
+        updateField("currentPassword", "");
+        updateField("newPassword", "");
+        updateField("confirmNewPassword", "");
+      } else {
+        showAlert("failure", "Failed to change password");
+      }
+    } catch (error) {
+      console.error("Error changing password:", error);
+      showAlert("failure", "An error occurred while changing the password");
     }
-  } catch (error) {
-    console.error("Error changing password:", error);
-    showAlert("failure", "An error occurred while changing the password");
-  }
 
     // Optionally, reset the password fields
-    updateField('currentPassword', '');
-    updateField('newPassword', '');
-    updateField('confirmNewPassword', '');
+    updateField("currentPassword", "");
+    updateField("newPassword", "");
+    updateField("confirmNewPassword", "");
   };
 
   const handleAlertClose = () => {
-
     setAlertVisible(false);
     if (alertType === "success") {
       navigation.navigate("ProfileScreen1");
     }
-   
-
   };
 
   return (
@@ -323,7 +309,7 @@ const handlePickImage = async () => {
             <TextInput
               style={styles.input}
               value={profileData.name}
-              onChangeText={(value) => updateField('name', value)}
+              onChangeText={(value) => updateField("name", value)}
               placeholder="Name"
             />
           </View>
@@ -333,7 +319,7 @@ const handlePickImage = async () => {
             <TextInput
               style={styles.input}
               value={profileData.username}
-              onChangeText={(value) => updateField('username', value)}
+              onChangeText={(value) => updateField("username", value)}
               placeholder="Username"
             />
           </View>
@@ -343,7 +329,7 @@ const handlePickImage = async () => {
             <TextInput
               style={styles.input}
               value={profileData.email}
-              onChangeText={(value) => updateField('email', value)}
+              onChangeText={(value) => updateField("email", value)}
               placeholder="Email"
               keyboardType="email-address"
               autoCapitalize="none"
@@ -355,7 +341,7 @@ const handlePickImage = async () => {
             <TextInput
               style={styles.input}
               value={profileData.contactno}
-              onChangeText={(value) => updateField('contactno', value)}
+              onChangeText={(value) => updateField("contactno", value)}
               placeholder="Phone Number"
               keyboardType="phone-pad"
             />
@@ -366,7 +352,7 @@ const handlePickImage = async () => {
             <TextInput
               style={[styles.input, styles.bioInput]}
               value={profileData.bio}
-              onChangeText={(value) => updateField('bio', value)}
+              onChangeText={(value) => updateField("bio", value)}
               placeholder="Bio"
               multiline
               numberOfLines={3}
@@ -378,7 +364,7 @@ const handlePickImage = async () => {
             <Text style={styles.label}>Gender</Text>
             <Picker
               selectedValue={profileData.gender}
-              onValueChange={(itemValue) => updateField('gender', itemValue)}
+              onValueChange={(itemValue) => updateField("gender", itemValue)}
               style={styles.picker}
             >
               <Picker.Item label="Male" value="Male" />
@@ -393,7 +379,7 @@ const handlePickImage = async () => {
             <TextInput
               style={[styles.input, error.currentPassword && styles.errorInput]}
               value={profileData.currentPassword}
-              onChangeText={(value) => updateField('currentPassword', value)}
+              onChangeText={(value) => updateField("currentPassword", value)}
               placeholder="Current Password"
               secureTextEntry
             />
@@ -404,7 +390,7 @@ const handlePickImage = async () => {
             <TextInput
               style={[styles.input, error.newPassword && styles.errorInput]}
               value={profileData.newPassword}
-              onChangeText={(value) => updateField('newPassword', value)}
+              onChangeText={(value) => updateField("newPassword", value)}
               placeholder="New Password"
               secureTextEntry
             />
@@ -413,20 +399,31 @@ const handlePickImage = async () => {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirm New Password</Text>
             <TextInput
-              style={[styles.input, error.confirmNewPassword && styles.errorInput]}
+              style={[
+                styles.input,
+                error.confirmNewPassword && styles.errorInput,
+              ]}
               value={profileData.confirmNewPassword}
-              onChangeText={(value) => updateField('confirmNewPassword', value)}
+              onChangeText={(value) => updateField("confirmNewPassword", value)}
               placeholder="Confirm New Password"
               secureTextEntry
             />
           </View>
 
-          <TouchableOpacity onPress={handleChangePassword} style={styles.changePasswordButton}>
+          <TouchableOpacity
+            onPress={handleChangePassword}
+            style={styles.changePasswordButton}
+          >
             <Text style={styles.changePasswordButtonText}>Change Password</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-      <AlertModal visible={alertVisible} type={alertType} message={alertMessage} onClose={handleAlertClose} />
+      <AlertModal
+        visible={alertVisible}
+        type={alertType}
+        message={alertMessage}
+        onClose={handleAlertClose}
+      />
     </View>
   );
 }
@@ -434,37 +431,37 @@ const handlePickImage = async () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#dbdbdb',
+    borderBottomColor: "#dbdbdb",
   },
   backButton: {
     padding: 8,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   saveButton: {
     padding: 8,
   },
   saveButtonText: {
-    color: '#007AFF',
+    color: "#007AFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   content: {
     flex: 1,
   },
   profilePictureContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 20,
   },
   profilePicture: {
@@ -474,9 +471,9 @@ const styles = StyleSheet.create({
   },
   editPictureText: {
     marginTop: 8,
-    color: '#007AFF',
+    color: "#007AFF",
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
   },
   formContainer: {
     padding: 16,
@@ -486,41 +483,41 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 15,
-    color: '#666',
+    color: "#666",
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#dbdbdb',
+    borderColor: "#dbdbdb",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-    color: '#1c1c1e',
+    color: "#1c1c1e",
   },
   bioInput: {
     height: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   picker: {
     height: 50,
-    width: '100%',
+    width: "100%",
     borderWidth: 1,
-    borderColor: '#dbdbdb',
+    borderColor: "#dbdbdb",
     borderRadius: 8,
   },
   changePasswordButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     borderRadius: 8,
     paddingVertical: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   changePasswordButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   errorInput: {
-    borderColor: 'red',
+    borderColor: "red",
   },
 });

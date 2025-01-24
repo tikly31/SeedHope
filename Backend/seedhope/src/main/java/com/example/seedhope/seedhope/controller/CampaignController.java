@@ -46,6 +46,11 @@ public class CampaignController {
         return ResponseEntity.ok(campaignService.getAllApprovedCampaigns());
     }
 
+    @GetMapping("/campaign/pending")
+    public ResponseEntity<List<Campaign>> getAllPendingCampaigns() {
+        return ResponseEntity.ok(campaignService.getAllPendingCampaigns());
+    }
+
     @GetMapping("/campaign/all")
     public ResponseEntity<List<Campaign>> getAllCampaigns() {
         return ResponseEntity.ok(campaignService.getAllCampaigns());

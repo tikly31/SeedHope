@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,24 +7,31 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import BottomNavBar from '../components/BottomNavBar';
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import BottomNavBar from "../components/BottomNavBar";
 
 const categories = [
-  ['Medical', 'Education', 'Disaster'],
-  ['Environment', 'Emergency'],
+  ["Medical", "Education", "Disaster"],
+  ["Environment", "Emergency"],
 ];
 
 export default function CreateFundraiser({ navigation }) {
-  const [selectedCity, setSelectedCity] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCity, setSelectedCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const cities = ['Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal'];
+  const cities = [
+    "Dhaka",
+    "Chittagong",
+    "Sylhet",
+    "Rajshahi",
+    "Khulna",
+    "Barisal",
+  ];
 
   const isFormValid = selectedCity && zipCode && selectedCategory;
 
@@ -35,8 +42,8 @@ export default function CreateFundraiser({ navigation }) {
 
   const handleContinue = () => {
     if (isFormValid) {
-      navigation.navigate('FundraiserBeneficiary', {
-        dueDate : dueDate.toISOString().split('T')[0],
+      navigation.navigate("FundraiserBeneficiary", {
+        dueDate: dueDate.toISOString().split("T")[0],
         category: selectedCategory,
       });
     }
@@ -77,9 +84,7 @@ export default function CreateFundraiser({ navigation }) {
           onPress={() => setShowDatePicker(true)}
           style={styles.datePickerButton}
         >
-          <Text style={styles.datePickerText}>
-            {dueDate.toDateString()}
-          </Text>
+          <Text style={styles.datePickerText}>{dueDate.toDateString()}</Text>
         </TouchableOpacity>
         {showDatePicker && (
           <DateTimePicker
@@ -114,7 +119,10 @@ export default function CreateFundraiser({ navigation }) {
         </View>
 
         <TouchableOpacity
-          style={[styles.continueButton, !isFormValid && styles.continueButtonDisabled]}
+          style={[
+            styles.continueButton,
+            !isFormValid && styles.continueButtonDisabled,
+          ]}
           disabled={!isFormValid}
           onPress={handleContinue}
         >
@@ -131,30 +139,30 @@ export default function CreateFundraiser({ navigation }) {
 const styles = StyleSheet.create({
   containers: {
     flex: 1,
-    backgroundColor: '#F7FAFC',
+    backgroundColor: "#F7FAFC",
   },
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    color: '#333',
+    color: "#333",
   },
   question: {
     fontSize: 18,
     marginBottom: 15,
-    color: '#333',
+    color: "#333",
   },
   inputContainer: {
     marginBottom: 25,
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     marginBottom: 15,
   },
@@ -164,7 +172,7 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 15,
     fontSize: 16,
@@ -172,62 +180,62 @@ const styles = StyleSheet.create({
   datePickerButton: {
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 15,
     marginBottom: 25,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   datePickerText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   categoriesContainer: {
     marginTop: 10,
   },
   categoryRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    flexWrap: "wrap",
     marginBottom: 10,
   },
   categoryButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     marginRight: 10,
     marginBottom: 10,
   },
   selectedCategory: {
-    backgroundColor: '#e3e3e3',
-    borderColor: '#666',
+    backgroundColor: "#e3e3e3",
+    borderColor: "#666",
   },
   categoryText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   continueButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     padding: 15,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
     marginBottom: 30,
   },
   continueButtonDisabled: {
-    backgroundColor: '#B0BEC5', // Gray color for disabled state
+    backgroundColor: "#B0BEC5", // Gray color for disabled state
   },
   continueButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   bottomnavbar: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    width: '100%',
+    width: "100%",
   },
 });

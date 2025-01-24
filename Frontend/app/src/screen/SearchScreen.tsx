@@ -1,6 +1,14 @@
 // SearchScreen.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import FundraiserItem from "../components/FundraiserItem"; // Import the renamed component
 
@@ -66,7 +74,7 @@ export default function SearchScreen({ navigation }) {
 
   const searchFundraisers = () => {
     setLoading(true);
-    const filteredResults = dummyFundraisers.filter(fundraiser =>
+    const filteredResults = dummyFundraisers.filter((fundraiser) =>
       fundraiser.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setSearchResults(filteredResults);
@@ -81,7 +89,12 @@ export default function SearchScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+        <Ionicons
+          name="search"
+          size={20}
+          color="#666"
+          style={styles.searchIcon}
+        />
         <TextInput
           style={styles.searchInput}
           placeholder="Search fundraisers..."
@@ -103,13 +116,19 @@ export default function SearchScreen({ navigation }) {
           renderItem={({ item }) => (
             <FundraiserItem
               item={item}
-              onPress={() => navigation.navigate("FundraiserDetailsScreen", { fundId: item.fundId })} // Use fundId here
+              onPress={() =>
+                navigation.navigate("FundraiserDetailsScreen", {
+                  fundId: item.fundId,
+                })
+              } // Use fundId here
             />
           )}
           keyExtractor={(item) => item.fundId} // Use fundId as the key
           ListEmptyComponent={
             <Text style={styles.emptyText}>
-              {searchQuery ? "No results found" : "Start typing to search fundraisers"}
+              {searchQuery
+                ? "No results found"
+                : "Start typing to search fundraisers"}
             </Text>
           }
         />
