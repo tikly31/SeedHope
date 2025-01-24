@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
+import { fetchTrendingCampaigns, formatTrendingCampaigns } from "../utils/apiUtils"; // Adjust the path based on your project structure
 
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
@@ -75,13 +76,14 @@ export default function MainScreen1() {
   const [recentFundraisers, setRecentFundraisers] = useState([]);
   const [successfulFundraisers, setSuccessfulFundraisers] = useState([]);
   const [topContributors, setTopContributors] = useState([]);
+  const [trendingFundraisers, setTrendingFundraisers] = useState([]);
   const [loading, setLoading] = useState(true);
-   const staticTrendingFundraisers = [
-      { id: '100', title: 'Save the Forest', photoUrl:'camp1.jpg', amount: '$5,000' },
-      { id: '200', title: 'Clean Water Project', photoUrl:'camp2.jpg',amount: '$3,000' },
-      { id: '300', title: 'Education Fund', photoUrl:'camp3.jpg',amount: '$8,000' },
-      { id: '400', title: 'Medical Aid', photoUrl:'camp4.jpg',amount: '$12,000' },
-    ];
+//    const staticTrendingFundraisers = [
+//       { id: '100', title: 'Save the Forest', photoUrl:'camp1.jpg', amount: '$5,000' },
+//       { id: '200', title: 'Clean Water Project', photoUrl:'camp2.jpg',amount: '$3,000' },
+//       { id: '300', title: 'Education Fund', photoUrl:'camp3.jpg',amount: '$8,000' },
+//       { id: '400', title: 'Medical Aid', photoUrl:'camp4.jpg',amount: '$12,000' },
+//     ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,6 +94,8 @@ export default function MainScreen1() {
           axios.get(`${API_BASE_URL}/campaign/successful`),
           axios.get(`${API_BASE_URL}/contributors`),
         ]);
+        const trending = await fetchTrendingCampaigns();
+        setTrendingFundraisers(trending);
         setEmergencyFundraisers(emergencyRes.data);
         setRecentFundraisers(recentRes.data);
         setSuccessfulFundraisers(successfulRes.data);
@@ -145,7 +149,7 @@ export default function MainScreen1() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <FundraiserSection
           title="Trending Fundraisers"
-          data={staticTrendingFundraisers}
+          data={trendingFundraisers}
           onPressFundraiser={handlePressFundraiser}
         />
         <FundraiserSection

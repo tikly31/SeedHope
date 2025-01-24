@@ -14,7 +14,7 @@ public class PaymentRequest {
   public String phone;
   public String notes;
   public String trancationId;
-  public String  campaignId;
+  public String campaignId;
 
     public double getAmount() {
         return amount;

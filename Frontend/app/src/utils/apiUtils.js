@@ -176,3 +176,39 @@ export const updateCampaign = async (campaign) => {
     throw error;
   }
 };
+
+/**
+ * Fetch trending campaigns from the backend.
+ * @param {string} apiUrl - The base URL of the backend API.
+ * @param {number} days - Number of recent days to analyze trends (default: 7 days).
+ * @returns {Promise<Object[]>} - A promise that resolves to an array of trending campaigns.
+ */
+export async function fetchTrendingCampaigns() {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/campaign/trending`);
+
+    if (response.status === 200) {
+      return response.data; // Assuming API returns an array of trending campaigns
+    } else {
+      console.error("Failed to fetch trending campaigns:", response.statusText);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching trending campaigns:", error.message);
+    throw new Error("Could not fetch trending campaigns. Please try again later.");
+  }
+}
+
+/**
+ * Parse and format campaign data for display.
+ * @param {Object[]} campaigns - Array of campaigns from the API.
+ * @returns {Object[]} - Array of formatted campaign objects.
+ */
+export function formatTrendingCampaigns(campaigns) {
+  return campaigns.map((campaign) => ({
+    id: campaign.campaignId || campaign.id,
+    title: campaign.title || "Unnamed Campaign",
+    transactionCount: campaign.transactionCount || 0,
+    ...campaign, // Include other fields returned from the backend if needed
+  }));
+}

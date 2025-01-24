@@ -112,7 +112,7 @@ export default function FundraiserDetailsScreen({ route }: FundraiserDetailsProp
         </TouchableOpacity>
 
         {/* Fundraiser Image */}
-        <Image source={fundraiser.photoUrl ? {uri : fundraiser.photoUrl} :{ uri: 'https://picsum.photos/200/300' }} style={styles.image} />
+        <Image source={fundraiser.photoUrl ? {uri : `${API_BASE_URL}/campaigns/${fundraiser.photoUrl}`} :{ uri: 'https://picsum.photos/200/300' }} style={styles.image} />
 
         <View style={styles.content}>
           {/* Fundraiser Title and Due Date */}
