@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,37 +10,60 @@ import {
   ScrollView,
   SafeAreaView,
   Image,
-} from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import * as ImagePicker from "expo-image-picker"
-import { MaterialIcons } from "@expo/vector-icons"
-import BottomNavBar from "../components/BottomNavBar"
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import * as ImagePicker from "expo-image-picker";
+import { MaterialIcons } from "@expo/vector-icons";
+import BottomNavBar from "../components/BottomNavBar";
 
-import {pickImage} from "./imagePickerUtils"
+import { pickImage } from "./imagePickerUtils";
+import uploadCampaignImage from "./uploadCampaignImage"; // Assuming the upload utility can be used for campaigns too
+import CONFIG from "./config";
+
+const API_BASE_URL = CONFIG.API_BASE_URL;
+
 
 export default function FundraiserDetails({ navigation, route }) {
-  const [title, setTitle] = useState("")
-  const [details, setDetails] = useState("")
-  const [image, setImage] = useState<string | null>(null)
-  const characterLimit = 500
+  const [title, setTitle] = useState("");
+  const [details, setDetails] = useState("");
+  const [image, setImage] = useState<string | null>(null);
+  const characterLimit = 500;
 
   // Destructure the passed params from route
-  const { dueDate, category, amount } = route.params || {}
+  const { dueDate, category, amount } = route.params || {};
 
-  const isValidForm = title.trim().length > 0 && details.trim().length > 0
+  const isValidForm = title.trim().length > 0 && details.trim().length > 0;
 
-  const pickImagehandle = async () => {
-    const image = await pickImage()
-    if (image) {
-      setImage(image)
+  const handlePickImage = async () => {
+    const uri = await pickImage();
+
+    if (!uri) {
+      console.warn("Image picking was canceled or returned no URI.");
+      return;
+    }
+
+    try {
+      const formattedImage = {
+        uri,
+        type: "image/jpeg", // Assuming it's a JPEG
+        name: uri.split("/").pop(), // Extract the file name
+      };
+
+      const uploadedFileName = await uploadCampaignImage(formattedImage);
+
+      if (uploadedFileName) {
+        setImage(uploadedFileName);
+        // Optionally display success alert
+      } else {
+        console.error("Image upload failed.");
+        // Optionally display failure alert
+      }
+    } catch (error) {
+      console.error("Error uploading campaign image:", error);
     }
   };
 
-
-
-
   const handleContinue = () => {
-    // Create Campaign object
     const campaign = {
       dueDate,
       category,
@@ -48,23 +71,26 @@ export default function FundraiserDetails({ navigation, route }) {
       title,
       details,
       image,
-    }
+    };
 
-    console.log("Created Campaign:", campaign)
+    console.log("Created Campaign:", campaign);
 
-    // Pass Campaign object to the next screen
-    navigation.navigate("DocumentUpload", { campaign })
-  }
+    navigation.navigate("DocumentUpload", { campaign });
+  };
 
   return (
     <SafeAreaView style={styles.containers}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={styles.container}
+      >
         <LinearGradient colors={["#ffffff", "#f8f9fa"]} style={styles.gradient}>
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
           >
+            {/* Title Section */}
             <View style={styles.inputSection}>
               <Text style={styles.sectionTitle}>Give your fundraiser a title</Text>
               <TextInput
@@ -80,8 +106,11 @@ export default function FundraiserDetails({ navigation, route }) {
               </Text>
             </View>
 
+            {/* Details Section */}
             <View style={styles.inputSection}>
-              <Text style={styles.sectionTitle}>Why are you raising this fund?</Text>
+              <Text style={styles.sectionTitle}>
+                Why are you raising this fund?
+              </Text>
               <TextInput
                 style={[styles.input, styles.multilineInput]}
                 value={details}
@@ -93,21 +122,32 @@ export default function FundraiserDetails({ navigation, route }) {
               />
             </View>
 
+            {/* Image Upload Section */}
             <View style={styles.inputSection}>
               <Text style={styles.sectionTitle}>Upload a cover image</Text>
-              <TouchableOpacity style={styles.imageUploadButton} onPress={pickImagehandle}>
+              <TouchableOpacity
+                style={styles.imageUploadButton}
+                onPress={handlePickImage}
+              >
                 {image ? (
-                  <Image source={{ uri: image }} style={styles.uploadedImage} />
+                  <Image source={{ uri: `${API_BASE_URL}/campaigns/${image}` }} style={styles.uploadedImage} />
                 ) : (
                   <View style={styles.uploadPlaceholder}>
-                    <MaterialIcons name="add-photo-alternate" size={40} color="#007AFF" />
+                    <MaterialIcons
+                      name="add-photo-alternate"
+                      size={40}
+                      color="#007AFF"
+                    />
                     <Text style={styles.uploadText}>Tap to upload image</Text>
                   </View>
                 )}
               </TouchableOpacity>
             </View>
           </ScrollView>
+        </LinearGradient>
 
+        {/* Fixed Submit Button */}
+        <View style={styles.fixedButtonContainer}>
           <TouchableOpacity
             style={[styles.button, !isValidForm && styles.buttonDisabled]}
             disabled={!isValidForm}
@@ -121,13 +161,15 @@ export default function FundraiserDetails({ navigation, route }) {
               <Text style={styles.buttonText}>Continue</Text>
             </LinearGradient>
           </TouchableOpacity>
-        </LinearGradient>
+        </View>
+
+        {/* Bottom Navigation Bar */}
+        <View style={styles.bottomNav}>
+          <BottomNavBar navigation={navigation} activeScreen="Create" />
+        </View>
       </KeyboardAvoidingView>
-      <View style={styles.bottomNav}>
-        <BottomNavBar navigation={navigation} activeScreen="Create" />
-      </View>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -146,6 +188,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+    paddingBottom: 120, // Adds enough space at the bottom for the fixed button
   },
   inputSection: {
     marginBottom: 20,
@@ -194,9 +237,9 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   button: {
-    margin: 20,
     borderRadius: 10,
     overflow: "hidden",
+    marginHorizontal: 20, // Adds horizontal spacing for the button
   },
   buttonDisabled: {
     opacity: 0.7,
@@ -210,10 +253,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+  fixedButtonContainer: {
+    position: "absolute",
+    bottom: 70, // Ensures the button doesn’t overlap with the bottom navigation bar
+    width: "100%",
+    paddingHorizontal: 20, // Adds padding to the sides
+  },
   bottomNav: {
     position: "absolute",
     bottom: 0,
     width: "100%",
+    height: 60, // Adjust based on the height of your bottom navigation bar
+    backgroundColor: "#fff", // Optional: background color for the bottom navigation bar
+    borderTopWidth: 1,
+    borderColor: "#ddd", // Optional: a border at the top for separation
   },
-})
-
+});
