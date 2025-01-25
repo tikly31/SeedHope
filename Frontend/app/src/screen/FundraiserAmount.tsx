@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,15 +13,31 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import BottomNavBar from "../components/BottomNavBar";
+import { Keyboard } from "react-native";
 
 export default function FundraiserAmount({ navigation, route }) {
   const [amount, setAmount] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const scaleAnim = new Animated.Value(1);
 
   // Retrieve data from the previous page
   const { dueDate, category } = route.params;
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
 
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
   const handleAmountChange = (text: string) => {
     const numericValue = text.replace(/[^0-9]/g, "");
     setAmount(numericValue);
@@ -97,12 +113,12 @@ export default function FundraiserAmount({ navigation, route }) {
                   selectionColor="#007AFF"
                 />
               </View>
-              <View style={styles.helperTextContainer}>
+              {/* <View style={styles.helperTextContainer}>
                 <Text style={styles.helperText}>
                   Fundraisers like yours typically aim to raise{" "}
                   <Text style={styles.highlightText}>500k BDT</Text>
                 </Text>
-              </View>
+              </View> */}
             </View>
 
             <Animated.View
@@ -135,9 +151,12 @@ export default function FundraiserAmount({ navigation, route }) {
           </View>
         </LinearGradient>
       </KeyboardAvoidingView>
-      <View style={styles.bottomnavbar}>
+      {/* <View style={styles.bottomnavbar}>
         <BottomNavBar navigation={navigation} activeScreen="Create" />
-      </View>
+      </View> */}
+      {!keyboardVisible && (
+        <BottomNavBar navigation={navigation} activeScreen="Create" />
+      )}
     </SafeAreaView>
   );
 }
@@ -252,7 +271,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   bottomnavbar: {
-    position: "absolute",
+    position: "fixed",
     bottom: 0,
     width: "100%",
   },

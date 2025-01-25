@@ -13,8 +13,10 @@ import * as DocumentPicker from "expo-document-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import BottomNavBar from "../components/BottomNavBar";
+import AlertModal from "../components/AlertModal";
 
 import CONFIG from "./config";
+import { set } from "date-fns";
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
 interface DocumentFile {
@@ -30,6 +32,18 @@ export default function DocumentUpload({ navigation, route }) {
   const [organizerId, setOrganizerId] = useState<string | null>(null);
 
   const { campaign } = route.params; // Campaign object passed from previous page
+
+
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertType, setAlertType] = useState<"success" | "failure">("success");
+    const [alertMessage, setAlertMessage] = useState("");
+
+    const handleAlertClose = () => {
+      setAlertVisible(false);
+      if(alertType === "success") {
+        navigation.navigate("FundraiserSuccess");
+      }
+    };
 
   useEffect(() => {
     const fetchCurrentUserId = async () => {
@@ -67,7 +81,11 @@ export default function DocumentUpload({ navigation, route }) {
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
-        Alert.alert("Error", "No authentication token found.");
+        // Alert.alert("Error", "No authentication token found.");
+        setAlertType("failure");
+        setAlertMessage("No authentication token found.");
+        setAlertVisible(true);
+
         return;
       }
 
@@ -88,7 +106,11 @@ export default function DocumentUpload({ navigation, route }) {
 
       if (!response.ok) {
         console.error("Failed to upload document:", response.statusText);
-        Alert.alert("Error", "Failed to upload the document.");
+        // Alert.alert("Error", "Failed to upload the document.");
+        setAlertType("failure");
+        setAlertMessage("Failed to upload the document.");
+        setAlertVisible(true);
+
         return;
       }
 
@@ -99,10 +121,17 @@ export default function DocumentUpload({ navigation, route }) {
       // Store the correct URL instead of the local URI
       setDocuments([{ name: fileName, size: 0, uri: uploadedFileUrl }]);
 
-      Alert.alert("Success", "File uploaded successfully!");
+      // Alert.alert("Success", "File uploaded successfully!");
+      setAlertType("success");
+      setAlertMessage("File uploaded successfully!");
+      setAlertVisible(true);
     } catch (error) {
       console.error("Error uploading document:", error);
-      Alert.alert("Error", "An error occurred while uploading the document.");
+      // Alert.alert("Error", "An error occurred while uploading the document.");
+      setAlertType("failure");
+      setAlertMessage("An error occurred while uploading the document.");
+      setAlertVisible(true);
+
     }
   };
 
@@ -132,17 +161,23 @@ export default function DocumentUpload({ navigation, route }) {
 
   const handleSubmit = async () => {
     if (!organizerId) {
-      Alert.alert(
-        "Error",
-        "Organizer ID is not set yet. Please wait a moment and try again."
-      );
+      // Alert.alert(
+      //   "Error",
+      //   "Organizer ID is not set yet. Please wait a moment and try again."
+      // );
+      setAlertType("failure");
+      setAlertMessage("Organizer ID is not set yet. Please wait a moment and try again.");
+      setAlertVisible(true);
       return;
     }
 
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
-        Alert.alert("Error", "No authentication token found.");
+        // Alert.alert("Error", "No authentication token found.");
+        setAlertType("failure");
+        setAlertMessage("No authentication token found.");
+        setAlertVisible(true);
         return;
       }
 
@@ -168,23 +203,39 @@ export default function DocumentUpload({ navigation, route }) {
 
       if (!response.ok) {
         console.error("Failed to create campaign:", response.statusText);
-        Alert.alert("Error", "Failed to create the campaign.");
+        // Alert.alert("Error", "Failed to create the campaign.");
+        setAlertType("failure");
+        setAlertMessage("Failed to create the campaign.");
+        setAlertVisible(true);
         return;
       }
 
       const createdCampaign = await response.json();
       console.log("Campaign created successfully:", createdCampaign);
-
-      Alert.alert("Success", "Campaign created successfully!");
-      navigation.navigate("FundraiserSuccess");
+      setAlertType("success");
+      setAlertMessage("Campaign created successfully!");
+      setAlertVisible(true);
+      // Alert.alert("Success", "Campaign created successfully!");
+      // navigation.navigate("FundraiserSuccess");
     } catch (error) {
       console.error("Error creating campaign:", error);
-      Alert.alert("Error", "An error occurred while creating the campaign.");
+      // Alert.alert("Error", "An error occurred while creating the campaign.");
+      setAlertType("failure");
+      setAlertMessage("An error occurred while creating the campaign.");
+      setAlertVisible(true);
     }
   };
 
   return (
     <View style={styles.container}>
+
+       <AlertModal
+              visible={alertVisible}
+              type={alertType}
+              message={alertMessage}
+              onClose={handleAlertClose}
+              onAction={alertType === "success" ? handleAlertClose : undefined}
+        />
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={styles.title}>Add your documents</Text>

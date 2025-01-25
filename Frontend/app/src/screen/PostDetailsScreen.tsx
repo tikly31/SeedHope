@@ -36,6 +36,10 @@ export default function PostDetailsScreen({ route, navigation }) {
   const { fund } = route.params;
   const [postOwner, setPostOwner] = useState(null);
 
+
+
+   
+
   // const [fundraiser, setFundraiser] = useState<Fundraiser>({} as Fundraiser);
 
   

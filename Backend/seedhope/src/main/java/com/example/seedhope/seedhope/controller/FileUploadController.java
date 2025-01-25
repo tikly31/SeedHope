@@ -11,7 +11,7 @@ import java.nio.file.*;
 @RestController
 @RequestMapping("/uploads")
 public class FileUploadController {
-    private static final String BASE_UPLOAD_DIRECTORY = "D:/SeedHope/Backend/seedhope/src/main/resources/photos/";
+    private static final String BASE_UPLOAD_DIRECTORY = "/home/hp/SDP/SeedHope/Backend/seedhope/src/main/resources/photos";
 
     @PostMapping("/campaign")
     public ResponseEntity<String> uploadCampaignPhoto(@RequestParam("file") MultipartFile file) {
