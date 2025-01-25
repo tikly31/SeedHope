@@ -32,6 +32,7 @@ public class Campaign{
 //    @Column
     private Double raisedAmount = 0.0;
 
+    private String document;
 //    @Column
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
@@ -70,7 +71,7 @@ public class Campaign{
         this.raisedAmount = 0.0;
     }
 
-    public Campaign(String title, String description, String category, Double goalAmount, Double raisedAmount, Status status, LocalDate dueDate, String photoUrl, Long organizer_id) {
+    public Campaign(String title, String description, String category, Double goalAmount, Double raisedAmount, Status status, LocalDate dueDate, String photoUrl, Long organizer_id, String document) {
         this.title = title;
         this.description = description;
         this.category = category;
@@ -81,12 +82,18 @@ public class Campaign{
         this.organizerId = organizer_id;
         this.creationDate = LocalDateTime.now();
         this.raisedAmount = raisedAmount;
+        this.document = document;
     }
 
 
     // Getters and Setters
     public Long getId() {
         return id;
+    }
+    public String getDocument(){return this.document;}
+
+    public void setDocument(String document) {
+        this.document = document;
     }
 
     public Long getOrganizerId(){

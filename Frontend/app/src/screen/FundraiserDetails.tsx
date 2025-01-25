@@ -16,7 +16,7 @@ import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import BottomNavBar from "../components/BottomNavBar";
 
-import uploadCampaignImage from "../utils/apiUtils"; // Assuming the upload utility can be used for campaigns too
+import {uploadCampaignImage} from "../utils/apiUtils"; // Assuming the upload utility can be used for campaigns too
 import CONFIG from "./config";
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
