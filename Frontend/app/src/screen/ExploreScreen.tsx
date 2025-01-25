@@ -1,132 +1,124 @@
-import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import BottomNavBar from "../components/BottomNavBar";
+import React from "react"
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
+import BottomNavBar from "../components/BottomNavBar"
 
 interface CategoryButtonProps {
-  icon: React.ReactNode;
-  label: string;
-  onPress: () => void;
+  icon: string
+  label: string
+  gradient: string[]
+  onPress: () => void
 }
 
-const CategoryButton = ({ icon, label, onPress }: CategoryButtonProps) => (
+const CategoryButton = ({ icon, label, gradient, onPress }: CategoryButtonProps) => (
   <TouchableOpacity style={styles.categoryButton} onPress={onPress}>
-    <View style={styles.iconContainer}>{icon}</View>
+    <LinearGradient colors={gradient} style={styles.iconContainer} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+      <MaterialCommunityIcons name={icon} size={32} color="#FFFFFF" />
+    </LinearGradient>
     <Text style={styles.categoryLabel}>{label}</Text>
   </TouchableOpacity>
-);
+)
 
 export default function ExploreScreen({ navigation }) {
   const categories = [
-    {
-      icon: <Ionicons name="book-outline" size={32} color="#4A5568" />,
-      label: "Education",
-    },
-    {
-      icon: <Ionicons name="medkit-outline" size={32} color="#4A5568" />,
-      label: "Medical",
-    },
-    {
-      icon: <Ionicons name="cloud-outline" size={32} color="#4A5568" />,
-      label: "Disaster",
-    },
-    {
-      icon: <Ionicons name="leaf-outline" size={32} color="#4A5568" />,
-      label: "Environment",
-    },
-    {
-      icon: <Ionicons name="alarm-outline" size={32} color="#4A5568" />,
-      label: "Emergency",
-    },
-  ];
-
-  // Helper function to group categories into rows of two
-  const groupedCategories = categories.reduce((rows, category, index) => {
-    if (index % 2 === 0) rows.push([]);
-    rows[rows.length - 1].push(category);
-    return rows;
-  }, [] as Array<Array<{ icon: React.ReactNode; label: string }>>);
+    { icon: "school", label: "Education", gradient: ["#FF6B6B", "#FF8E8E"] },
+    { icon: "hospital-box", label: "Medical", gradient: ["#4ECDC4", "#45B7AF"] },
+    { icon: "home-flood", label: "Disaster", gradient: ["#6C5CE7", "#8278E9"] },
+    { icon: "leaf", label: "Environment", gradient: ["#A8E6CF", "#8ED7B6"] },
+    { icon: "alarm-light", label: "Emergency", gradient: ["#FFB900", "#FF9B00"] },
+    { icon: "heart", label: "Family", gradient: ["#FF78B9", "#FF96C7"] },
+    { icon: "football", label: "Sports", gradient: ["#3498DB", "#2980B9"] },
+    { icon: "charity", label: "Community", gradient: ["#00B894", "#00A187"] },
+  ]
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Categories</Text>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {groupedCategories.map((row, rowIndex) => (
-          <View key={rowIndex} style={styles.row}>
-            {row.map((category, colIndex) => (
-              <CategoryButton
-                key={colIndex}
-                icon={category.icon}
-                label={category.label}
-                onPress={() =>
-                  navigation.navigate("CategoryScreen", {
-                    category: category.label.toLowerCase(),
-                  })
-                }
-              />
-            ))}
-          </View>
-        ))}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Categories</Text>
+      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <View style={styles.categoriesGrid}>
+          {categories.map((category, index) => (
+            <CategoryButton
+              key={index}
+              icon={category.icon}
+              label={category.label}
+              gradient={category.gradient}
+              onPress={() =>
+                navigation.navigate("CategoryScreen", {
+                  category: category.label.toLowerCase(),
+                })
+              }
+            />
+          ))}
+        </View>
       </ScrollView>
-      <BottomNavBar navigation={navigation} activeScreen="Home" />
+      {/* <View style={styles.bottomNavContainer}> */}
+        <BottomNavBar navigation={navigation} activeScreen="Explore" />
+      {/* </View> */}
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F7FAFC",
+    
   },
   header: {
-    fontSize: 28,
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E2E8F0",
+  },
+  headerTitle: {
+    fontSize: 24,
     fontWeight: "700",
     color: "#2D3748",
-    padding: 20,
-    paddingBottom: 10,
   },
   scrollContainer: {
     flexGrow: 1,
-    padding: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 120, // Add extra padding at the bottom to ensure all content is visible
   },
-  row: {
+  categoriesGrid: {
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
-    marginBottom: 24,
   },
   categoryButton: {
     width: "48%",
     aspectRatio: 1,
+    marginBottom: 16,
     alignItems: "center",
   },
   iconContainer: {
     width: "100%",
     aspectRatio: 1,
-    backgroundColor: "white",
-    borderRadius: 16,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowRadius: 4,
     elevation: 3,
   },
   categoryLabel: {
     marginTop: 8,
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "600",
     color: "#4A5568",
     textAlign: "center",
   },
-});
+  bottomNavContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+})
+

@@ -41,6 +41,10 @@ export default function PostDetailsScreen({ route, navigation }) {
   const [ownerPhoto, setOwnerPhoto] = useState("");
   const [userId, setUserId] = useState(0);
 
+
+
+   
+
   // const [fundraiser, setFundraiser] = useState<Fundraiser>({} as Fundraiser);
 
   

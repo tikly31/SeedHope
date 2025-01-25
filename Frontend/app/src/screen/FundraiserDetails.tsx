@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -15,20 +15,35 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import BottomNavBar from "../components/BottomNavBar";
-
-import {uploadCampaignImage} from "../utils/apiUtils"; // Assuming the upload utility can be used for campaigns too
+import { Keyboard } from "react-native";
+import { uploadCampaignImage } from "../utils/apiUtils"; // Assuming the upload utility can be used for campaigns too
 import CONFIG from "./config";
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
-import { pickImage } from "../utils/imagePickerUtils"
+import { pickImage } from "../utils/imagePickerUtils";
 
 export default function FundraiserDetails({ navigation, route }) {
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const characterLimit = 500;
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
 
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
   // Destructure the passed params from route
   const { dueDate, category, amount } = route.params || {};
 
@@ -92,7 +107,9 @@ export default function FundraiserDetails({ navigation, route }) {
           >
             {/* Title Section */}
             <View style={styles.inputSection}>
-              <Text style={styles.sectionTitle}>Give your fundraiser a title</Text>
+              <Text style={styles.sectionTitle}>
+                Give your fundraiser a title
+              </Text>
               <TextInput
                 style={styles.input}
                 value={title}
@@ -130,7 +147,10 @@ export default function FundraiserDetails({ navigation, route }) {
                 onPress={handlePickImage}
               >
                 {image ? (
-                  <Image source={{ uri: `${API_BASE_URL}/campaigns/${image}` }} style={styles.uploadedImage} />
+                  <Image
+                    source={{ uri: `${API_BASE_URL}/campaigns/${image}` }}
+                    style={styles.uploadedImage}
+                  />
                 ) : (
                   <View style={styles.uploadPlaceholder}>
                     <MaterialIcons
@@ -143,11 +163,24 @@ export default function FundraiserDetails({ navigation, route }) {
                 )}
               </TouchableOpacity>
             </View>
+            <TouchableOpacity
+              style={[styles.button, !isValidForm && styles.buttonDisabled]}
+              disabled={!isValidForm}
+              activeOpacity={0.8}
+              onPress={handleContinue}
+            >
+              <LinearGradient
+                colors={isValidForm ? ["#007AFF", "#0055FF"] : ["#ccc", "#bbb"]}
+                style={styles.buttonGradient}
+              >
+                <Text style={styles.buttonText}>Continue</Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </ScrollView>
         </LinearGradient>
 
         {/* Fixed Submit Button */}
-        <View style={styles.fixedButtonContainer}>
+        {/* <View style={styles.fixedButtonContainer}>
           <TouchableOpacity
             style={[styles.button, !isValidForm && styles.buttonDisabled]}
             disabled={!isValidForm}
@@ -161,13 +194,13 @@ export default function FundraiserDetails({ navigation, route }) {
               <Text style={styles.buttonText}>Continue</Text>
             </LinearGradient>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* Bottom Navigation Bar */}
-        <View style={styles.bottomNav}>
-          <BottomNavBar navigation={navigation} activeScreen="Create" />
-        </View>
       </KeyboardAvoidingView>
+      {!keyboardVisible && (
+        <BottomNavBar navigation={navigation} activeScreen="Create" />
+      )}
     </SafeAreaView>
   );
 }
