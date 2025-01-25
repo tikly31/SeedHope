@@ -18,6 +18,7 @@ import { fetchTrendingCampaigns, formatTrendingCampaigns } from "../utils/apiUti
 import logo from '../assets/image.png';
 import profile from '../assets/profile.jpg';
 import FundraiserSection from '../components/FundraiserSection';
+import {get_current_user} from "../utils/apiUtils";
 
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
@@ -81,6 +82,7 @@ export default function MainScreen1() {
   const [topContributors, setTopContributors] = useState([]);
   const [trendingFundraisers, setTrendingFundraisers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState();
 //    const staticTrendingFundraisers = [
 //       { id: '100', title: 'Save the Forest', photoUrl:'camp1.jpg', amount: '$5,000' },
 //       { id: '200', title: 'Clean Water Project', photoUrl:'camp2.jpg',amount: '$3,000' },
@@ -103,6 +105,13 @@ export default function MainScreen1() {
         setRecentFundraisers(recentRes.data);
         setSuccessfulFundraisers(successfulRes.data);
         setTopContributors(contributorsRes.data);
+
+        const response = await get_current_user();
+        if(response)
+                setCurrentUser(response);
+//         console.log("response", response);
+        console.log("User", currentUser);
+
       } catch (error) {
         console.error('Error fetching data:', error.message);
       } finally {
@@ -116,6 +125,10 @@ export default function MainScreen1() {
     console.log('Navigating with fundId:', fundId);
     navigation.navigate('FundraiserDetailsScreen', { fundId });
   };
+
+  const handleOnPress = () => {
+       navigation.navigate('ProfileScreen1');
+      };
 
   if (loading) {
     return (
@@ -131,8 +144,8 @@ export default function MainScreen1() {
        {/* Header */}
         <View style={styles.header}>
           <Image source={logo} style={styles.logo} />
-          <TouchableOpacity>
-            <Image source={profile} style={styles.profilePhoto} />
+          <TouchableOpacity onPress = {handleOnPress}>
+            <Image source={{uri : `${API_BASE_URL}/user/${currentUser.picture}`}} style={styles.profilePhoto} />
           </TouchableOpacity>
         </View>
 

@@ -1,10 +1,7 @@
 package com.example.seedhope.seedhope.service;
 
 import com.example.seedhope.seedhope.exception.PaymentException;
-import com.example.seedhope.seedhope.model.Donation;
-import com.example.seedhope.seedhope.model.Payment;
-import com.example.seedhope.seedhope.model.PaymentRequest;
-import com.example.seedhope.seedhope.model.PaymentStatus;
+import com.example.seedhope.seedhope.model.*;
 import com.example.seedhope.seedhope.util.PaymentSubject;
 import com.example.seedhope.seedhope.repository.PaymentRepository;
 import com.example.seedhope.seedhope.response.PaymentResponse;
@@ -157,12 +154,15 @@ public class PaymentServiceImpl implements PaymentService {
 //                    Long.parseLong(paymentStatus.getCampaignId()), paymentStatus.getAmount()
 //            );
 
+            Campaign cmp = campaignService.getCampaignById(Long.parseLong(paymentStatus.getCampaignId()));
             // Create a new donation record
             Donation donation = new Donation();
             donation.setAmount(paymentStatus.getAmount());
             donation.setCampaignId(Long.parseLong(paymentStatus.getCampaignId()));
             donation.setUserId(userservice.getUserIdByEmail(paymentStatus.getCustomerInfo()));
             donation.setStatus("SUCCESS");
+
+            donation.setImageUrl(cmp.getPhotoUrl());
             donation.setTitle(campaignService.getCampaignTitleById(Long.parseLong(paymentStatus.getCampaignId())));
             donationService.addDonation(donation);
 
@@ -178,7 +178,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .setPaymentDate(LocalDateTime.now())
                     .setCampaign(
                             campaignService.getCampaignById(Long.parseLong(paymentStatus.getCampaignId()))
-                                    .orElseThrow(() -> new RuntimeException("Campaign not found"))
+
                     )
                     .build();
 

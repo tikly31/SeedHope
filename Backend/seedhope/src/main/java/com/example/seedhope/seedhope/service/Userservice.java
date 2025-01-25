@@ -18,6 +18,7 @@ import com.example.seedhope.seedhope.exception.UserNotFoundException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class Userservice implements PaymentObserver {
@@ -176,7 +177,7 @@ public class Userservice implements PaymentObserver {
     }
 
     public List<User> getTopContributors() {
-        return userRepository.findAllByOrderByDonatedAmountDesc();
+        return userRepository.findTop5ByOrderByDonatedAmountDesc();
     }
 
     public User updateUser(User user) {
