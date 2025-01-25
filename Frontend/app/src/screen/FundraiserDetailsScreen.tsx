@@ -13,12 +13,12 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { get_current_user } from "../utils/apiUtils";
+import { get_current_user, getUserById, getCampaignById } from "../utils/apiUtils";
 import { Share } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import CONFIG from "./config";
-
+import profile from "../assets/profile.jpg";
 const API_BASE_URL = CONFIG.API_BASE_URL;
 const PLACEHOLDER_IMAGE = "https://picsum.photos/200/300";
 
@@ -52,6 +52,10 @@ export default function FundraiserDetailsScreen({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [authorName, setAuthorName] = useState<string>("");
+  const [authorImage, setAuthorImage] = useState(profile);
+  const [userId, setUserId] = useState<string>("");
+  // const [user, setUser] = useState<any>(null);
 
   const buttonScale = useSharedValue(1);
 
@@ -67,11 +71,16 @@ export default function FundraiserDetailsScreen({
   const fetchFundraiserDetails = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/campaign/${fundId}`);
-      setFundraiser(response.data);
+      const response = await getCampaignById(fundId);
+      setFundraiser(response);
+      console.log("Fundraiser:", response);
 
-      const user = await get_current_user();
+      const user = await getUserById(response.organizerId);
+    
       setCurrentUser(user);
+      setAuthorName(user.name);
+      setUserId(user.id);
+      setAuthorImage(user.picture ? { uri: `${API_BASE_URL}/user/${user.picture}` } : profile);
     } catch (err) {
       console.error("Error fetching fundraiser details:", err);
       setError("Failed to load fundraiser details.");
@@ -209,7 +218,22 @@ export default function FundraiserDetailsScreen({
           <View style={styles.progressContainer}>
             <View style={[styles.progressBar, { width: `${progress}%` }]} />
           </View>
-
+          <View style={styles.authorContainer}>
+            <View style={styles.authorInfo}>
+              <TouchableOpacity onPress = {() => navigation.navigate("ProfileScreen2", { userId: userId })}>
+                <Image
+                  source={authorImage} // Placeholder for author profile image
+                  style={styles.profileImage}
+                />
+              </TouchableOpacity>
+              
+              <View style={styles.authorDetails}>
+                <Text style={styles.authorName}>{authorName}</Text>
+                {/* <Text style={styles.authorId}></Text> */}
+                {/* Displaying author ID */}
+              </View>
+            </View>
+          </View>
           <View style={styles.descriptionContainer}>
             {fundraiser.isUrgent && (
               <View style={styles.urgentTag}>
@@ -424,5 +448,30 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  authorContainer: {
+    marginBottom: 16,
+  },
+  authorInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  authorDetails: {
+    flexDirection: "column",
+  },
+  authorName: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  authorId: {
+    paddingLeft: 4,
+    fontSize: 14,
+    color: "#666",
   },
 });

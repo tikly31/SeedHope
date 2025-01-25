@@ -1,6 +1,6 @@
 // config.js
 const CONFIG = {
-  API_BASE_URL: "http://192.168.0.113:8080", // Replace with your base URL
+  API_BASE_URL: "http://192.168.0.109:8080", // Replace with your base URL
 };
 
 export default CONFIG;

@@ -52,110 +52,87 @@ export default function DocumentUpload({ navigation, route }) {
     }
   };
 
-  const handleDocumentPick = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: ["image/*", "application/pdf"],
-        copyToCacheDirectory: true,
-      });
+const handleDocumentPick = async () => {
+  try {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ["image/*", "application/pdf"],
+      copyToCacheDirectory: true,
+    });
 
-      console.log("Document Picker Result:", result); // Debug log
+    console.log("Document Picker Result:", result); // Debug log
 
-      if (result.canceled) {
-        console.log("User canceled document selection.");
-        return; // Exit if user cancels
-      }
-
-      if (result.assets && result.assets.length > 0) {
-        const file = result.assets[0]; // Handle the new response format
-        console.log("Picked file:", file);
-
-        setDocument(null); // Remove previous file
-        await uploadDocumentToServer(
-          file.uri,
-          file.name,
-          file.mimeType || "application/pdf"
-        );
-      } else {
-        console.log("No document received.");
-      }
-    } catch (err) {
-      console.error("Error picking document:", err);
+    if (result.canceled) {
+      console.log("User canceled document selection.");
+      return; // Exit if user cancels
     }
-  };
 
-  const handleSubmit = async () => {
-    if (!organizerId) {
-      Alert.alert(
-        "Error",
-        "Organizer ID is not set yet. Please wait a moment and try again."
-      );
+    if (result.assets && result.assets.length > 0) {
+      const file = result.assets[0]; // Handle the new response format
+      console.log("Picked file:", file);
+
+      setDocument(null); // Remove previous file
+      await uploadDocumentToServer(file.uri, file.name, file.mimeType || "application/pdf");
+    } else {
+      console.log("No document received.");
+    }
+  } catch (err) {
+    console.error("Error picking document:", err);
+  }
+};
+
+
+const handleSubmit = async () => {
+  if (!organizerId) {
+    Alert.alert("Error", "Organizer ID is not set yet. Please wait a moment and try again.");
+    return;
+  }
+
+  try {
+    console.log("Document: ", document?.name || "No document uploaded");
+
+    const campaignData = {
+      title: campaign.title,
+      description: campaign.details,
+      category: campaign.category,
+      goalAmount: campaign.amount,
+      dueDate: campaign.dueDate,
+      organizerId,
+      photoUrl: campaign.image || "http://placehold.it/300",
+      raisedAmount: 0.0,
+      status: "PENDING",
+      document: document ? document.uri : null, // Allow null if no document is uploaded
+    };
+
+    const response = await fetch(`${API_BASE_URL}/campaign`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(campaignData),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to create campaign:", response.statusText);
+      Alert.alert("Error", "Failed to create the campaign.");
       return;
     }
 
-    try {
-      //       const token = await AsyncStorage.getItem("token");
-      //       if (!token) {
-      //         Alert.alert("Error", "No authentication token found.");
-      //         return;
-      //       }
+    Alert.alert("Success", "Campaign created successfully!");
+    navigation.navigate("FundraiserSuccess");
+  } catch (error) {
+    console.error("Error creating campaign:", error);
+    Alert.alert("Error", "An error occurred while creating the campaign.");
+  }
+};
 
-      console.log("Document : ", document.name);
-
-      const campaignData = {
-        title: campaign.title,
-        description: campaign.details,
-        category: campaign.category,
-        goalAmount: campaign.amount,
-        dueDate: campaign.dueDate,
-        organizerId,
-        photoUrl: campaign.image || "http://placehold.it/300",
-        raisedAmount: 0.0,
-        status: "PENDING",
-        document: document ? document.uri : "", // Attach uploaded document URL
-      };
-
-      const response = await fetch(`${API_BASE_URL}/campaign`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(campaignData),
-      });
-
-      if (!response.ok) {
-        console.error("Failed to create campaign:", response.statusText);
-        Alert.alert("Error", "Failed to create the campaign.");
-        return;
-      }
-
-      Alert.alert("Success", "Campaign created successfully!");
-      navigation.navigate("FundraiserSuccess");
-    } catch (error) {
-      console.error("Error creating campaign:", error);
-      Alert.alert("Error", "An error occurred while creating the campaign.");
-    }
-  };
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.content}>
         <Text style={styles.title}>Add Your Documents</Text>
-        <Text style={styles.subtitle}>
-          To boost authenticity, include your documents!
-        </Text>
-        {organizerId && (
-          <Text style={styles.organizerId}>Organizer ID: {organizerId}</Text>
-        )}
-        {document && (
-          <Text style={styles.documentName}>Uploaded: {document.name}</Text>
-        )}
-        <TouchableOpacity
-          onPress={handleDocumentPick}
-          style={styles.uploadButton}
-        >
-          <LinearGradient
-            colors={["#1aa7ec", "#1aa7ec"]}
-            style={styles.gradient}
-          >
+        <Text style={styles.subtitle}>To boost authenticity, include your documents!</Text>
+        {organizerId && <Text style={styles.organizerId}>Organizer ID: {organizerId}</Text>}
+        {document && <Text style={styles.documentName}>Uploaded: {document.name}</Text>}
+        <TouchableOpacity onPress={handleDocumentPick} style={styles.uploadButton}>
+          <LinearGradient colors={["#FF9500", "#FF8000"]} style={styles.gradient}>
             <MaterialIcons name="file-upload" size={24} color="#fff" />
             <Text style={styles.uploadButtonText}>Add File</Text>
           </LinearGradient>

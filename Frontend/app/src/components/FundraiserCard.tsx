@@ -1,7 +1,7 @@
 import type React from "react"
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from "react-native"
 import { LinearGradient } from "expo-linear-gradient";
-
+import { colors } from "../utils/colors";
 interface FundraiserCardProps {
   id: string
   title: string
