@@ -13,7 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { get_current_user } from "../utils/apiUtils";
+import { get_current_user, getUserById, getCampaignById } from "../utils/apiUtils";
 import { Share } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
@@ -55,6 +55,7 @@ export default function FundraiserDetailsScreen({
   const [authorName, setAuthorName] = useState<string>("");
   const [authorImage, setAuthorImage] = useState(profile);
   const [userId, setUserId] = useState<string>("");
+  // const [user, setUser] = useState<any>(null);
 
   const buttonScale = useSharedValue(1);
 
@@ -70,12 +71,15 @@ export default function FundraiserDetailsScreen({
   const fetchFundraiserDetails = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/campaign/${fundId}`);
-      setFundraiser(response.data);
+      const response = await getCampaignById(fundId);
+      setFundraiser(response);
+      console.log("Fundraiser:", response);
 
-      const user = await get_current_user();
+      const user = await getUserById(response.organizerId);
+    
       setCurrentUser(user);
       setAuthorName(user.name);
+      setUserId(user.id);
       setAuthorImage(user.picture ? { uri: `${API_BASE_URL}/user/${user.picture}` } : profile);
     } catch (err) {
       console.error("Error fetching fundraiser details:", err);
