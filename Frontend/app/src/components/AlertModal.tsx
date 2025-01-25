@@ -51,7 +51,7 @@ export default function AlertModal({
   };
 
   const getColor = () => {
-    return type === "success" ? "#4CAF50" : "#F44336";
+    return type === "success" ? "#54927d" : "#ff9966";
   };
 
   return (

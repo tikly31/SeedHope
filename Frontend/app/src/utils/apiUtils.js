@@ -368,3 +368,22 @@ export const uploadDocument = async (file) => {
     return null; // Return null to indicate failure
   }
 };
+
+export const getCampaignById = async (campaignId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/campaign/${campaignId}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.warn(`Campaign with ID ${campaignId} not found.`);
+        return null;
+      }
+      throw new Error(`Failed to fetch campaign: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching campaign:", error);
+    return null;
+  }
+};

@@ -72,7 +72,7 @@ export default function FundraiserBeneficiary({ navigation, route }) {
                   <MaterialCommunityIcons
                     name={option.icon as any}
                     size={24}
-                    color={selectedOption === option.id ? "#007AFF" : "#666"}
+                    color={selectedOption === option.id ? "#54927d" : "#666"}
                   />
                 </View>
                 <View style={styles.textContainer}>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   selectedOption: {
-    borderColor: "#007AFF",
+    borderColor: "#54927d",
     backgroundColor: "#F0F8FF",
   },
   optionContent: {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   continueButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#54927d",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",

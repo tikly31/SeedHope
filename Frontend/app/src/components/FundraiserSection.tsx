@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 16,
     marginBottom: 12,
+    // color
   },
   fundraiserList: {
     paddingHorizontal: 12,

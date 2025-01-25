@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   saveButtonText: {
-    color: "#007AFF",
+    color: "#54927d",
     fontSize: 16,
     fontWeight: "600",
   },
@@ -500,14 +500,14 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
   picker: {
-    height: 50,
+    height: 70,
     width: "100%",
     borderWidth: 1,
     borderColor: "#dbdbdb",
     borderRadius: 8,
   },
   changePasswordButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#54927d",
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: "center",

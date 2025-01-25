@@ -203,7 +203,7 @@ export default function MainScreen1() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.green,
+    backgroundColor: colors.Light_Beige,
   },
   header: {
     flexDirection: 'row',

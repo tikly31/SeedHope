@@ -374,7 +374,7 @@ export default function DonationPage({ route }: FundraiserDetailsProps) {
             onPress={handleProceed}
           >
             <LinearGradient
-              colors={isValidForm ? ["#4CAF50", "#45a049"] : ["#ccc", "#bbb"]}
+              colors={isValidForm ? ["#54927d", "#54927d"] : ["#ccc", "#bbb"]}
               style={styles.buttonGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   selectedPreset: {
-    borderColor: "#4CAF50",
+    borderColor: "#1aa7ec",
     backgroundColor: "#E8F5E9",
   },
   presetText: {

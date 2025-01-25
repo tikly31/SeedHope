@@ -24,13 +24,14 @@ const FundraiserItem = ({ item, onPress }) => {
           {item.title}
         </Text>
         <Text style={styles.fundraiserDueDate}>
-          Due: {new Date(item.dueDate).toLocaleDateString()}
+          Due: {new Date(item.dueDate).toLocaleDateString("en-BD", { day: "numeric", month: "long", year: "numeric" })}
+
         </Text>
         <View style={styles.progressBarContainer}>
           <View style={[styles.progressBar, { width: `${progress}%` }]} />
         </View>
         <Text style={styles.fundraiserAmount}>
-          ৳{item.raisedAmount ? item.raisedAmount.toLocaleString() : "0"} raised
+          ৳{item.raisedAmount ? item.raisedAmount.toLocaleString() : "0"} Raised out
           of ৳{item.goalAmount ? item.goalAmount.toLocaleString() : "0"}
         </Text>
       </View>

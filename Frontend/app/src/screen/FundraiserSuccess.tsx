@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,10 +12,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import BottomNavBar from "../components/BottomNavBar";
 
+
 export default function FundraiserSuccess({ navigation }) {
   const scaleAnim = new Animated.Value(0);
   const rotateAnim = new Animated.Value(0);
   const fadeAnim = new Animated.Value(0);
+
+
 
   useEffect(() => {
     Animated.sequence([
@@ -55,8 +58,11 @@ export default function FundraiserSuccess({ navigation }) {
     outputRange: ["0deg", "360deg"],
   });
 
+  
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
+     
       <LinearGradient colors={["#ffffff", "#f0f8ff"]} style={styles.container}>
         <View style={styles.content}>
           <Animated.View
@@ -68,7 +74,7 @@ export default function FundraiserSuccess({ navigation }) {
             ]}
           >
             <LinearGradient
-              colors={["#4CAF50", "#45a049"]}
+              colors={["#54927d", "#45a049"]}
               style={styles.iconGradient}
             >
               <MaterialIcons name="check-circle" size={64} color="#fff" />
@@ -93,7 +99,7 @@ export default function FundraiserSuccess({ navigation }) {
             onPress={() => navigation.navigate("MainScreen")}
           >
             <LinearGradient
-              colors={["#007AFF", "#0055FF"]}
+              colors={["#54927d", "#54927d"]}
               style={styles.buttonGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}

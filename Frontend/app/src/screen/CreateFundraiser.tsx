@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,14 +7,24 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
+  Keyboard,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import BottomNavBar from "../components/BottomNavBar";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 const categories = [
-  ["Medical", "Education", "Disaster"],
-  ["Environment", "Emergency"],
+  [
+    "Medical",
+    "Education",
+    "Disaster",
+    "Environment",
+    "Emergency",
+    "Family",
+    "Sports",
+    "Community",
+  ],
 ];
 
 export default function CreateFundraiser({ navigation }) {
@@ -23,6 +33,7 @@ export default function CreateFundraiser({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false); // State to track keyboard visibility
 
   const cities = [
     "Dhaka",
@@ -31,6 +42,8 @@ export default function CreateFundraiser({ navigation }) {
     "Rajshahi",
     "Khulna",
     "Barisal",
+    "Mymensingh",
+    "Rangpur",
   ];
 
   const isFormValid = selectedCity && zipCode && selectedCategory;
@@ -48,6 +61,22 @@ export default function CreateFundraiser({ navigation }) {
       });
     }
   };
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.containers}>
@@ -129,9 +158,11 @@ export default function CreateFundraiser({ navigation }) {
           <Text style={styles.continueButtonText}>Continue</Text>
         </TouchableOpacity>
       </ScrollView>
-      <View style={styles.bottomnavbar}>
+
+      {/* Conditionally render BottomNavBar based on keyboard visibility */}
+      {!keyboardVisible && (
         <BottomNavBar navigation={navigation} activeScreen="Create" />
-      </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -167,7 +198,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   picker: {
-    height: 50,
+    height: 60,
   },
   input: {
     height: 50,
@@ -218,7 +249,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   continueButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#54927d",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
@@ -232,10 +263,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-  },
-  bottomnavbar: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
   },
 });

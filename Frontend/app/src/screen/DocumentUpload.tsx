@@ -81,53 +81,48 @@ const handleDocumentPick = async () => {
 };
 
 
-  const handleSubmit = async () => {
-    if (!organizerId) {
-      Alert.alert("Error", "Organizer ID is not set yet. Please wait a moment and try again.");
+const handleSubmit = async () => {
+  if (!organizerId) {
+    Alert.alert("Error", "Organizer ID is not set yet. Please wait a moment and try again.");
+    return;
+  }
+
+  try {
+    console.log("Document: ", document?.name || "No document uploaded");
+
+    const campaignData = {
+      title: campaign.title,
+      description: campaign.details,
+      category: campaign.category,
+      goalAmount: campaign.amount,
+      dueDate: campaign.dueDate,
+      organizerId,
+      photoUrl: campaign.image || "http://placehold.it/300",
+      raisedAmount: 0.0,
+      status: "PENDING",
+      document: document ? document.uri : null, // Allow null if no document is uploaded
+    };
+
+    const response = await fetch(`${API_BASE_URL}/campaign`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(campaignData),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to create campaign:", response.statusText);
+      Alert.alert("Error", "Failed to create the campaign.");
       return;
     }
 
-    try {
-//       const token = await AsyncStorage.getItem("token");
-//       if (!token) {
-//         Alert.alert("Error", "No authentication token found.");
-//         return;
-//       }
+    Alert.alert("Success", "Campaign created successfully!");
+    navigation.navigate("FundraiserSuccess");
+  } catch (error) {
+    console.error("Error creating campaign:", error);
+    Alert.alert("Error", "An error occurred while creating the campaign.");
+  }
+};
 
-      console.log("Document : ", document.name);
-
-      const campaignData = {
-        title: campaign.title,
-        description: campaign.details,
-        category: campaign.category,
-        goalAmount: campaign.amount,
-        dueDate: campaign.dueDate,
-        organizerId,
-        photoUrl: campaign.image || "http://placehold.it/300",
-        raisedAmount: 0.0,
-        status: "PENDING",
-        document: document ? document.uri : "", // Attach uploaded document URL
-      };
-
-      const response = await fetch(`${API_BASE_URL}/campaign`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(campaignData),
-      });
-
-      if (!response.ok) {
-        console.error("Failed to create campaign:", response.statusText);
-        Alert.alert("Error", "Failed to create the campaign.");
-        return;
-      }
-
-      Alert.alert("Success", "Campaign created successfully!");
-      navigation.navigate("FundraiserSuccess");
-    } catch (error) {
-      console.error("Error creating campaign:", error);
-      Alert.alert("Error", "An error occurred while creating the campaign.");
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -137,7 +132,7 @@ const handleDocumentPick = async () => {
         {organizerId && <Text style={styles.organizerId}>Organizer ID: {organizerId}</Text>}
         {document && <Text style={styles.documentName}>Uploaded: {document.name}</Text>}
         <TouchableOpacity onPress={handleDocumentPick} style={styles.uploadButton}>
-          <LinearGradient colors={["#FF9500", "#FF8000"]} style={styles.gradient}>
+          <LinearGradient colors={["#1aa", "#1aa"]} style={styles.gradient}>
             <MaterialIcons name="file-upload" size={24} color="#fff" />
             <Text style={styles.uploadButtonText}>Add File</Text>
           </LinearGradient>
@@ -146,8 +141,11 @@ const handleDocumentPick = async () => {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.continueButton} onPress={handleSubmit}>
-          <LinearGradient colors={["#007AFF", "#0055FF"]} style={styles.gradient}>
-            <Text style={styles.continueButtonText}>Submit Campaign</Text>
+          <LinearGradient
+            colors={["#54927d", "#54927d"]}
+            style={styles.gradient}
+          >
+            <Text style={styles.continueButtonText}>Submit</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -157,16 +155,47 @@ const handleDocumentPick = async () => {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   content: { flex: 1, padding: 24 },
   title: { fontSize: 28, fontWeight: "bold", marginBottom: 8 },
   subtitle: { fontSize: 16, color: "#666" },
   uploadButton: { borderRadius: 12, overflow: "hidden", marginBottom: 24 },
-  gradient: { flexDirection: "row", alignItems: "center", padding: 16 },
-  uploadButtonText: { color: "#fff", fontSize: 18, fontWeight: "600", marginLeft: 8 },
-  documentName: { fontSize: 16, fontWeight: "500", color: "#333", marginTop: 12 },
-  footer: { padding: 24, backgroundColor: "#fff", borderTopWidth: 1, borderTopColor: "#e1e1e1" },
-  continueButton: { borderRadius: 12, overflow: "hidden" },
-  continueButtonText: { color: "#fff", fontSize: 18, fontWeight: "600" },
+  gradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center", // Center content horizontally
+    padding: 16,
+  },
+  uploadButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+  documentName: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#333",
+    marginTop: 12,
+  },
+  footer: {
+    padding: 24,
+    backgroundColor: "#fff",
+    borderTopWidth: 1,
+    borderTopColor: "#e1e1e1",
+  },
+  continueButton: { 
+    borderRadius: 12, 
+    overflow: "hidden", 
+    width: "100%", 
+    alignSelf: "center",
+  },
+  continueButtonText: { 
+    color: "#fff", 
+    fontSize: 18, 
+    fontWeight: "600",
+  },
 });
+
