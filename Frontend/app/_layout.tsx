@@ -25,6 +25,7 @@ import SearchScreen from "./src/screen/SearchScreen";
 import LogoutScreen from "./src/screen/LogoutScreen";
 import EditFundraiserScreen from "./src/screen/EditFundraiserScreen";
 import CommentScreen from "./src/screen/CommentScreen";
+import ProfileScreen2 from "./src/screen/ProfileScreen2";
 
 const Stack = createNativeStackNavigator();
 
@@ -72,6 +73,7 @@ const AppNavigator = () => {
         name={"EditFundraiserScreen"}
         component={EditFundraiserScreen}
       />
+      <Stack.Screen name={"ProfileScreen2"} component={ProfileScreen2} />
     </Stack.Navigator>
     // </NavigationContainer>
   );
