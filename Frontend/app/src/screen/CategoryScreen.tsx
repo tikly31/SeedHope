@@ -1,40 +1,21 @@
 import React, { useEffect, useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   ActivityIndicator,
-  TouchableOpacity,
-  Image,
-  Dimensions,
   TextInput,
+  SafeAreaView,
+  Text,
+  Dimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import FundraiserCard from "../components/FundraiserCard";
 import CONFIG from "./config";
+import BottomNavBar from '../components/BottomNavBar';
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
 const { width } = Dimensions.get("window");
-const CARD_WIDTH = (width - 48) / 2;
-
-const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
-  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
-    <View style={styles.cardImageContainer}>
-      <Image
-        source={{ uri: imageUrl }}
-        style={styles.cardImage}
-        resizeMode="cover"
-      />
-    </View>
-    <View style={styles.cardContent}>
-      <Text style={styles.cardTitle} numberOfLines={2}>
-        {title}
-      </Text>
-      <Text style={styles.cardAmount}>৳{amount.toLocaleString()} left</Text>
-    </View>
-  </TouchableOpacity>
-);
 
 export default function CategoryScreen({ route, navigation }) {
   const { category } = route.params;
@@ -73,7 +54,7 @@ export default function CategoryScreen({ route, navigation }) {
     setSearchText(text);
 
     if (text.trim() === "") {
-      setFilteredDonations(donations); // Reset list if search is empty
+      setFilteredDonations(donations);
       return;
     }
 
@@ -93,17 +74,45 @@ export default function CategoryScreen({ route, navigation }) {
     }
   };
 
-  const renderItem = ({ item, index }) => (
-    <View style={[styles.cardWrapper, index % 2 !== 0 && { marginLeft: 16 }]}>
-      <FundraiserCard
-        id={item.id}
-        title={item.title}
-        amount={item.goalAmount - item.raisedAmount}
-        imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
-        onPress={(id) =>
-          navigation.navigate("FundraiserDetailsScreen", { fundId: id })
-        }
-      />
+  const renderItem = ({ item }) => (
+    <FundraiserCard
+      id={item.id}
+      title={item.title}
+      imageUri={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
+      remainingAmount={item.goalAmount - item.raisedAmount}
+      goalAmount={item.goalAmount}
+      raisedAmount={item.raisedAmount}
+      onPress={(id) =>
+        navigation.navigate("FundraiserDetailsScreen", { fundId: id })
+      }
+    />
+  );
+
+  const renderEmptyList = () => (
+    <View style={styles.emptyContainer}>
+      {searchText.trim() !== "" ? (
+        <>
+          <Ionicons name="search-outline" size={50} color="#A0AEC0" />
+          <Text style={styles.emptyText}>No fundraisers found</Text>
+          <Text style={styles.emptySubText}>
+            We couldn't find any fundraisers matching "{searchText}"
+          </Text>
+          <Text style={styles.emptyTips}>Try:</Text>
+          <View style={styles.tipsList}>
+            <Text style={styles.tipText}>• Using more general keywords</Text>
+            <Text style={styles.tipText}>• Checking for typos</Text>
+            <Text style={styles.tipText}>• Using fewer keywords</Text>
+          </View>
+        </>
+      ) : (
+        <>
+          <Ionicons name="folder-open-outline" size={50} color="#A0AEC0" />
+          <Text style={styles.emptyText}>No fundraisers yet</Text>
+          <Text style={styles.emptySubText}>
+            Check back later for new fundraising campaigns
+          </Text>
+        </>
+      )}
     </View>
   );
 
@@ -127,7 +136,6 @@ export default function CategoryScreen({ route, navigation }) {
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Campaigns in {category}</Text>
 
-      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Ionicons
           name="search-outline"
@@ -140,17 +148,22 @@ export default function CategoryScreen({ route, navigation }) {
           placeholder="Search fundraisers..."
           value={searchText}
           onChangeText={handleSearch}
+          placeholderTextColor="#A0AEC0"
         />
       </View>
 
       <FlatList
-      contentContainerStyle={{ paddingBottom: 30 }}
         data={filteredDonations}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        numColumns={2}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          filteredDonations.length === 0 && styles.emptyListContent
+        ]}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={renderEmptyList}
       />
+      <BottomNavBar navigation={navigation}/>
     </SafeAreaView>
   );
 }
@@ -187,49 +200,15 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: 40,
+    color: "#2D3748",
+    fontSize: 16,
   },
   listContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 18,
+    paddingLeft: 12,
+    paddingBottom: 24,
   },
-  cardWrapper: {
-    width: CARD_WIDTH,
-    marginBottom: 20,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardImageContainer: {
-    height: 100,
-    backgroundColor: "#E2E8F0",
-  },
-  cardImage: {
-    width: "100%",
-    height: "100%",
-  },
-  cardContent: {
-    padding: 12,
-    paddingBottom: 16,
-  },
-  cardTitle: {
-    padding : 5,
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#2D3748",
-    lineHeight: 20,
-    minHeight : 40,
-  },
-  cardAmount: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#4299E1",
+  emptyListContent: {
+    flexGrow: 1,
   },
   loaderContainer: {
     flex: 1,
@@ -246,5 +225,45 @@ const styles = StyleSheet.create({
     color: "#E53E3E",
     fontSize: 16,
     textAlign: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+    minHeight: 400, // Ensures proper spacing even with few items
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#4A5568',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: '#718096',
+    textAlign: 'center',
+    marginTop: 8,
+    lineHeight: 20,
+  },
+  emptyTips: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#4A5568',
+    marginTop: 24,
+    alignSelf: 'flex-start',
+    paddingLeft: 16,
+  },
+  tipsList: {
+    alignSelf: 'flex-start',
+    marginTop: 12,
+    paddingLeft: 16,
+  },
+  tipText: {
+    fontSize: 14,
+    color: '#718096',
+    lineHeight: 22,
   },
 });

@@ -34,7 +34,6 @@ interface Comment {
   content: string;
   createdAt: string;
   timestamp: string;
-  likes: number;
   parentCommentId?: number | null;
   replies: Comment[];
 }
@@ -123,7 +122,7 @@ export default function CommentScreen({ route }) {
 
   const handleAddComment = async () => {
     if (!currentUser || commentText.trim() === "") return;
-
+  
     try {
       const newCommentData = {
         campaignId: campaignId,
@@ -133,12 +132,11 @@ export default function CommentScreen({ route }) {
         content: commentText,
         createdAt: new Date().toISOString(),
         parentCommentId: null,
-        likes: 0,
         replies: [],
       };
-
+  
       const newComment = await createComment(newCommentData);
-
+  
       setComments((prevComments) => [newComment, ...prevComments]);
       setCommentText("");
       Keyboard.dismiss();
@@ -150,7 +148,7 @@ export default function CommentScreen({ route }) {
 
   const handleAddReply = async () => {
     if (!currentUser || replyText.trim() === "" || isReplying === null) return;
-
+  
     try {
       const newReplyData = {
         campaignId: campaignId,
@@ -160,12 +158,11 @@ export default function CommentScreen({ route }) {
         content: replyText,
         createdAt: new Date().toISOString(),
         parentCommentId: isReplying,
-        likes: 0,
         replies: [],
       };
-
+  
       const newReply = await addReplyToComment(isReplying, newReplyData);
-
+  
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment.id === isReplying
@@ -176,7 +173,7 @@ export default function CommentScreen({ route }) {
             : comment
         )
       );
-
+  
       setReplyText("");
       setIsReplying(null);
       Keyboard.dismiss();
@@ -223,17 +220,9 @@ export default function CommentScreen({ route }) {
         </View>
         <View style={styles.actionContainer}>
           <Text style={styles.timestamp}>{item.timestamp}</Text>
-          <TouchableOpacity>
-            <Text style={styles.actionButton}>Like</Text>
-          </TouchableOpacity>
           <TouchableOpacity onPress={() => handleReply(item.id)}>
             <Text style={styles.actionButton}>Reply</Text>
           </TouchableOpacity>
-          {item.likes > 0 && (
-            <View style={styles.likeCount}>
-              <Text style={styles.likeText}>👍 {item.likes}</Text>
-            </View>
-          )}
         </View>
         {item.replies && item.replies.length > 0 && (
           <TouchableOpacity onPress={() => toggleRepliesVisibility(item.id)}>
@@ -494,15 +483,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#2196F3",
     marginHorizontal: 8,
-  },
-  likeCount: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  likeText: {
-    fontSize: 12,
-    color: "#2196F3",
-    marginLeft: 4,
   },
   viewRepliesText: {
     fontSize: 12,

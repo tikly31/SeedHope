@@ -17,25 +17,25 @@ import { useNavigation } from '@react-navigation/native';
 import { fetchTrendingCampaigns, formatTrendingCampaigns } from "../utils/apiUtils"; // Adjust the path based on your project structure
 import logo from '../assets/image.png';
 import profile from '../assets/profile.jpg';
-
+import FundraiserSection from '../components/FundraiserSection';
 
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
 // const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
 
-const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
-  <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
-    <View style={styles.cardImageContainer}>
-      <Image
-        source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
-        style={styles.cardImage}
-        resizeMode="cover" // Ensure the image covers the entire area
-      />
-    </View>
-    <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
-    <Text style={styles.cardAmount}>{amount}</Text>
-  </TouchableOpacity>
-);
+// const FundraiserCard = ({ id, title, imageUrl, amount, onPress }) => (
+//   <TouchableOpacity style={styles.card} onPress={() => onPress(id)}>
+//     <View style={styles.cardImageContainer}>
+//       <Image
+//         source={{ uri: imageUrl}} // Use dynamic imageUrl or fallback to placeholder
+//         style={styles.cardImage}
+//         resizeMode="cover" // Ensure the image covers the entire area
+//       />
+//     </View>
+//     <Text style={styles.cardTitle} numberOfLines={2}>{title}</Text>
+//     <Text style={styles.cardAmount}>{amount}</Text>
+//   </TouchableOpacity>
+// );
 
 
 const ContributorCircle = ({ image, name }) => (
@@ -45,32 +45,32 @@ const ContributorCircle = ({ image, name }) => (
   </View>
 );
 
-const FundraiserSection = ({ title, data, onPressFundraiser }) => (
-  <View style={styles.section}>
-    <Text style={styles.sectionTitle}>{title}</Text>
-    {data.length === 0 ? (
-      <Text style={styles.noDataText}>No fundraisers available.</Text>
-    ) : (
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <FundraiserCard
-            key={item.id}
-            id={item.id}
-            title={item.title}
-            imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
-            amount={item.goalAmount-item.raisedAmount}
-            onPress={onPressFundraiser}
-          />
-        )}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.fundraiserList}
-      />
-    )}
-  </View>
-);
+// const FundraiserSection = ({ title, data, onPressFundraiser }) => (
+//   <View style={styles.section}>
+//     <Text style={styles.sectionTitle}>{title}</Text>
+//     {data.length === 0 ? (
+//       <Text style={styles.noDataText}>No fundraisers available.</Text>
+//     ) : (
+//       <FlatList
+//         data={data}
+//         renderItem={({ item }) => (
+//           <FundraiserCard
+//             key={item.id}
+//             id={item.id}
+//             title={item.title}
+//             imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
+//             amount={item.goalAmount-item.raisedAmount}
+//             onPress={onPressFundraiser}
+//           />
+//         )}
+//         keyExtractor={(item) => item.id}
+//         horizontal
+//         showsHorizontalScrollIndicator={false}
+//         contentContainerStyle={styles.fundraiserList}
+//       />
+//     )}
+//   </View>
+// );
 
 export default function MainScreen1() {
   const navigation = useNavigation();

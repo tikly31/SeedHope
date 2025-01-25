@@ -13,7 +13,7 @@ import java.nio.file.*;
 public class FileUploadController {
 
     // Base directory for all uploads
-    private static final String BASE_UPLOAD_DIRECTORY = "D:/SeedHope/Backend/seedhope/src/main/resources/photos/";
+    private static final String BASE_UPLOAD_DIRECTORY = "D:/SDP/SeedHope/Backend/seedhope/src/main/resources/photos";
 
     /**
      * Endpoint to upload campaign photos.

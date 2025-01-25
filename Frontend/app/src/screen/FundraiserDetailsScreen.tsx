@@ -9,19 +9,17 @@ import {
   SafeAreaView,
   Alert,
   ActivityIndicator,
-  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { get_current_user } from "../utils/apiUtils";
-import * as Sharing from "expo-sharing";
-import * as FileSystem from "expo-file-system";
 import { Share } from "react-native";
-
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import { LinearGradient } from "expo-linear-gradient";
 import CONFIG from "./config";
-const API_BASE_URL = CONFIG.API_BASE_URL;
 
+const API_BASE_URL = CONFIG.API_BASE_URL;
 const PLACEHOLDER_IMAGE = "https://picsum.photos/200/300";
 
 interface Fundraiser {
@@ -54,6 +52,8 @@ export default function FundraiserDetailsScreen({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
+
+  const buttonScale = useSharedValue(1);
 
   const isValidUrl = (url: string): boolean => {
     try {
@@ -92,10 +92,7 @@ export default function FundraiserDetailsScreen({
 
       const result = await Share.share({
         message: shareMessage,
-        url:
-          fundraiser.photoUrl && isValidUrl(fundraiser.photoUrl)
-            ? fundraiser.photoUrl
-            : undefined,
+        url: fundraiser.photoUrl && isValidUrl(fundraiser.photoUrl) ? fundraiser.photoUrl : undefined,
         title: `Support ${fundraiser.title}!`,
       });
 
@@ -106,10 +103,7 @@ export default function FundraiserDetailsScreen({
       }
     } catch (error) {
       console.error("Error sharing fundraiser:", error);
-      Alert.alert(
-        "Sharing Error",
-        "Unable to share fundraiser. Please try again later."
-      );
+      Alert.alert("Sharing Error", "Unable to share fundraiser. Please try again later.");
     }
   };
 
@@ -118,7 +112,6 @@ export default function FundraiserDetailsScreen({
       console.log("Invalid fundId:", fundId);
       return;
     }
-
     fetchFundraiserDetails();
   }, [fundId]);
 
@@ -128,71 +121,68 @@ export default function FundraiserDetailsScreen({
     }, [fundId])
   );
 
-  // Loading State
+  const handlePressIn = () => {
+    buttonScale.value = withSpring(0.9, { damping: 5 });
+  };
+
+  const handleDonatePressOut = () => {
+    buttonScale.value = withSpring(1, { damping: 5 });
+    navigation.navigate("DonationPage", { fundId });
+  };
+
+  const handleEditPressOut = () => {
+    buttonScale.value = withSpring(1, { damping: 5 });
+    navigation.navigate("EditFundraiserScreen", {fundraiser});
+  };
+
+  const animatedButtonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: buttonScale.value }],
+  }));
+
   if (loading) {
     return (
-      <View style={styles.loaderContainer}>
+      <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color="#2196F3" />
         <Text>Loading fundraiser details...</Text>
       </View>
     );
   }
 
-  // Error State
   if (error) {
     return (
-      <View style={styles.errorContainer}>
+      <View style={styles.centerContainer}>
         <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity
-          style={styles.retryButton}
-          onPress={fetchFundraiserDetails}
-        >
+        <TouchableOpacity style={styles.retryButton} onPress={fetchFundraiserDetails}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  // No Fundraiser State
   if (!fundraiser) {
     return (
-      <View style={styles.errorContainer}>
+      <View style={styles.centerContainer}>
         <Text style={styles.errorText}>Fundraiser not found.</Text>
       </View>
     );
   }
 
-  // Image source selection
   const getImageSource = () => {
-    if (fundraiser.photoUrl && isValidUrl(fundraiser.photoUrl)) {
-      return { uri: fundraiser.photoUrl };
-    }
-    return { uri: PLACEHOLDER_IMAGE };
+    return fundraiser.photoUrl && isValidUrl(fundraiser.photoUrl)
+      ? { uri: fundraiser.photoUrl }
+      : { uri: PLACEHOLDER_IMAGE };
   };
 
-  // Progress calculation
-  const progress = Math.min(
-    (fundraiser.raisedAmount / fundraiser.goalAmount) * 100,
-    100
-  );
+  const progress = Math.min((fundraiser.raisedAmount / fundraiser.goalAmount) * 100, 100);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
 
-        <Image
-          source={getImageSource()}
-          style={styles.image}
-          onError={(e) => {
-            console.warn("Image load error", e.nativeEvent.error);
-          }}
-        />
+        <Image source={getImageSource()} style={styles.image} />
 
         <View style={styles.content}>
           <View style={styles.header}>
@@ -203,15 +193,11 @@ export default function FundraiserDetailsScreen({
           <View style={styles.amountsContainer}>
             <View style={styles.amountBox}>
               <Text style={styles.amountLabel}>Raised Amount</Text>
-              <Text style={styles.amount}>
-                ${fundraiser.raisedAmount.toLocaleString()}
-              </Text>
+              <Text style={styles.amount}>৳{fundraiser.raisedAmount.toLocaleString()}</Text>
             </View>
             <View style={styles.amountBox}>
               <Text style={styles.amountLabel}>Goal Amount</Text>
-              <Text style={styles.amount}>
-                ${fundraiser.goalAmount.toLocaleString()}
-              </Text>
+              <Text style={styles.amount}>৳{fundraiser.goalAmount.toLocaleString()}</Text>
             </View>
           </View>
 
@@ -227,39 +213,40 @@ export default function FundraiserDetailsScreen({
             )}
             <Text style={styles.description}>{fundraiser.description}</Text>
           </View>
-
-          {currentUser.id === fundraiser.organizerId ? (
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={styles.donateButton}
-              onPress={() =>
-                navigation.navigate("EditFundraiserScreen", { fundraiser })
-              }
+              style={[styles.button, styles.commentButton]}
+              onPress={() => navigation.navigate("CommentScreen", { fundId })}
             >
-              <Text style={styles.donateButtonText}>Edit Fundraiser</Text>
+              <Ionicons name="chatbubble-ellipses-outline" size={24} color="#fff" />
+              <Text style={styles.buttonText}>Comment</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.shareButton]}
+              onPress={shareFundraiser}
+            >
+              <Ionicons name="share-social-outline" size={24} color="#fff" />
+              <Text style={styles.buttonText}>Share</Text>
+            </TouchableOpacity>
+          </View>
+          {currentUser.id === fundraiser.organizerId ? (
+            <Animated.View style={[styles.donateButtonContainer, animatedButtonStyle]}>
+              <TouchableOpacity onPressIn={handlePressIn} onPressOut={handleEditPressOut}>
+                <LinearGradient colors={["#4CAF50", "#2196F3"]} style={styles.gradientButton}>
+                  <Ionicons name="create-outline" size={24} color="#fff" />
+                  <Text style={styles.donateButtonText}>Edit</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </Animated.View>
           ) : (
-            <>
-              <TouchableOpacity
-                style={styles.donateButton}
-                onPress={() => navigation.navigate("DonationPage", { fundId })}
-              >
-                <Text style={styles.donateButtonText}>Donate</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.commentButton}
-                onPress={() => navigation.navigate("CommentScreen", { fundId })}
-              >
-                <Ionicons name="chatbubble-outline" size={24} color="#fff" />
-                <Text style={styles.commentButtonText}>Comments</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.shareButton}
-                onPress={shareFundraiser}
-              >
-                <Ionicons name="share-social-outline" size={24} color="#fff" />
-                <Text style={styles.shareButtonText}>Share</Text>
-              </TouchableOpacity>
-            </>
+              <Animated.View style={[styles.donateButtonContainer, animatedButtonStyle]}>
+                <TouchableOpacity onPressIn={handlePressIn} onPressOut={handleDonatePressOut}>
+                  <LinearGradient colors={["#4CAF50", "#2196F3"]} style={styles.gradientButton}>
+                    <Ionicons name="cash-outline" size={24} color="#fff" />
+                    <Text style={styles.donateButtonText}>Donate</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </Animated.View>
           )}
         </View>
       </ScrollView>
@@ -272,21 +259,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  errorContainer: {
+  centerContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 16,
-    textAlign: "center",
   },
   backButton: {
     position: "absolute",
@@ -379,42 +356,45 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#444",
   },
-  donateButton: {
-    backgroundColor: "#2196F3",
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  donateButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  commentButton: {
-    backgroundColor: "#4CAF50",
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
+  buttonContainer: {
     flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 10,
+    justifyContent: "space-between",
+    marginBottom: 20,
   },
-  commentButtonText: {
+  button: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    borderRadius: 12,
+    marginHorizontal: 5,
+  },
+  buttonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     marginLeft: 8,
   },
+  commentButton: {
+    backgroundColor: "#4CAF50",
+  },
   shareButton: {
     backgroundColor: "#FF9800",
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 10,
   },
-  shareButtonText: {
+  donateButtonContainer: {
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  gradientButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    borderRadius: 12,
+    width: 200,
+  },
+  donateButtonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
