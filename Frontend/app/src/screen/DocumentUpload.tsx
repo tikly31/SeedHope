@@ -81,53 +81,48 @@ const handleDocumentPick = async () => {
 };
 
 
-  const handleSubmit = async () => {
-    if (!organizerId) {
-      Alert.alert("Error", "Organizer ID is not set yet. Please wait a moment and try again.");
+const handleSubmit = async () => {
+  if (!organizerId) {
+    Alert.alert("Error", "Organizer ID is not set yet. Please wait a moment and try again.");
+    return;
+  }
+
+  try {
+    console.log("Document: ", document?.name || "No document uploaded");
+
+    const campaignData = {
+      title: campaign.title,
+      description: campaign.details,
+      category: campaign.category,
+      goalAmount: campaign.amount,
+      dueDate: campaign.dueDate,
+      organizerId,
+      photoUrl: campaign.image || "http://placehold.it/300",
+      raisedAmount: 0.0,
+      status: "PENDING",
+      document: document ? document.uri : null, // Allow null if no document is uploaded
+    };
+
+    const response = await fetch(`${API_BASE_URL}/campaign`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(campaignData),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to create campaign:", response.statusText);
+      Alert.alert("Error", "Failed to create the campaign.");
       return;
     }
 
-    try {
-//       const token = await AsyncStorage.getItem("token");
-//       if (!token) {
-//         Alert.alert("Error", "No authentication token found.");
-//         return;
-//       }
+    Alert.alert("Success", "Campaign created successfully!");
+    navigation.navigate("FundraiserSuccess");
+  } catch (error) {
+    console.error("Error creating campaign:", error);
+    Alert.alert("Error", "An error occurred while creating the campaign.");
+  }
+};
 
-      console.log("Document : ", document.name);
-
-      const campaignData = {
-        title: campaign.title,
-        description: campaign.details,
-        category: campaign.category,
-        goalAmount: campaign.amount,
-        dueDate: campaign.dueDate,
-        organizerId,
-        photoUrl: campaign.image || "http://placehold.it/300",
-        raisedAmount: 0.0,
-        status: "PENDING",
-        document: document ? document.uri : "", // Attach uploaded document URL
-      };
-
-      const response = await fetch(`${API_BASE_URL}/campaign`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(campaignData),
-      });
-
-      if (!response.ok) {
-        console.error("Failed to create campaign:", response.statusText);
-        Alert.alert("Error", "Failed to create the campaign.");
-        return;
-      }
-
-      Alert.alert("Success", "Campaign created successfully!");
-      navigation.navigate("FundraiserSuccess");
-    } catch (error) {
-      console.error("Error creating campaign:", error);
-      Alert.alert("Error", "An error occurred while creating the campaign.");
-    }
-  };
 
   return (
     <View style={styles.container}>

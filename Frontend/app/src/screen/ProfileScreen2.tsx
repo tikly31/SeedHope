@@ -19,6 +19,7 @@ import {
   get_current_user,
   getCampaignsByOrganizerId,
   getDonationsByUserId,
+  getUserById,
 } from "../utils/apiUtils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CONFIG from "./config";
@@ -58,7 +59,7 @@ export default function ProfileScreen2( {route} ) {
     try {
       const token = await AsyncStorage.getItem("token");
       if (token) {
-        const userData = await get_current_user();
+        const userData = await getUserById(userId);
         if (userData) {
           setUsername(userData.username);
           setName(userData.name);

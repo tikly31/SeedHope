@@ -13,7 +13,9 @@ import profile from "../assets/profile.jpg"; // Import the profile image
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the profile icon
 
 import { getUserById, updateCampaign } from "../utils/apiUtils";
-
+import { set } from "date-fns";
+import CONFIG from "./config";
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 
 interface Fundraiser {
@@ -35,6 +37,9 @@ interface Fundraiser {
 export default function PostDetailsScreen({ route, navigation }) {
   const { fund } = route.params;
   const [postOwner, setPostOwner] = useState(null);
+  const [ownerName, setOwnerName] = useState("");
+  const [ownerPhoto, setOwnerPhoto] = useState("");
+  const [userId, setUserId] = useState(0);
 
   // const [fundraiser, setFundraiser] = useState<Fundraiser>({} as Fundraiser);
 
@@ -44,7 +49,12 @@ export default function PostDetailsScreen({ route, navigation }) {
       try {
         const user = await getUserById(fund.organizerId);
         setPostOwner(user);
-        // console.log("User:", user);
+        setOwnerName(user.name);
+        console.log("User:", fund.organizerId);
+        setOwnerPhoto(`${API_BASE_URL}/user/${user.picture}`);
+        // setUserId(user.id);
+        // console.log("User:", user.picture);
+        // console.log("User:", postOwner.Id);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -63,10 +73,10 @@ export default function PostDetailsScreen({ route, navigation }) {
     authorId: fund.organizerId, // Added authorId
     goalAmount: fund.goalAmount,
     description: fund.description,
-    imageUrl: fund.imageUrl ? fund.imageUrl : "https://via.placeholder.com/300",
+    imageUrl: fund.photoUrl ? `${API_BASE_URL}/campaigns/${fund.photoUrl}` : "https://via.placeholder.com/300",
   });
 
-
+  console.log("Fundraiser Image:", fund.photoUrl);
 
   const handleApprove = async () => {
     // Handle approve logic
@@ -145,13 +155,15 @@ export default function PostDetailsScreen({ route, navigation }) {
           <View style={styles.authorContainer}>
             <Text style={styles.label}>Author</Text>
             <View style={styles.authorInfo}>
-              <Image
-                source={profile} // Placeholder for author profile image
-                style={styles.profileImage}
-              />
+              <TouchableOpacity onPress = {() => navigation.navigate("ProfileScreen2", { userId: fund.organizerId })}>
+                              <Image
+                                source={{uri : ownerPhoto}} // Placeholder for author profile image
+                                style={styles.profileImage}
+                              />
+                            </TouchableOpacity>
               <View style={styles.authorDetails}>
                 <Text style={styles.authorName}>{postOwner ? postOwner.name : "Unknown"}</Text>
-                <Text style={styles.authorId}>ID: {post.authorId}</Text>
+                {/* <Text style={styles.authorId}>ID: {post.authorId}</Text> */}
                 {/* Displaying author ID */}
               </View>
             </View>
@@ -159,7 +171,7 @@ export default function PostDetailsScreen({ route, navigation }) {
 
           <View style={styles.goalContainer}>
             <Text style={styles.label}>Goal Amount</Text>
-            <Text style={styles.goalAmount}>${post.goalAmount}</Text>
+            <Text style={styles.goalAmount}>{post.goalAmount}</Text>
           </View>
 
           <View style={styles.descriptionContainer}>

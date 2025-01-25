@@ -1,7 +1,7 @@
 import type React from "react"
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from "react-native"
 import { LinearGradient } from "expo-linear-gradient";
-
+import { colors } from "../utils/colors";
 interface FundraiserCardProps {
   id: string
   title: string
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
   },
   remainingAmount: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#2196F3",
+    fontWeight: "800",
+    color: colors.Dark_Blue,
     marginBottom: 16,
     letterSpacing: 0.15,
   },
