@@ -24,6 +24,9 @@ import {
 } from "../utils/apiUtils";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import CONFIG from "./config";
+import { Navigation } from "lucide-react-native";
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 interface Comment {
   id: number;
@@ -128,7 +131,7 @@ export default function CommentScreen({ route }) {
         campaignId: campaignId,
         userId: currentUser.id,
         userName: currentUser.name || "Anonymous",
-        userAvatar: currentUser.avatarUrl || "https://via.placeholder.com/40",
+        userAvatar: currentUser.picture || "https://via.placeholder.com/40",
         content: commentText,
         createdAt: new Date().toISOString(),
         parentCommentId: null,
@@ -154,7 +157,7 @@ export default function CommentScreen({ route }) {
         campaignId: campaignId,
         userId: currentUser.id,
         userName: currentUser.name || "Anonymous",
-        userAvatar: currentUser.avatarUrl || "https://via.placeholder.com/40",
+        userAvatar: currentUser.picture || "https://via.placeholder.com/40",
         content: replyText,
         createdAt: new Date().toISOString(),
         parentCommentId: isReplying,
@@ -201,6 +204,10 @@ export default function CommentScreen({ route }) {
     }));
   };
 
+//   const handleGotoProfile = (userId) => {
+//     navigation.navigate("ProfileScreen2", { userId} });
+//   };
+
   const renderComment = ({
     item,
     depth = 0,
@@ -209,10 +216,15 @@ export default function CommentScreen({ route }) {
     depth?: number;
   }) => (
     <View style={[styles.commentContainer, { marginLeft: depth * 16 }]}>
-      <Image 
-        source={{ uri: item.userAvatar || "https://via.placeholder.com/40" }} 
-        style={styles.avatar} 
-      />
+      <TouchableOpacity on onPress={() => 
+        navigation.navigate("ProfileScreen2", { userId: item.userId })
+      }>
+        <Image 
+          source={{ uri: `${API_BASE_URL}/user/${item.userAvatar}` || "https://via.placeholder.com/40" }} 
+          style={styles.avatar} 
+        />
+      </TouchableOpacity>
+    
       <View style={styles.commentContent}>
         <View style={styles.commentBubble}>
           <Text style={styles.userName}>{item.userName}</Text>
@@ -300,12 +312,16 @@ export default function CommentScreen({ route }) {
               </TouchableOpacity>
             </View>
             <View style={styles.inputWrapper}>
+              <TouchableOpacity>
               <Image
                 source={{ 
-                  uri: currentUser?.avatarUrl || "https://via.placeholder.com/40" 
+                  uri: `${API_BASE_URL}/user/${currentUser?.avatarUrl}` || "https://via.placeholder.com/40" 
                 }}
                 style={styles.avatar}
               />
+              </TouchableOpacity>
+
+              
               <View style={styles.textInputContainer}>
                 <TextInput
                   style={styles.input}
