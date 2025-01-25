@@ -1,5 +1,7 @@
 import type React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
+import CONFIG from "../screen/config";
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 interface DonationItemProps {
   title: string;
@@ -16,7 +18,7 @@ const DonationItem: React.FC<DonationItemProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <Image source={{ uri: imageUrl }} style={styles.image} />
+      <Image source={{ uri: `${API_BASE_URL}/campaigns/${imageUrl}` }} style={styles.image} />
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.amount}>

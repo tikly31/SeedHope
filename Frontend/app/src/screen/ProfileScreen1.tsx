@@ -36,9 +36,21 @@ export default function ProfileScreen() {
   const [donateAmount, setDonateAmount] = useState(0);
   const [fundraisers, setFundraisers] = useState([]);
   const [donations, setDonations] = useState([]);
+  const [fundcnt, setfundcnt] = useState(0);
+  const [donatecnt, setdonatecnt] = useState(0);
 
   const [picture, setPicture] = useState(null);
   const navigation = useNavigation();
+
+   const formatAmount = (amount) => {
+     if (amount >= 1_000_000) {
+       return (amount / 1_000_000).toFixed(1) + " M"; // Convert to millions
+     } else if (amount >= 1_000) {
+       return (amount / 1_000).toFixed(1) + " K"; // Convert to thousands
+     } else {
+       return amount.toString(); // Return as is for small numbers
+     }
+   };
 
   const fetchUserData = async () => {
     try {
@@ -50,16 +62,18 @@ export default function ProfileScreen() {
           setName(userData.name);
           setBio(userData.bio);
           setPicture(`${API_BASE_URL}/user/${userData.picture}`);
-          setDonateAmount(userData.donatedAmount);
+          setDonateAmount(formatAmount(userData.donatedAmount));
           // console.log("pivture", userData.picture);
           const userFundraisers = await getCampaignsByOrganizerId(userData.id);
           if (userFundraisers) {
             setFundraisers(userFundraisers);
+            setfundcnt(userFundraisers.length);
           }
           const userDonations = await getDonationsByUserId(userData.id);
           // console.log("userDonations", userData.id);
           if (userDonations) {
             setDonations(userDonations);
+            setdonatecnt(userDonations.length);
           }
         }
       }
@@ -117,7 +131,7 @@ export default function ProfileScreen() {
         title={item.title}
         donatedAmount={item.amount}
         status={item.status}
-        imageUrl={`${API_BASE_URL}/campaign/${item.imageUrl}`}
+        imageUrl={item.imageUrl}
       />
     );
 
@@ -148,7 +162,7 @@ export default function ProfileScreen() {
         </View>
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>12</Text>
+            <Text style={styles.statNumber}>{fundcnt}</Text>
             <Text style={styles.statLabel}>Fundraisers</Text>
           </View>
           <View style={styles.statItem}>
@@ -156,8 +170,8 @@ export default function ProfileScreen() {
             <Text style={styles.statLabel}>Donated</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>24</Text>
-            <Text style={styles.statLabel}>Donated</Text>
+            <Text style={styles.statNumber}>{donatecnt}</Text>
+            <Text style={styles.statLabel}>Donations</Text>
           </View>
         </View>
       </View>

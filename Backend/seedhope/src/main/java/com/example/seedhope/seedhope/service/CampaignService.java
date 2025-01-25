@@ -73,8 +73,9 @@ public class CampaignService implements PaymentObserver {
         return campaignRepository.findByStatus(Campaign.Status.PENDING);
     }
 
-    public Optional<Campaign> getCampaignById(Long id) {
-        return campaignRepository.findById(id);
+    public Campaign getCampaignById(Long id) {
+        return campaignRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Campaign not found with id: " + id));
     }
 
     public Campaign updateCampaignStatus(Long id, Campaign.Status status) {

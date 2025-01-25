@@ -93,7 +93,7 @@ export default function FundraiserDetailsScreen({
       const result = await Share.share({
         message: shareMessage,
         url:
-          fundraiser.photoUrl && isValidUrl(fundraiser.photoUrl)
+          fundraiser.photoUrl
             ? fundraiser.photoUrl
             : undefined,
         title: `Support ${fundraiser.title}!`,
@@ -164,8 +164,8 @@ export default function FundraiserDetailsScreen({
 
   // Image source selection
   const getImageSource = () => {
-    if (fundraiser.photoUrl && isValidUrl(fundraiser.photoUrl)) {
-      return { uri: fundraiser.photoUrl };
+    if (fundraiser.photoUrl) {
+      return { uri: `${API_BASE_URL}/campaigns/${fundraiser.photoUrl}` };
     }
     return { uri: PLACEHOLDER_IMAGE };
   };
