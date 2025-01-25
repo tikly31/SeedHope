@@ -132,7 +132,7 @@ const handleSubmit = async () => {
         {organizerId && <Text style={styles.organizerId}>Organizer ID: {organizerId}</Text>}
         {document && <Text style={styles.documentName}>Uploaded: {document.name}</Text>}
         <TouchableOpacity onPress={handleDocumentPick} style={styles.uploadButton}>
-          <LinearGradient colors={["#FF9500", "#FF8000"]} style={styles.gradient}>
+          <LinearGradient colors={["#1aa", "#1aa"]} style={styles.gradient}>
             <MaterialIcons name="file-upload" size={24} color="#fff" />
             <Text style={styles.uploadButtonText}>Add File</Text>
           </LinearGradient>

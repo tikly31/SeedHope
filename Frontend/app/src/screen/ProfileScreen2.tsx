@@ -198,7 +198,7 @@ export default function ProfileScreen2( {route} ) {
           <MaterialCommunityIcons
             name="hand-heart"
             size={24}
-            color={activeTab === "fundraisers" ? "#007AFF" : "#666"}
+            color={activeTab === "fundraisers" ? "#54927d" : "#666"}
           />
         </TouchableOpacity>
         <TouchableOpacity
@@ -208,7 +208,7 @@ export default function ProfileScreen2( {route} ) {
           <MaterialCommunityIcons
             name="gift-outline"
             size={24}
-            color={activeTab === "donations" ? "#007AFF" : "#666"}
+            color={activeTab === "donations" ? "#54927d" : "#666"}
           />
         </TouchableOpacity>
       </View>
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "transparent",
   },
   activeTab: {
-    borderBottomColor: "#007AFF",
+    borderBottomColor: "#54927d",
   },
 });
 
