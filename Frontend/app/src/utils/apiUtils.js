@@ -38,6 +38,30 @@ export const get_current_user = async () => {
   }
 };
 
+// get user by id as path parameter
+
+export const getUserById = async (userId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/users/${userId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user");
+    }
+
+    const user = await response.json();
+    return user;
+  }
+  catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+
 export const passwordChecker = async (rawPassword) => {
   try {
     const token = await AsyncStorage.getItem("token"); // Retrieve the token from AsyncStorage
@@ -193,6 +217,7 @@ export const getPendingCampaigns = async () => {
     }
 
     const campaigns = await response.json(); // Assuming the response is a JSON array
+    console.log("campaigns", campaigns);
     return campaigns;
   } catch (error) {
     console.error("Error fetching campaigns:", error);
