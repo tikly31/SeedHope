@@ -45,7 +45,12 @@ public class Donation {
         this.title = title;
     }
 
-
+    public void setImageUrl(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
+    public String getImageUrl(){
+        return this.imageUrl;
+    }
     public double getAmount() {
         return amount;
     }

@@ -1,6 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
+import CONFIG from "../screen/config";
+const API_BASE_URL = CONFIG.API_BASE_URL;
+
 interface DonationCardProps {
   title: string;
   onPress: () => void;

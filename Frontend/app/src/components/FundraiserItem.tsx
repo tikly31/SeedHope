@@ -1,12 +1,16 @@
 import { useNavigation } from "expo-router";
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+// import CONFIG from ../Screen/config;
+import CONFIG from "../screen/config";
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 const FundraiserItem = ({ item, onPress }) => {
   const progress = (item.raisedAmount / item.goalAmount) * 100;
   const [id, setid] = useState(item.id);
   const navigation = useNavigation();
-
+  console.log("PhotoUrl", item.photoUrl);
+  console.log(API_BASE_URL);
   onPress = () => {
     console.log("id", id);
     navigation.navigate("FundraiserDetailsScreen", { fundId: id });
@@ -14,7 +18,7 @@ const FundraiserItem = ({ item, onPress }) => {
 
   return (
     <TouchableOpacity style={styles.fundraiserItem} onPress={onPress}>
-      <Image source={{ uri: item.photoUrl }} style={styles.fundraiserImage} />
+      <Image source={{ uri: `${API_BASE_URL}/campaigns/${item.photoUrl}` }} style={styles.fundraiserImage} />
       <View style={styles.fundraiserInfo}>
         <Text style={styles.fundraiserTitle} numberOfLines={2}>
           {item.title}

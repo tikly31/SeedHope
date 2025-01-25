@@ -24,6 +24,9 @@ import {
 } from "../utils/apiUtils";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import CONFIG from "./config";
+import { Navigation } from "lucide-react-native";
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 interface Comment {
   id: number;
@@ -34,7 +37,6 @@ interface Comment {
   content: string;
   createdAt: string;
   timestamp: string;
-  likes: number;
   parentCommentId?: number | null;
   replies: Comment[];
 }
@@ -123,22 +125,21 @@ export default function CommentScreen({ route }) {
 
   const handleAddComment = async () => {
     if (!currentUser || commentText.trim() === "") return;
-
+  
     try {
       const newCommentData = {
         campaignId: campaignId,
         userId: currentUser.id,
         userName: currentUser.name || "Anonymous",
-        userAvatar: currentUser.avatarUrl || "https://via.placeholder.com/40",
+        userAvatar: currentUser.picture || "https://via.placeholder.com/40",
         content: commentText,
         createdAt: new Date().toISOString(),
         parentCommentId: null,
-        likes: 0,
         replies: [],
       };
-
+  
       const newComment = await createComment(newCommentData);
-
+  
       setComments((prevComments) => [newComment, ...prevComments]);
       setCommentText("");
       Keyboard.dismiss();
@@ -150,22 +151,21 @@ export default function CommentScreen({ route }) {
 
   const handleAddReply = async () => {
     if (!currentUser || replyText.trim() === "" || isReplying === null) return;
-
+  
     try {
       const newReplyData = {
         campaignId: campaignId,
         userId: currentUser.id,
         userName: currentUser.name || "Anonymous",
-        userAvatar: currentUser.avatarUrl || "https://via.placeholder.com/40",
+        userAvatar: currentUser.picture || "https://via.placeholder.com/40",
         content: replyText,
         createdAt: new Date().toISOString(),
         parentCommentId: isReplying,
-        likes: 0,
         replies: [],
       };
-
+  
       const newReply = await addReplyToComment(isReplying, newReplyData);
-
+  
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment.id === isReplying
@@ -176,7 +176,7 @@ export default function CommentScreen({ route }) {
             : comment
         )
       );
-
+  
       setReplyText("");
       setIsReplying(null);
       Keyboard.dismiss();
@@ -204,6 +204,10 @@ export default function CommentScreen({ route }) {
     }));
   };
 
+//   const handleGotoProfile = (userId) => {
+//     navigation.navigate("ProfileScreen2", { userId} });
+//   };
+
   const renderComment = ({
     item,
     depth = 0,
@@ -212,10 +216,15 @@ export default function CommentScreen({ route }) {
     depth?: number;
   }) => (
     <View style={[styles.commentContainer, { marginLeft: depth * 16 }]}>
-      <Image 
-        source={{ uri: item.userAvatar || "https://via.placeholder.com/40" }} 
-        style={styles.avatar} 
-      />
+      <TouchableOpacity on onPress={() => 
+        navigation.navigate("ProfileScreen2", { userId: item.userId })
+      }>
+        <Image 
+          source={{ uri: `${API_BASE_URL}/user/${item.userAvatar}` || "https://via.placeholder.com/40" }} 
+          style={styles.avatar} 
+        />
+      </TouchableOpacity>
+    
       <View style={styles.commentContent}>
         <View style={styles.commentBubble}>
           <Text style={styles.userName}>{item.userName}</Text>
@@ -223,17 +232,9 @@ export default function CommentScreen({ route }) {
         </View>
         <View style={styles.actionContainer}>
           <Text style={styles.timestamp}>{item.timestamp}</Text>
-          <TouchableOpacity>
-            <Text style={styles.actionButton}>Like</Text>
-          </TouchableOpacity>
           <TouchableOpacity onPress={() => handleReply(item.id)}>
             <Text style={styles.actionButton}>Reply</Text>
           </TouchableOpacity>
-          {item.likes > 0 && (
-            <View style={styles.likeCount}>
-              <Text style={styles.likeText}>👍 {item.likes}</Text>
-            </View>
-          )}
         </View>
         {item.replies && item.replies.length > 0 && (
           <TouchableOpacity onPress={() => toggleRepliesVisibility(item.id)}>
@@ -311,12 +312,16 @@ export default function CommentScreen({ route }) {
               </TouchableOpacity>
             </View>
             <View style={styles.inputWrapper}>
+              <TouchableOpacity>
               <Image
                 source={{ 
-                  uri: currentUser?.avatarUrl || "https://via.placeholder.com/40" 
+                  uri: `${API_BASE_URL}/user/${currentUser?.avatarUrl}` || "https://via.placeholder.com/40" 
                 }}
                 style={styles.avatar}
               />
+              </TouchableOpacity>
+
+              
               <View style={styles.textInputContainer}>
                 <TextInput
                   style={styles.input}
@@ -494,15 +499,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#2196F3",
     marginHorizontal: 8,
-  },
-  likeCount: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  likeText: {
-    fontSize: 12,
-    color: "#2196F3",
-    marginLeft: 4,
   },
   viewRepliesText: {
     fontSize: 12,

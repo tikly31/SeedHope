@@ -58,10 +58,14 @@ public class CampaignController {
 
     @GetMapping("/campaign/{id}")
     public ResponseEntity<Campaign> getCampaignById(@PathVariable Long id) {
-        return campaignService.getCampaignById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            Campaign campaign = campaignService.getCampaignById(id);
+            return ResponseEntity.ok(campaign);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 
     @PatchMapping("/campaign/{id}/status")
     public ResponseEntity<Campaign> updateCampaignStatus(@PathVariable Long id, @RequestParam Campaign.Status status) {

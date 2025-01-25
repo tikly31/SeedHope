@@ -3,11 +3,12 @@ import { View, Text, FlatList, StyleSheet } from "react-native";
 import FundraiserCard from "./FundraiserCard"; // Adjust the path as necessary
 import CONFIG from "../screen/config";
 const API_BASE_URL = CONFIG.API_BASE_URL; // Import the API_BASE_URL from the config file
+
 interface Fundraiser {
   id: string;
   title: string;
   raisedAmount: number; // Assuming raisedAmount is a number
-  goalAmount: string; // Assuming goalAmount is a number
+  goalAmount: number; // Assuming goalAmount is a number
   dueDate: string; // Assuming dueDate is a string
   photoUrl: string; // Assuming photoUrl is a string
 }
@@ -31,12 +32,15 @@ const FundraiserSection: React.FC<FundraiserSectionProps> = ({
       <FlatList
         data={data}
         renderItem={({ item }) => (
+          // console.log("item", item.raisedAmount),
           <FundraiserCard
             key={item.id}
             id={item.id}
             title={item.title}
-            imageUrl={`${API_BASE_URL}/campaigns/${item.photoUrl}`}
-            amount={item.goalAmount - item.raisedAmount}
+            imageUri={`${API_BASE_URL}/campaigns/${item.photoUrl}`} // Ensure the URL is correct
+            remainingAmount={(item.goalAmount - item.raisedAmount).toString()} // Calculate the remaining amount
+            goalAmount={item.goalAmount.toString()} // Pass the goalAmount
+            raisedAmount={item.raisedAmount.toString()} // Pass the raisedAmount
             onPress={onPressFundraiser}
           />
         )}

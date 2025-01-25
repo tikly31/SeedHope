@@ -328,3 +328,43 @@ export function formatTrendingCampaigns(campaigns) {
     ...campaign, // Include other fields returned from the backend if needed
   }));
 }
+
+export const uploadDocument = async (file) => {
+  // Create a new FormData instance
+  const formData = new FormData();
+
+  // Append the file to the FormData object with the key 'file'
+  formData.append("file", {
+    uri: file.uri,
+    name: file.name,
+    type: file.type,
+  });
+
+  try {
+    // Make a POST request to the '/uploads/document' endpoint
+    const response = await fetch(`${CONFIG.API_BASE_URL}/uploads/document`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        // If your backend requires authentication, include the Authorization header
+        // "Authorization": `Bearer ${await AsyncStorage.getItem('authToken')}`,
+      },
+    });
+
+    // Check if the response status is OK (200-299)
+    if (!response.ok) {
+      // Optionally, parse the error message from the response
+      const errorMessage = await response.text();
+      throw new Error(`Failed to upload document: ${errorMessage}`);
+    }
+
+    // Assuming the backend returns the file name as plain text
+    const fileName = await response.text();
+    return fileName; // This is the uploaded file's name
+  } catch (error) {
+    // Log the error to the console for debugging
+    console.error("Error uploading document:", error);
+    return null; // Return null to indicate failure
+  }
+};

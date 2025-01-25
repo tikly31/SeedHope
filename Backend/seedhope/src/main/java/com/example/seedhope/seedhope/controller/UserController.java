@@ -74,6 +74,4 @@ public class UserController {
         return userservice.verifyPassword(rawPassword);
     }
 
-
-
 }

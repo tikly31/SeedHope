@@ -1,40 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react"
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
+import { Ionicons } from "@expo/vector-icons"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 interface BottomNavBarProps {
-  navigation: any;
-  activeScreen:
-    | "MainScreen"
-    | "ExploreScreen"
-    | "CreateScreen"
-    | "ProfileScreen"
-    | "PostList";
-  isAdmin?: boolean;
+  navigation: any
+  activeScreen: "MainScreen" | "ExploreScreen" | "CreateScreen" | "ProfileScreen" | "PostList"
+  isAdmin?: boolean
 }
 
-export default function BottomNavBar({
-  navigation,
-  activeScreen,
-  isAdmin: initialAdmin = false,
-}: BottomNavBarProps) {
-  const [isAdmin, setIsAdmin] = useState(initialAdmin);
+export default function BottomNavBar({ navigation, activeScreen, isAdmin: initialAdmin = false }: BottomNavBarProps) {
+  const [isAdmin, setIsAdmin] = useState(initialAdmin)
 
   useEffect(() => {
     const fetchRole = async () => {
       try {
-        const role = await AsyncStorage.getItem("role");
+        const role = await AsyncStorage.getItem("role")
         if (role === "ADMIN") {
-          setIsAdmin(true);
+          setIsAdmin(true)
         }
       } catch (error) {
-        console.error("Error fetching role from AsyncStorage:", error);
+        console.error("Error fetching role from AsyncStorage:", error)
       }
-    };
+    }
 
-    fetchRole();
-  }, []);
+    fetchRole()
+  }, [])
 
   const navItems = [
     { name: "MainScreen", label: "Home", icon: "home-outline" },
@@ -51,46 +42,35 @@ export default function BottomNavBar({
           icon: "add-circle-outline",
         },
     { name: "ProfileScreen1", label: "Profile", icon: "person-outline" },
-  ];
+  ]
 
   return (
     <View style={styles.bottomNav}>
       {navItems.map((item) => (
-        <TouchableOpacity
-          key={item.name}
-          style={styles.navItem}
-          onPress={() => navigation.navigate(item.name)}
-        >
-          <Ionicons
-            name={item.icon}
-            size={24}
-            color={activeScreen === item.name ? "#2196F3" : "#666"}
-          />
-          <Text
-            style={[
-              styles.navText,
-              activeScreen === item.name && styles.navTextActive,
-            ]}
-          >
-            {item.label}
-          </Text>
+        <TouchableOpacity key={item.name} style={styles.navItem} onPress={() => navigation.navigate(item.name)}>
+          <Ionicons name={item.icon} size={24} color={activeScreen === item.name ? "#2196F3" : "#666"} />
+          <Text style={[styles.navText, activeScreen === item.name && styles.navTextActive]}>{item.label}</Text>
+          {activeScreen === item.name && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
       ))}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   bottomNav: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: 8,
+    paddingTop: 8,
+    paddingHorizontal: 8,
     borderTopWidth: 1,
     borderTopColor: "#eee",
     backgroundColor: "#fff",
   },
   navItem: {
     alignItems: "center",
+    paddingBottom: 8,
+    position: "relative",
   },
   navText: {
     fontSize: 12,
@@ -100,4 +80,15 @@ const styles = StyleSheet.create({
   navTextActive: {
     color: "#2196F3",
   },
-});
+  activeIndicator: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 3,
+    backgroundColor: "#2196F3",
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
+  },
+})
+

@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import BottomNavBar from "../components/BottomNavBar";
 import FundraiserItem from "../components/FundraiserItem"; // Import the new FundraiserItem component
 import DonationItem from "../components/DonationItem"; // Import the DonationItem component
+import profile from "../assets/profile.jpg";
 import {
   get_current_user,
   getCampaignsByOrganizerId,
@@ -27,23 +28,9 @@ const API_BASE_URL = CONFIG.API_BASE_URL;
 const { width } = Dimensions.get("window");
 const PROFILE_IMAGE_SIZE = 80;
 
-export default function ProfileScreen() {
-  const [isAdmin, setIsAdmin] = useState(false);
+export default function ProfileScreen2( {route} ) {
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      try {
-        const role = await AsyncStorage.getItem("role");
-        if (role === "ADMIN") {
-          setIsAdmin(true);
-        }
-      } catch (error) {
-        console.error("Error fetching role from AsyncStorage:", error);
-      }
-    };
-
-    fetchRole();
-  }, []);
+  const {userId} = route.params;  
   const [activeTab, setActiveTab] = useState("fundraisers");
   const [username, setUsername] = useState("rahman_ajij");
   const [name, setName] = useState("Ajij Rahman");
@@ -106,6 +93,21 @@ export default function ProfileScreen() {
       fetchUserData();
     }, [])
   );
+
+  // const fundraisers = [
+  //   { id: "1", title: "Medical Fund", raisedAmount: 50000, goalAmount: 100000, dueDate: "2023-12-31", photoUrl: "https://example.com/image1.jpg" },
+  //   { id: "2", title: "Education Support", raisedAmount: 30000, goalAmount: 50000, dueDate: "2023-11-15", photoUrl: "https://example.com/image2.jpg" },
+  //   { id: "3", title: "Emergency Aid", raisedAmount: 25000, goalAmount: 40000, dueDate: "2023-10-20", photoUrl: "https://example.com/image3.jpg" },
+  //   { id: "4", title: "Community Project", raisedAmount: 40000, goalAmount: 60000, dueDate: "2024-01-10", photoUrl: "https://example.com/image4.jpg" },
+  //   { id: "5", title: "Environmental Cause", raisedAmount: 35000, goalAmount: 50000, dueDate: "2024-05-30", photoUrl: "https://example.com/image5.jpg" },
+  //   { id: "6", title: "Animal Welfare", raisedAmount: 20000, goalAmount: 30000, dueDate: "2024-03-15", photoUrl: "https://example.com/image6.jpg" },
+  // ];
+
+  // const donations = [
+  //   { id: '7', title: 'Local Food Bank', donatedAmount: 15000, status: 'success', imageUrl: 'https://example.com/image7.jpg' },
+  //   { id: '8', title: 'Children\'s Hospital', donatedAmount: 250, status: 'failure', imageUrl: 'https://example.com/image8.jpg' },
+  //   { id: '9', title: 'Disaster Relief', donatedAmount: 30000, status: 'success', imageUrl: 'https://example.com/image9.jpg' },
+  // ];
 
   const handleEditProfile = () => {
     navigation.navigate("EditProfileScreen1");
@@ -181,11 +183,11 @@ export default function ProfileScreen() {
         <Text style={styles.bioText}>{bio}</Text>
       </View>
 
-      <View style={styles.actionButtons}>
+      {/* <View style={styles.actionButtons}>
         <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
           <Text style={styles.editButtonText}>Edit Profile</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       <View style={styles.tabContainer}>
         <TouchableOpacity
@@ -335,4 +337,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreen;
+export default ProfileScreen2;

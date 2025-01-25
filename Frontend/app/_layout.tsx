@@ -25,6 +25,7 @@ import SearchScreen from "./src/screen/SearchScreen";
 import LogoutScreen from "./src/screen/LogoutScreen";
 import EditFundraiserScreen from "./src/screen/EditFundraiserScreen";
 import CommentScreen from "./src/screen/CommentScreen";
+import ProfileScreen2 from "./src/screen/ProfileScreen2";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,9 +38,13 @@ const AppNavigator = () => {
       }}
     >
       <Stack.Screen name={"LoginScreen"} component={LoginScreen} />
+      <Stack.Screen name={"MainScreen"} component={MainScreen} />
+      <Stack.Screen
+        name={"FundraiserDetailsScreen"}
+        component={FundraiserDetailsScreen}
+      />
       <Stack.Screen name={"ProfileScreen1"} component={ProfileScreen1} />
       <Stack.Screen name={"CommentScreen"} component={CommentScreen} />
-      <Stack.Screen name={"MainScreen"} component={MainScreen} />
       <Stack.Screen
         name={"EditProfileScreen1"}
         component={EditProfileScreen1}
@@ -47,10 +52,6 @@ const AppNavigator = () => {
       <Stack.Screen name={"SearchScreen"} component={SearchScreen} />
       <Stack.Screen name={"PostListScreen"} component={PostListScreen} />
       <Stack.Screen name={"PostDetails"} component={PostDetailsScreen} />
-      <Stack.Screen
-        name={"FundraiserDetailsScreen"}
-        component={FundraiserDetailsScreen}
-      />
       <Stack.Screen name={"DonationPage"} component={DonationPage} />
       <Stack.Screen name={"ExploreScreen"} component={ExploreScreen} />
       <Stack.Screen name={"HomeScreen"} component={HomeScreen} />
@@ -72,6 +73,7 @@ const AppNavigator = () => {
         name={"EditFundraiserScreen"}
         component={EditFundraiserScreen}
       />
+      <Stack.Screen name={"ProfileScreen2"} component={ProfileScreen2} />
     </Stack.Navigator>
     // </NavigationContainer>
   );
