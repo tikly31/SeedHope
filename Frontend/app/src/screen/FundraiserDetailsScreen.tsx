@@ -191,7 +191,8 @@ export default function FundraiserDetailsScreen({
         <View style={styles.content}>
           <View style={styles.header}>
             <Text style={styles.title}>{fundraiser.title}</Text>
-            <Text style={styles.dueDate}>Due: {fundraiser.dueDate}</Text>
+            <Text style={styles.dueDate}>Due: {new Date(fundraiser.dueDate).toLocaleDateString("en-BD", { day: "numeric", month: "long", year: "numeric" })}
+            </Text>
           </View>
 
           <View style={styles.amountsContainer}>
@@ -217,6 +218,25 @@ export default function FundraiserDetailsScreen({
             )}
             <Text style={styles.description}>{fundraiser.description}</Text>
           </View>
+          {currentUser.id === fundraiser.organizerId ? (
+            <Animated.View style={[styles.donateButtonContainer, animatedButtonStyle]}>
+              <TouchableOpacity onPressIn={handlePressIn} onPressOut={handleEditPressOut}>
+                <LinearGradient colors={["#1aa", "#1aa"]} style={styles.gradientButton}>
+                  <Ionicons name="create-outline" size={24} color="#fff" />
+                  <Text style={styles.donateButtonText}>Edit</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </Animated.View>
+          ) : (
+              <Animated.View style={[styles.donateButtonContainer, animatedButtonStyle]}>
+                <TouchableOpacity onPressIn={handlePressIn} onPressOut={handleDonatePressOut}>
+                  <LinearGradient colors={["#1aa", "#1aa"]} style={styles.gradientButton}>
+                    <Ionicons name="cash-outline" size={24} color="#fff" />
+                    <Text style={styles.donateButtonText}>Donate</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </Animated.View>
+          )}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, styles.commentButton]}
@@ -233,25 +253,7 @@ export default function FundraiserDetailsScreen({
               <Text style={styles.buttonText}>Share</Text>
             </TouchableOpacity>
           </View>
-          {currentUser.id === fundraiser.organizerId ? (
-            <Animated.View style={[styles.donateButtonContainer, animatedButtonStyle]}>
-              <TouchableOpacity onPressIn={handlePressIn} onPressOut={handleEditPressOut}>
-                <LinearGradient colors={["#4CAF50", "#2196F3"]} style={styles.gradientButton}>
-                  <Ionicons name="create-outline" size={24} color="#fff" />
-                  <Text style={styles.donateButtonText}>Edit</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </Animated.View>
-          ) : (
-              <Animated.View style={[styles.donateButtonContainer, animatedButtonStyle]}>
-                <TouchableOpacity onPressIn={handlePressIn} onPressOut={handleDonatePressOut}>
-                  <LinearGradient colors={["#4CAF50", "#2196F3"]} style={styles.gradientButton}>
-                    <Ionicons name="cash-outline" size={24} color="#fff" />
-                    <Text style={styles.donateButtonText}>Donate</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </Animated.View>
-          )}
+          
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -325,7 +327,7 @@ const styles = StyleSheet.create({
   amount: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#2196F3",
+    color: "#1aa",
   },
   progressContainer: {
     height: 8,
@@ -381,10 +383,10 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   commentButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#4e9fe5",
   },
   shareButton: {
-    backgroundColor: "#FF9800",
+    backgroundColor: "#87c6eb",
   },
   donateButtonContainer: {
     marginBottom: 20,

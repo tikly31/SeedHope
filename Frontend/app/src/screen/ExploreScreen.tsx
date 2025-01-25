@@ -21,15 +21,16 @@ const CategoryButton = ({ icon, label, gradient, onPress }: CategoryButtonProps)
 )
 
 export default function ExploreScreen({ navigation }) {
+  const g = ["#BBDEFB", "#2196F3"];
   const categories = [
-    { icon: "school", label: "Education", gradient: ["#FF6B6B", "#FF8E8E"] },
-    { icon: "hospital-box", label: "Medical", gradient: ["#4ECDC4", "#45B7AF"] },
-    { icon: "home-flood", label: "Disaster", gradient: ["#6C5CE7", "#8278E9"] },
-    { icon: "leaf", label: "Environment", gradient: ["#A8E6CF", "#8ED7B6"] },
-    { icon: "alarm-light", label: "Emergency", gradient: ["#FFB900", "#FF9B00"] },
-    { icon: "heart", label: "Family", gradient: ["#FF78B9", "#FF96C7"] },
-    { icon: "football", label: "Sports", gradient: ["#3498DB", "#2980B9"] },
-    { icon: "charity", label: "Community", gradient: ["#00B894", "#00A187"] },
+    { icon: "school", label: "Education", gradient: g},
+    { icon: "hospital-box", label: "Medical", gradient: g},
+    { icon: "home-flood", label: "Disaster", gradient: g },
+    { icon: "leaf", label: "Environment", gradient: g },
+    { icon: "alarm-light", label: "Emergency", gradient: g },
+    { icon: "heart", label: "Family", gradient: g },
+    { icon: "football", label: "Sports", gradient: g },
+    { icon: "charity", label: "Community", gradient: g },
   ]
 
   return (

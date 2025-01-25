@@ -95,7 +95,7 @@ const FundraiserCard: React.FC<FundraiserCardProps> = ({
               {title}
             </Text>
           </View>
-          <Text style={styles.remainingAmount}>৳{remainingAmount.toLocaleString()} remaining</Text>
+          <Text style={styles.remainingAmount}>৳{remainingAmount.toLocaleString()} Remaining</Text>
           <View style={styles.progressContainer}>
             <LinearGradient
               colors={progressColors}
@@ -109,11 +109,11 @@ const FundraiserCard: React.FC<FundraiserCardProps> = ({
           <View style={styles.amountContainer}>
             <Text style={styles.raisedAmount}>
               ৳{raisedAmount.toLocaleString()}
-              <Text style={styles.raisedLabel}> raised</Text>
+              <Text style={styles.raisedLabel}> Raised</Text>
             </Text>
             <Text style={styles.goalAmount}>
               ৳{goalAmount.toLocaleString()}
-              <Text style={styles.goalLabel}> goal</Text>
+              <Text style={styles.goalLabel}> Goal</Text>
             </Text>
           </View>
         </View>
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   remainingAmount: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#2196F3",
+    color: "#1aa",
     marginBottom: 16,
     letterSpacing: 0.15,
   },

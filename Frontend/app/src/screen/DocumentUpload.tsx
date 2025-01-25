@@ -153,7 +153,7 @@ export default function DocumentUpload({ navigation, route }) {
           style={styles.uploadButton}
         >
           <LinearGradient
-            colors={["#FF9500", "#FF8000"]}
+            colors={["#1aa7ec", "#1aa7ec"]}
             style={styles.gradient}
           >
             <MaterialIcons name="file-upload" size={24} color="#fff" />
@@ -165,10 +165,10 @@ export default function DocumentUpload({ navigation, route }) {
       <View style={styles.footer}>
         <TouchableOpacity style={styles.continueButton} onPress={handleSubmit}>
           <LinearGradient
-            colors={["#007AFF", "#0055FF"]}
+            colors={["#54927d", "#54927d"]}
             style={styles.gradient}
           >
-            <Text style={styles.continueButtonText}>Submit Campaign</Text>
+            <Text style={styles.continueButtonText}>Submit</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -178,13 +178,19 @@ export default function DocumentUpload({ navigation, route }) {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   content: { flex: 1, padding: 24 },
   title: { fontSize: 28, fontWeight: "bold", marginBottom: 8 },
   subtitle: { fontSize: 16, color: "#666" },
   uploadButton: { borderRadius: 12, overflow: "hidden", marginBottom: 24 },
-  gradient: { flexDirection: "row", alignItems: "center", padding: 16 },
+  gradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center", // Center content horizontally
+    padding: 16,
+  },
   uploadButtonText: {
     color: "#fff",
     fontSize: 18,
@@ -203,6 +209,16 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#e1e1e1",
   },
-  continueButton: { borderRadius: 12, overflow: "hidden" },
-  continueButtonText: { color: "#fff", fontSize: 18, fontWeight: "600" },
+  continueButton: { 
+    borderRadius: 12, 
+    overflow: "hidden", 
+    width: "100%", 
+    alignSelf: "center",
+  },
+  continueButtonText: { 
+    color: "#fff", 
+    fontSize: 18, 
+    fontWeight: "600",
+  },
 });
+

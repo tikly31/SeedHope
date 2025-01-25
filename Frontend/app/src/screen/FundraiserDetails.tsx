@@ -170,7 +170,7 @@ export default function FundraiserDetails({ navigation, route }) {
               onPress={handleContinue}
             >
               <LinearGradient
-                colors={isValidForm ? ["#007AFF", "#0055FF"] : ["#ccc", "#bbb"]}
+                colors={isValidForm ? ["#54927d", "#54927d"] : ["#ccc", "#bbb"]}
                 style={styles.buttonGradient}
               >
                 <Text style={styles.buttonText}>Continue</Text>

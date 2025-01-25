@@ -74,7 +74,7 @@ export default function FundraiserSuccess({ navigation }) {
             ]}
           >
             <LinearGradient
-              colors={["#4CAF50", "#45a049"]}
+              colors={["#54927d", "#45a049"]}
               style={styles.iconGradient}
             >
               <MaterialIcons name="check-circle" size={64} color="#fff" />
@@ -99,7 +99,7 @@ export default function FundraiserSuccess({ navigation }) {
             onPress={() => navigation.navigate("MainScreen")}
           >
             <LinearGradient
-              colors={["#007AFF", "#0055FF"]}
+              colors={["#54927d", "#54927d"]}
               style={styles.buttonGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}

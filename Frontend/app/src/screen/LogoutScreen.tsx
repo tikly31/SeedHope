@@ -58,7 +58,7 @@ export default function LogoutScreen() {
         style={[styles.card, { transform: [{ scale: scaleAnim }] }]}
       >
         <View style={styles.iconContainer}>
-          <MaterialIcons name="logout" size={40} color="#FF3B30" />
+          <MaterialIcons name="logout" size={40} color="#ff9966" />
         </View>
 
         <Text style={styles.title}>Logout</Text>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
   },
   logoutButton: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: "#ff9966",
   },
   cancelButtonText: {
     fontSize: 16,

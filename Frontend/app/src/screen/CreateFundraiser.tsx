@@ -12,6 +12,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import BottomNavBar from "../components/BottomNavBar";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 const categories = [
   [
@@ -62,11 +63,13 @@ export default function CreateFundraiser({ navigation }) {
   };
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () =>
-      setKeyboardVisible(true)
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardVisible(true)
     );
-    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () =>
-      setKeyboardVisible(false)
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardVisible(false)
     );
 
     return () => {
@@ -246,7 +249,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   continueButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#54927d",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",

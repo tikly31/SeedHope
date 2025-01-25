@@ -138,7 +138,7 @@ export default function FundraiserAmount({ navigation, route }) {
               >
                 <LinearGradient
                   colors={
-                    isValidAmount ? ["#007AFF", "#0055FF"] : ["#ccc", "#bbb"]
+                    isValidAmount ? ["#54927d", "#54927d"] : ["#ccc", "#bbb"]
                   }
                   style={styles.buttonGradient}
                   start={{ x: 0, y: 0 }}
