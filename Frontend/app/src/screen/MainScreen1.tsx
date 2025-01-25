@@ -19,7 +19,7 @@ import logo from '../assets/image.png';
 import profile from '../assets/profile.jpg';
 import FundraiserSection from '../components/FundraiserSection';
 import {get_current_user} from "../utils/apiUtils";
-
+import {colors} from "../utils/colors";
 import CONFIG from './config';
 const API_BASE_URL = CONFIG.API_BASE_URL;
 // const API_BASE_URL = 'http://192.168.0.106:8080'; // Replace with your actual backend URL
@@ -203,7 +203,7 @@ export default function MainScreen1() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.green,
   },
   header: {
     flexDirection: 'row',

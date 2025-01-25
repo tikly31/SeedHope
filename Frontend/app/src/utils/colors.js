@@ -1,8 +1,7 @@
 export const colors = {
-    white: '#FFFFFF',
-    primary: '#45484A',
-    secondary: '#AEB5BB',
-    gray: '#D9D9D9',
+    yellow: '#E5E3D4',
+    green: '#64e1b4',
+    violet: '#6A669D',
+    blue: '#1C325B',
   };
-
 export default colors;
