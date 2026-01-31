@@ -9,6 +9,8 @@ const API_BASE_URL = CONFIG.API_BASE_URL;
 export const get_current_user = async () => {
   try {
     const token = await AsyncStorage.getItem("token");
+
+    // console.log("token", token);
     if (!token) {
       return null;
     }

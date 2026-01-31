@@ -55,6 +55,7 @@ export default function FundraiserDetailsScreen({
   const [authorName, setAuthorName] = useState<string>("");
   const [authorImage, setAuthorImage] = useState(profile);
   const [userId, setUserId] = useState<string>("");
+  const [user, setUser] = useState<any>(null);
   // const [user, setUser] = useState<any>(null);
 
   const buttonScale = useSharedValue(1);
@@ -76,6 +77,8 @@ export default function FundraiserDetailsScreen({
       console.log("Fundraiser:", response);
 
       const user = await getUserById(response.organizerId);
+      const currentUser = await get_current_user();
+      setUser(currentUser);
     
       setCurrentUser(user);
       setAuthorName(user.name);
@@ -242,8 +245,10 @@ export default function FundraiserDetailsScreen({
             )}
             <Text style={styles.description}>{fundraiser.description}</Text>
           </View>
-          {currentUser.id === fundraiser.organizerId ? (
+          {user.id === fundraiser.organizerId ? (
+          
             <Animated.View style={[styles.donateButtonContainer, animatedButtonStyle]}>
+                {/* <Text>{currentUser.id} {fundraiser.organizerId}</Text> */}
               <TouchableOpacity onPressIn={handlePressIn} onPressOut={handleEditPressOut}>
                 <LinearGradient colors={["#1aa", "#1aa"]} style={styles.gradientButton}>
                   <Ionicons name="create-outline" size={24} color="#fff" />

@@ -13,7 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import BottomNavBar from '../components/BottomNavBar';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { fetchTrendingCampaigns, formatTrendingCampaigns } from "../utils/apiUtils"; // Adjust the path based on your project structure
 import logo from '../assets/image.png';
 import profile from '../assets/profile.jpg';
@@ -91,36 +91,44 @@ export default function MainScreen1() {
 //       { id: '400', title: 'Medical Aid', photoUrl:'camp4.jpg',amount: '$12,000' },
 //     ];
 
+  const fetch = async () => {
+    const user = await get_current_user();
+    setCurrentUser(user);
+  };
+  const fetchData = async () => {
+    try {
+      const [emergencyRes, recentRes, successfulRes, contributorsRes] = await Promise.all([
+        axios.get(`${API_BASE_URL}/campaign/sorted?sortBy=emergency`),
+        axios.get(`${API_BASE_URL}/campaign/sorted?sortBy=recent`),
+        axios.get(`${API_BASE_URL}/campaign/successful`),
+        axios.get(`${API_BASE_URL}/contributors`),
+      ]);
+      const trending = await fetchTrendingCampaigns();
+      setTrendingFundraisers(trending);
+      setEmergencyFundraisers(emergencyRes.data);
+      setRecentFundraisers(recentRes.data);
+      setSuccessfulFundraisers(successfulRes.data);
+      setTopContributors(contributorsRes.data);
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [emergencyRes, recentRes, successfulRes, contributorsRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/campaign/sorted?sortBy=emergency`),
-          axios.get(`${API_BASE_URL}/campaign/sorted?sortBy=recent`),
-          axios.get(`${API_BASE_URL}/campaign/successful`),
-          axios.get(`${API_BASE_URL}/contributors`),
-        ]);
-        const trending = await fetchTrendingCampaigns();
-        setTrendingFundraisers(trending);
-        setEmergencyFundraisers(emergencyRes.data);
-        setRecentFundraisers(recentRes.data);
-        setSuccessfulFundraisers(successfulRes.data);
-        setTopContributors(contributorsRes.data);
-
-        const response = await get_current_user();
-        if(response)
-                setCurrentUser(response);
-//         console.log("response", response);
-        console.log("User", currentUser);
-
-      } catch (error) {
-        console.error('Error fetching data:', error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    
     fetchData();
+    fetch();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+      fetch();
+      return () => {}; 
+    }, [])
+  );
 
   const handlePressFundraiser = (fundId) => {
     console.log('Navigating with fundId:', fundId);
@@ -146,7 +154,7 @@ export default function MainScreen1() {
         <View style={styles.header}>
           <Image source={logo} style={styles.logo} />
           <TouchableOpacity onPress = {handleOnPress}>
-            <Image source={{uri : `${API_BASE_URL}/user/${currentUser.picture}`}} style={styles.profilePhoto} />
+            <Image source={{uri : currentUser?.picture ? `${API_BASE_URL}/user/${currentUser.picture}` : ''}} style={styles.profilePhoto} />
           </TouchableOpacity>
         </View>
 
